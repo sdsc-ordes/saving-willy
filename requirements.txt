@@ -1,0 +1,12 @@
+transformers
+streamlit
+huggingface_hub
+torch
+
+# for nice map tiles
+folium
+streamlit_folium
+
+# for ceatatean
+pytorch_lightning 
+timm
