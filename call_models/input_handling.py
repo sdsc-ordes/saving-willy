@@ -6,6 +6,8 @@ import hashlib
 import logging
 
 import streamlit as st
+import cv2
+import numpy as np
 
 m_logger = logging.getLogger(__name__)
 # we can set the log level locally for funcs in this module
@@ -135,7 +137,12 @@ def setup_input(viewcontainer: st.delta_generator.DeltaGenerator=None, _allowed_
 
     if uploaded_filename is not None:
         # Display the uploaded image
-        image = Image.open(uploaded_filename)
+        #image = Image.open(uploaded_filename)
+        # load image using cv2 format, so it is compatible with the ML models
+        file_bytes = np.asarray(bytearray(uploaded_filename.read()), dtype=np.uint8)
+        image = cv2.imdecode(file_bytes, 1)
+
+
         viewcontainer.image(image, caption='Uploaded Image.', use_column_width=True)
         # store the image in the session state
         st.session_state.image = image
