@@ -25,6 +25,8 @@ from transformers import AutoModelForImageClassification
 
 # setup for the ML model on huggingface (our wrapper)
 os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
+#classifier_revision = '0f9c15e2db4d64e7f622ade518854b488d8d35e6'
+classifier_revision = 'main' # default/latest version
 # and the dataset of observations (hf dataset in our space)
 dataset_id = "Saving-Willy/Happywhale-kaggle"
 data_files = "data/train-00000-of-00001.parquet"
@@ -221,7 +223,8 @@ if __name__ == "__main__":
     if tab_inference.button("Identify with cetacean classifier"):
         #pipe = pipeline("image-classification", model="Saving-Willy/cetacean-classifier", trust_remote_code=True)
         cetacean_classifier = AutoModelForImageClassification.from_pretrained("Saving-Willy/cetacean-classifier", 
-                                                                            revision='0f9c15e2db4d64e7f622ade518854b488d8d35e6', trust_remote_code=True)
+                                                                            revision=classifier_revision,
+                                                                            trust_remote_code=True)
         
         if st.session_state.image is None:
             # TODO: cleaner design to disable the button until data input done?
