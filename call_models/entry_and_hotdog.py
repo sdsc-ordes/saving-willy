@@ -106,6 +106,7 @@ def push_observation(tab_log=None):
 if __name__ == "__main__":
 
     g_logger.info("App started.")
+    g_logger.warning(f"[D] Streamlit version: {st.__version__}. Python version: {os.sys.version}")
 
     #g_logger.debug("debug message")
     #g_logger.info("info message")
