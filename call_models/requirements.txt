@@ -5,8 +5,6 @@ pandas==2.2.3
 # frontend
 streamlit==1.39.0
 ## for nice map tiles
-folium
-streamlit_folium
 folium==0.18.0
 streamlit_folium==0.23.1
 
