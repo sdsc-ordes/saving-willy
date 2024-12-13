@@ -5,7 +5,7 @@ colorFrom: yellow
 colorTo: red
 sdk: streamlit
 sdk_version: 1.39.0
-python_version: 3.10
+python_version: 3.10.0
 app_file: call_models/entry_and_hotdog.py
 pinned: false
 license: apache-2.0
