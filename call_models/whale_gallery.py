@@ -5,7 +5,13 @@ import whale_viewer as sw_wv
 
 def render_whale_gallery(n_cols:int = 4):
     """
-    A function to display a gallery of whale images in a grid
+    Renders a gallery of whale images + urls in a grid format using Streamlit.
+
+    Parameters:
+    n_cols (int): Number of columns in the grid. Default is 4.
+
+    The function formats whale names, creates a grid layout for images, and applies custom CSS styles
+    Each image is displayed with a caption and a link to a reference URL.
     """
     def format_whale_name(name):
         return name.replace("_", " ").capitalize()
