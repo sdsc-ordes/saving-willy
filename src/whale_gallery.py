@@ -2,7 +2,7 @@ from itertools import cycle
 import streamlit as st
 
 import whale_viewer as sw_wv
-
+import os
 
 def render_whale_gallery(n_cols:int = 4) -> None:
     """
@@ -65,7 +65,10 @@ def render_whale_gallery(n_cols:int = 4) -> None:
         img_name = sw_wv.df_whale_img_ref.iloc[ix].loc["WHALE_IMAGES"]
         whale_name = _format_whale_name(str(sw_wv.df_whale_img_ref.iloc[ix].name))
         url = sw_wv.df_whale_img_ref.iloc[ix].loc['WHALE_REFERENCES']
-        image_path = f"images/references/{img_name}"
+        # Define image paths
+        current_dir = os.getcwd()
+        image_path = os.path.join(current_dir, "images/references/", img_name)
+        #image_path = f"images/references/{img_name}"
         #next(cols).image(image_path, width=150, caption=f"{whale_name}")
         thing = next(cols)
         with thing:
