@@ -25,9 +25,9 @@ nav:
   - API:
     - Main app: main.md
     - Data entry handling: input_handling.md
+    - Map of observations: obs_map.md
     - Whale gallery: whale_gallery.md
     - Whale viewer: whale_viewer.md
-    - Map of observations: obs_map.md
     - Logging: st_logs.md
     - Tab-rendering fix (js): fix_tabrender.md
 

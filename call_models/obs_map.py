@@ -62,7 +62,21 @@ _colors = [
 
 whale2color = {k: v for k, v in zip(sw_wv.WHALE_CLASSES, _colors)}
 
-def create_map(tile_name:str, location:Tuple, zoom_start: int = 7):
+def create_map(tile_name:str, location:Tuple[float], zoom_start: int = 7) -> folium.Map:
+    """
+    Create a folium map with the specified tile layer
+
+    Parameters:
+        tile_name (str): The name of the tile layer to use. Options include:
+                        'Open Street Map', 'Esri Ocean', 'Esri Images', 
+                        'Stamen Toner', 'Stamen Watercolor', 
+                        'CartoDB Positron', 'CartoDB Dark_Matter'.
+        location (Tuple): Coordinates (lat, lon) of the map center, as floats.
+        zoom_start (int, optional): The initial zoom level for the map. Default is 7.
+
+    Returns:
+        folium.Map: A folium Map object with the specified settings.
+    """
     # https://xyzservices.readthedocs.io/en/stable/gallery.html 
     # get teh attribtuions from here once we pick the 2-3-4 options 
     # make esri ocean the default
@@ -103,12 +117,27 @@ def create_map(tile_name:str, location:Tuple, zoom_start: int = 7):
 
 def present_obs_map(dataset_id:str = "Saving-Willy/Happywhale-kaggle",
                     data_files:str = "data/train-00000-of-00001.parquet", 
-                    dbg_show_extra:bool = False):
-    '''
-    render a map, with a selectable tileset, and show markers for each of the whale 
-    observations
+                    dbg_show_extra:bool = False) -> dict:
+    """
+    Render map plus tile selector, with markers for whale observations
     
-    '''
+
+    This function loads whale observation data from a specified dataset and
+    file, creates a pandas DataFrame compliant with Folium/Streamlit maps, and
+    renders an interactive map with markers for each observation.  The map
+    allows users to select a tileset, and displays markers with species-specific
+    colors.
+
+    Args:
+        dataset_id (str): The ID of the dataset to load from Hugging Face. Default is "Saving-Willy/Happywhale-kaggle".
+        data_files (str): The path to the data file to load. Default is "data/train-00000-of-00001.parquet".
+        dbg_show_extra (bool): If True, add a few extra sample markers for visualization. Default is False.
+
+    Returns:
+        dict: Selected data from the Folium/leaflet.js interactions in the browser.
+
+    """
+
     # load/download data from huggingface dataset
     metadata = load_dataset(dataset_id, data_files=data_files)
     
