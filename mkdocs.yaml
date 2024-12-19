@@ -19,9 +19,6 @@ plugins:
         python: 
           paths: [nonexistent_path_on_purpose]
 
-#        python:
-          #paths: [srcy]
-
 
 nav:
   - README: index.md
