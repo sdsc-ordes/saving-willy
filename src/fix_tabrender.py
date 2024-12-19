@@ -10,6 +10,21 @@ import streamlit as st
 import uuid, html
 # workaround for streamlit making tabs height 0 when not active, breaks map
 def inject_iframe_js_code(source: str) -> None:
+    """
+    Injects JavaScript code into a Streamlit app using an iframe.
+
+    This function creates a hidden div with a unique ID and injects the provided
+    JavaScript code into the parent document using an iframe. The iframe's source
+    is a JavaScript URL that creates a script element, sets its type to 'text/javascript',
+    and assigns the provided JavaScript code to its text content. The script element
+    is then appended to the hidden div in the parent document.
+
+    Args:
+        source (str): The JavaScript code to be injected.
+
+    Returns:
+        None
+    """
     div_id = uuid.uuid4()
 
     st.markdown(
@@ -28,7 +43,28 @@ def inject_iframe_js_code(source: str) -> None:
         unsafe_allow_html=True,
     )
     
-def js_show_zeroheight_iframe(component_iframe_title: str, height: str = "auto"):
+def js_show_zeroheight_iframe(component_iframe_title: str, height: str = "auto") -> None:
+    """
+    Injects JavaScript code to dynamically set iframe height (located by title)
+
+    This function generates and injects JavaScript code that searches for
+    iframes with the given title and sets their height to the specified value.
+    The script attempts to find the iframes up to a maximum number of attempts,
+    and also listens for user interactions to reattempt setting the height.
+    
+    See https://github.com/streamlit/streamlit/issues/7376 
+    
+
+    Args:
+        component_iframe_title (str): The title attribute of the iframes to target.
+        height (str, optional): The height to set for the iframes. Defaults to "auto".
+
+    Notes:
+        - The JavaScript code will attempt to find the iframes every 250
+          milliseconds, up to a maximum of 20 attempts.
+        - If the iframes are found, their height will be set to the specified value.
+        - User interactions (e.g., click events) triggers a reattempt to set the height.
+    """
     source = f"""
     (function() {{
     var attempts = 0;

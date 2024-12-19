@@ -16,10 +16,27 @@ plugins:
   - mkdocstrings:
       default_handler: python
       handlers:
-        python:
-          paths: [src]
+        python: 
+          paths: [nonexistent_path_on_purpose]
 
 
 nav:
   - README: index.md
-  - App: app.md
+  #- Quickstart:
+    #- Installation: installation.md
+    #- Usage: usage.md
+  - API:
+    - Main app: main.md
+    - Modules:
+      - Data entry handling: input_handling.md
+      - Map of observations: obs_map.md
+      - Whale gallery: whale_gallery.md
+      - Whale viewer: whale_viewer.md
+      - Logging: st_logs.md
+      - Tab-rendering fix (js): fix_tabrender.md
+
+    - Development clutter:
+      - Demo app: app.md
+    
+  - How to contribute:
+    - Dev Notes: dev_notes.md

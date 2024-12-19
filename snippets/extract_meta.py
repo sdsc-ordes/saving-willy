@@ -38,7 +38,7 @@ def extract_gps(image_path):
 
         return (lat, lon)
 # Example usage
-image_path = '../call_models/imgs/cakes.jpg'
+image_path = 'imgs/cakes.jpg' # this file has good exif data, inc GPS, timestamps etc.
 datetime_info = extract_datetime(image_path)
 gps_info = extract_gps(image_path)
 print(f'Date and Time: {datetime_info}')

@@ -22,7 +22,7 @@ WHALE_CLASSES = [
         "melon_headed_whale",
         "minke_whale",
         "pantropic_spotted_dolphin",
-        "pygmy_killer_whale",
+        "pygmy_killer_whale",        
         "rough_toothed_dolphin",
         "sei_whale",
         "short_finned_pilot_whale",
@@ -102,7 +102,16 @@ df_whale_img_ref = pd.DataFrame(
     }
 ).set_index("WHALE_CLASSES")
 
-def format_whale_name(whale_class:str):
+def format_whale_name(whale_class:str) -> str:
+    """
+    Formats a whale class name for display 
+    
+    Args:
+        whale_class (str): The class name of the whale, with words separated by underscores.
+
+    Returns:
+        str: The formatted whale name with spaces instead of underscores and each word capitalized.
+    """
     whale_name = whale_class.replace("_", " ").title()
     return whale_name
 
@@ -116,7 +125,8 @@ def display_whale(whale_classes:List[str], i:int, viewcontainer=None):
         i (int): The index of the whale class to display.
         viewcontainer: The container to display the whale information. If 
             not provided, use the current streamlit context (works via 
-            'with <container>' syntax)
+            'with `container`' syntax)
+
     Returns:
         None
     
