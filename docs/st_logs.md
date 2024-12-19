@@ -3,5 +3,5 @@ This module provides utilities to incorporate a standard python logger within st
 
 # Streamlit log handler 
 
-::: call_models.st_logs
+::: src.st_logs
 

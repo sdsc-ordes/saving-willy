@@ -16,8 +16,11 @@ plugins:
   - mkdocstrings:
       default_handler: python
       handlers:
-        python:
-          paths: [src]
+        python: 
+          paths: [nonexistent_path_on_purpose]
+
+#        python:
+          #paths: [srcy]
 
 
 nav:

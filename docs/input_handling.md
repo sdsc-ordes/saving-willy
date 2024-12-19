@@ -5,4 +5,4 @@ This module focuses on image and metadata entry:
 - a container class for an observation
 
 
-::: call_models.input_handling
+::: src.input_handling
