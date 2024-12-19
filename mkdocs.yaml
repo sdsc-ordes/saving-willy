@@ -22,3 +22,4 @@ plugins:
 
 nav:
   - README: index.md
+  - App: app.md
