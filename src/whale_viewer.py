@@ -2,6 +2,7 @@ from typing import List
 
 from PIL import Image
 import pandas as pd
+import os
 
 WHALE_CLASSES = [
         "beluga",
@@ -149,7 +150,9 @@ def display_whale(whale_classes:List[str], i:int, viewcontainer=None):
     viewcontainer.markdown(
         "### :whale:  #" + str(i + 1) + ": " + format_whale_name(whale_classes[i])
     )
-    image = Image.open("images/references/" + df_whale_img_ref.loc[whale_classes[i], "WHALE_IMAGES"])
+    current_dir = os.getcwd()
+    image_path = os.path.join(current_dir, "src/images/references/")
+    image = Image.open(image_path + df_whale_img_ref.loc[whale_classes[i], "WHALE_IMAGES"])
 
     viewcontainer.image(image, caption=df_whale_img_ref.loc[whale_classes[i], "WHALE_REFERENCES"])
     # link st.markdown(f"[{df.loc[whale_classes[i], 'WHALE_REFERENCES']}]({df.loc[whale_classes[i], 'WHALE_REFERENCES']})")
