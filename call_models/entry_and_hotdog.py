@@ -6,6 +6,7 @@ import tempfile
 
 import pandas as pd
 import streamlit as st
+from streamlit.delta_generator import DeltaGenerator # for type hinting
 import folium
 from streamlit_folium import st_folium
 from huggingface_hub import HfApi
@@ -63,14 +64,29 @@ if "tab_log" not in st.session_state:
     st.session_state.tab_log = None
     
 
-def metadata2md():
+def metadata2md() -> str:
+    """Get metadata from cache and return as markdown-formatted key-value list
+
+    Returns:
+        str: Markdown-formatted key-value list of metadata
+        
+    """
     markdown_str = "\n"
     for key, value in st.session_state.full_data.items():
             markdown_str += f"- **{key}**: {value}\n"
     return markdown_str
 
 
-def push_observation(tab_log=None):
+def push_observation(tab_log:DeltaGenerator=None):
+    """
+    Push the observation to the Hugging Face dataset
+    
+    Args:
+        tab_log (streamlit.container): The container to log messages to. If not provided,
+            log messages are in any case written to the global logger (TODO: test - didn't 
+            push any data since generating the logger)
+    
+    """
     # we get the data from session state: 1 is the dict 2 is the image.
     # first, lets do an info display (popup)
     metadata_str = json.dumps(st.session_state.full_data)
@@ -104,7 +120,26 @@ def push_observation(tab_log=None):
     st.info(msg)
     
 
-if __name__ == "__main__":
+
+def main() -> None:
+    """
+    Main entry point to set up the streamlit UI and run the application.
+
+    The organisation is as follows:
+
+    1. data input (a new observation) is handled in the sidebar
+    2. the rest of the interface is organised in tabs:
+    
+        - cetean classifier
+        - hotdog classifier
+        - map to present the obersvations
+        - table of recent log entries
+        - gallery of whale images
+    
+    The majority of the tabs are instantiated from modules. Currently the two 
+    classifiers are still in-line here.
+    
+    """
 
     g_logger.info("App started.")
     g_logger.warning(f"[D] Streamlit version: {st.__version__}. Python version: {os.sys.version}")
@@ -305,3 +340,6 @@ if __name__ == "__main__":
             tab_hotdogs.write(f"Session Data: {json.dumps(st.session_state.full_data)}")
             
             
+
+if __name__ == "__main__":
+    main()
