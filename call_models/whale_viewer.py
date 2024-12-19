@@ -104,8 +104,8 @@ df_whale_img_ref = pd.DataFrame(
 
 def format_whale_name(whale_class:str) -> str:
     """
-    Formats a whale class name by replacing underscores with spaces and capitalizing each word.
-
+    Formats a whale class name for display 
+    
     Args:
         whale_class (str): The class name of the whale, with words separated by underscores.
 
@@ -125,7 +125,8 @@ def display_whale(whale_classes:List[str], i:int, viewcontainer=None):
         i (int): The index of the whale class to display.
         viewcontainer: The container to display the whale information. If 
             not provided, use the current streamlit context (works via 
-            'with <container>' syntax)
+            'with `container`' syntax)
+
     Returns:
         None
     
