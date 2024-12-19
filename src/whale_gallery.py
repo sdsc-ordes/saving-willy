@@ -67,7 +67,7 @@ def render_whale_gallery(n_cols:int = 4) -> None:
         url = sw_wv.df_whale_img_ref.iloc[ix].loc['WHALE_REFERENCES']
         # Define image paths
         current_dir = os.getcwd()
-        image_path = os.path.join(current_dir, "images/references/", img_name)
+        image_path = os.path.join(current_dir, "src/images/references/", img_name)
         #image_path = f"images/references/{img_name}"
         #next(cols).image(image_path, width=150, caption=f"{whale_name}")
         thing = next(cols)
