@@ -1,4 +1,4 @@
-This module is about using a standard python logger within streamlit.
+This module provides utilities to incorporate a standard python logger within streamlit.
 
 
 # Streamlit log handler 
