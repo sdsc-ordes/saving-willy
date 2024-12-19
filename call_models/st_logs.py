@@ -1,3 +1,4 @@
+from typing import List
 import logging
 from datetime import datetime
 import re
@@ -35,6 +36,7 @@ class StreamlitLogHandler(logging.Handler):
         log_area (streamlit.DeltaGenerator): An empty Streamlit container for log output.
         buffer (collections.deque): A deque buffer to store log messages with a maximum length.
         _n (int): A counter to keep track of the number of log messages seen.
+
     Methods:
         __init__(container, maxlen=15, debug=False):
             Initializes the StreamlitLogHandler with a Streamlit container, buffer length, and debug flag.
@@ -70,13 +72,18 @@ class StreamlitLogHandler(logging.Handler):
         Returns:
             str: A string representing the total number of elements seen and the number of elements in the buffer.
         """
-        ''' return a string with num elements seen and num elements in buffer '''
         if verb:
             return f"total: {self._n}|| in buffer:{len(self.buffer)}"
 
         return f"{self._n}||{len(self.buffer)}"
 
-    def emit(self, record):
+    def emit(self, record) -> None:
+        '''put the record into buffer so it gets displayed
+
+        Args:
+            record (logging.LogRecord): The log record to process and display.
+        
+        '''
         self._n += 1
         msg = f"[{self._n}]" + self.format(record)
         self.buffer.append(msg)
@@ -119,11 +126,13 @@ def setup_logging(level:int=logging.INFO, buffer_len:int=15) -> StreamlitLogHand
     #    st.session_state['handler'] = handler
     return handler
 
-def parse_log_buffer(log_contents: deque) -> list:
+def parse_log_buffer(log_contents: deque) -> List[dict]:
     """
-    Convert log buffer to a list of dictionaries.
+    Convert log buffer to a list of dictionaries for use with a streamlit datatable.
+
     Args:
         log_contents (deque): A deque containing log lines as strings.
+
     Returns:
         list: A list of dictionaries, each representing a parsed log entry with the following keys:
             - 'timestamp' (datetime): The timestamp of the log entry.
@@ -164,7 +173,8 @@ def parse_log_buffer(log_contents: deque) -> list:
     return records
 
 def demo_log_callback() -> None:
-    '''function to demo adding log entries'''
+    '''basic demo of adding log entries as a callback function'''
+    
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
     logger.debug("debug message")
