@@ -6,7 +6,7 @@ colorTo: red
 sdk: streamlit
 sdk_version: 1.39.0
 python_version: "3.10"
-app_file: call_models/entry_and_hotdog.py
+app_file: src/main.py
 pinned: false
 license: apache-2.0
 short_description: 'SDSC Hackathon - Project 10. '
