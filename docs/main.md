@@ -7,4 +7,4 @@ The session state is used to retain values from one interaction to the next, sin
 See streamlit [docs](https://docs.streamlit.io/develop/api-reference/caching-and-state/st.session_state).
 
 
-::: src.entry_and_hotdog
+::: src.main
