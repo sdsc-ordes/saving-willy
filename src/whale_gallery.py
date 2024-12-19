@@ -3,11 +3,22 @@ import streamlit as st
 
 import whale_viewer as sw_wv
 
-def render_whale_gallery(n_cols:int = 4):
+
+def render_whale_gallery(n_cols:int = 4) -> None:
     """
-    A function to display a gallery of whale images in a grid
+    Renders a gallery of whale images + urls in a grid format using Streamlit.
+
+    The function formats whale names, creates a grid layout for images, and
+    applies custom CSS styles Each image is displayed with a caption and a link
+    to a reference URL.
+
+
+    Parameters:
+        n_cols (int): Number of columns in the grid. Default is 4.
+
     """
-    def format_whale_name(name):
+    def _format_whale_name(name:str) -> str:
+        '''clean up the whale name for display'''
         return name.replace("_", " ").capitalize()
     
     # make a grid of images, use some css to get more uniform
@@ -52,7 +63,7 @@ def render_whale_gallery(n_cols:int = 4):
     cols = cycle(st.columns(n_cols)) 
     for ix in range(len(sw_wv.df_whale_img_ref)):
         img_name = sw_wv.df_whale_img_ref.iloc[ix].loc["WHALE_IMAGES"]
-        whale_name = format_whale_name(str(sw_wv.df_whale_img_ref.iloc[ix].name))
+        whale_name = _format_whale_name(str(sw_wv.df_whale_img_ref.iloc[ix].name))
         url = sw_wv.df_whale_img_ref.iloc[ix].loc['WHALE_REFERENCES']
         image_path = f"images/references/{img_name}"
         #next(cols).image(image_path, width=150, caption=f"{whale_name}")
@@ -86,4 +97,3 @@ if __name__ == "__main__":
     with tg_cont:
         render_whale_gallery(n_cols=4)
     
-    pass
