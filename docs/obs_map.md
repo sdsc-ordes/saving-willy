@@ -4,4 +4,4 @@ Note: OSM, ESRI, and CartoDB map tiles are served without authentication/tokens,
 and so render correctly on the huggingface deployment. The Stamen tiles render
 on localhost but require a token to present on a 3rd-party site.
 
-::: call_models.obs_map
+::: src.obs_map
