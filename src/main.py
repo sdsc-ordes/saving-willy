@@ -111,7 +111,7 @@ def push_observation(tab_log:DeltaGenerator=None):
     rv = api.upload_file(
         path_or_fileobj=f.name,
         path_in_repo=path_in_repo,
-        repo_id="Saving-Willy/Happywhale-kaggle",
+        repo_id="Saving-Willy/temp_dataset",
         repo_type="dataset",
     )
     print(rv)
