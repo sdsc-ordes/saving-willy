@@ -313,7 +313,7 @@ def main() -> None:
 
     if tab_hotdogs.button("Get Hotdog Prediction"):   
         
-        pipeline = pipeline(task="image-classification", model="julien-c/hotdog-not-hotdog")
+        pipeline_hot_dog = pipeline(task="image-classification", model="julien-c/hotdog-not-hotdog")
         tab_hotdogs.title("Hot Dog? Or Not?")
 
         if st.session_state.image is None:
@@ -326,7 +326,7 @@ def main() -> None:
             # display the image (use cached version, no need to reread)
             col1.image(st.session_state.image, use_column_width=True)
             # and then run inference on the image
-            predictions = pipeline(st.session_state.image)
+            predictions = pipeline_hot_dog(st.session_state.image)
 
             col2.header("Probabilities")
             first = True
