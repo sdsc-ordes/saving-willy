@@ -107,8 +107,10 @@ class InputObservation:
             "author_email": self.author_email,
             "date": self.date,
             "time": self.time,
-            "date_option": self.date_option,
-            "time_option": self.time_option,
+            # "date_option": self.date_option,
+            # "time_option": self.time_option,
+            "date_option": str(self.date_option),
+            "time_option": str(self.time_option),
             "uploaded_filename": self.uploaded_filename
         }
 
