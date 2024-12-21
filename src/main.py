@@ -101,7 +101,7 @@ def push_observation(tab_log:DeltaGenerator=None):
         
     # get huggingface api
     import os 
-    token = os.getenv("HF_TOKEN")
+    token = os.environ.get("HF_TOKEN", None)
     api = HfApi(token=token)
 
     f = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False)
