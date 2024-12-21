@@ -13,6 +13,9 @@ from huggingface_hub import HfApi
 from transformers import pipeline
 from transformers import AutoModelForImageClassification
 
+from datasets import disable_caching
+disable_caching()
+
 import alps_map as sw_am
 import input_handling as sw_inp
 import obs_map as sw_map
