@@ -1,4 +1,6 @@
 #import datetime
+from PIL import Image
+
 import json
 import logging
 import os
@@ -331,7 +333,7 @@ def main() -> None:
             # display the image (use cached version, no need to reread)
             col1.image(st.session_state.image, use_column_width=True)
             # and then run inference on the image
-            predictions = pipeline_hot_dog(st.session_state.image)
+            predictions = pipeline_hot_dog(Image(st.session_state.image))
 
             col2.header("Probabilities")
             first = True
