@@ -100,7 +100,9 @@ def push_observation(tab_log:DeltaGenerator=None):
         tab_log.info(f"Uploading observation: {metadata_str}")
         
     # get huggingface api
-    api = HfApi()
+    import os 
+    token = os.getenv("HF_TOKEN")
+    api = HfApi(token=token)
 
     f = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False)
     f.write(metadata_str)
