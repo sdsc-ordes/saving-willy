@@ -1,8 +1,8 @@
 ---
 title: Saving Willy
-emoji: 👀
-colorFrom: yellow
-colorTo: red
+emoji: 🐋
+colorFrom: black
+colorTo: white
 sdk: streamlit
 sdk_version: 1.39.0
 python_version: "3.10"
