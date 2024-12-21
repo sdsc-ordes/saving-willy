@@ -333,7 +333,7 @@ def main() -> None:
             # display the image (use cached version, no need to reread)
             col1.image(st.session_state.image, use_column_width=True)
             # and then run inference on the image
-            hotdog_image = Image.open(st.session_state.image)
+            hotdog_image = Image.fromarray(st.session_state.image)
             predictions = pipeline_hot_dog(hotdog_image)
 
             col2.header("Probabilities")
