@@ -186,9 +186,8 @@ def get_image_datetime(image_file: UploadedFile) -> str | None:
         image = Image.open(image_file)
         exif_data = image._getexif()
         if exif_data is not None:
-            for tag, value in exif_data.items():
-                if ExifTags.TAGS.get(tag) == 'DateTimeOriginal':
-                    return value
+            if ExifTags.Base.DateTimeOriginal in exif_data:
+                return exif_data.get(ExifTags.Base.DateTimeOriginal)
     except Exception as e: # FIXME: what types of exception?
          st.warning(f"Could not extract date from image metadata. (file: {image_file.name})")
          # TODO: add to logger
