@@ -1,7 +1,7 @@
 import pytest
+from pathlib import Path
 
-from input_handling import is_valid_email
-from input_handling import is_valid_number
+from input_handling import is_valid_email, is_valid_number, get_image_datetime
 
 # generate tests for is_valid_email
 # - test with valid email
@@ -106,3 +106,31 @@ def test_is_valid_number_invalid():
     assert not is_valid_number("123,456")
     assert not is_valid_number("123-456")
     assert not is_valid_number("123+456")
+
+    
+    
+# tests for get_image_datetime
+# - testing with a valid image with complete, valid metadata
+# - testing with a valid image with incomplete metadata (missing datetime info -- that's a legitimate case we should handle)
+# - testing with a valid image with incomplete metadata (missing GPS info -- should not affect the datetime extraction)
+# - testing with a valid image with no metadata
+# - timezones too
+
+
+test_data_pth = Path('tests/data/')
+def test_get_image_datetime():
+    
+    # this image has lat, lon, and datetime
+    f1 = test_data_pth / 'cakes.jpg'
+    assert get_image_datetime(f1) == "2024:10:24 15:59:45"
+    #"+02:00"
+    # hmm, the full datetime requires timezone, which is called OffsetTimeOriginal
+    
+    # missing GPS loc: this should not interfere with the datetime
+    f2 = test_data_pth / 'cakes_no_exif_gps.jpg'
+    assert get_image_datetime(f2) == "2024:10:24 15:59:45"
+    
+    # missng datetime -> expect None
+    f3 = test_data_pth / 'cakes_no_exif_datetime.jpg'
+    assert get_image_datetime(f3) == None
+    
