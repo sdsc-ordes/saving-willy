@@ -1,7 +1,8 @@
 import pytest
 from pathlib import Path
 
-from input_handling import is_valid_email, is_valid_number, get_image_datetime
+from input_handling import is_valid_email, is_valid_number
+from input_handling import get_image_datetime, get_image_latlon
 
 # generate tests for is_valid_email
 # - test with valid email
@@ -133,4 +134,22 @@ def test_get_image_datetime():
     # missng datetime -> expect None
     f3 = test_data_pth / 'cakes_no_exif_datetime.jpg'
     assert get_image_datetime(f3) == None
+    
+
+def test_get_image_latlon():
+    # this image has lat, lon, and datetime
+    f1 = test_data_pth / 'cakes.jpg'
+    assert get_image_latlon(f1) == (46.51860277777778, 6.562075)
+    
+    # missing GPS loc
+    f2 = test_data_pth / 'cakes_no_exif_gps.jpg'
+    assert get_image_latlon(f2) == None
+    
+    # missng datetime -> expect gps not affected
+    f3 = test_data_pth / 'cakes_no_exif_datetime.jpg'
+    assert get_image_latlon(f3) == (46.51860277777778, 6.562075)
+
+# tests for get_image_latlon with empty file
+def test_get_image_latlon_empty():
+    assert get_image_latlon("") == None
     
