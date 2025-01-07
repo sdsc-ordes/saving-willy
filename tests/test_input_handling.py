@@ -1,6 +1,7 @@
 import pytest
 
 from input_handling import is_valid_email
+from input_handling import is_valid_number
 
 # generate tests for is_valid_email
 # - test with valid email
@@ -51,7 +52,57 @@ def test_is_valid_email_invalid():
 
 # not sure how xfails come through the CI pipeline yet.
 # maybe better to just comment out this stuff until pipeline is setup, then can check /extend
-#@pytest.mark.xfail(reason="Bug identified, but while setting up CI having failing tests causes more headache")
-#def test_is_valid_email_invalid_plus():
-#    assert not is_valid_email("+@test.com")
-#    assert not is_valid_email("+oneuse@test.com")
+@pytest.mark.xfail(reason="Bug identified, but while setting up CI having failing tests causes more headache")
+def test_is_valid_email_invalid_plus():
+    assert not is_valid_email("+@test.com")
+    assert not is_valid_email("+oneuse@test.com")
+
+
+def test_is_valid_number_valid():
+    # with a sign or without, fractional or integer are all valid
+    assert is_valid_number("123")
+    assert is_valid_number("123.456")
+    assert is_valid_number("-123")
+    assert is_valid_number("-123.456")
+    assert is_valid_number("+123")
+    assert is_valid_number("+123.456")
+
+def test_is_valid_number_empty():
+    assert not is_valid_number("")
+
+def test_is_valid_number_none():
+    with pytest.raises(TypeError):
+        is_valid_number(None)
+
+def test_is_valid_number_invalid():
+    # func should return False for strings that are not numbers
+    assert not is_valid_number("abc")
+    assert not is_valid_number("123abc")
+    assert not is_valid_number("abc123")
+    assert not is_valid_number("123.456.789")
+    assert not is_valid_number("123,456") 
+    assert not is_valid_number("123-456")
+    assert not is_valid_number("123+456")
+def test_is_valid_number_valid():
+    assert is_valid_number("123")
+    assert is_valid_number("123.456")
+    assert is_valid_number("-123")
+    assert is_valid_number("-123.456")
+    assert is_valid_number("+123")
+    assert is_valid_number("+123.456")
+
+def test_is_valid_number_empty():
+    assert not is_valid_number("")
+
+def test_is_valid_number_none():
+    with pytest.raises(TypeError):
+        is_valid_number(None)
+
+def test_is_valid_number_invalid():
+    assert not is_valid_number("abc")
+    assert not is_valid_number("123abc")
+    assert not is_valid_number("abc123")
+    assert not is_valid_number("123.456.789")
+    assert not is_valid_number("123,456")
+    assert not is_valid_number("123-456")
+    assert not is_valid_number("123+456")
