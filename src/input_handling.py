@@ -1,3 +1,4 @@
+from fractions import Fraction
 from PIL import Image
 from PIL import ExifTags
 import re
@@ -185,13 +186,48 @@ def get_image_datetime(image_file: UploadedFile) -> str | None:
         image = Image.open(image_file)
         exif_data = image._getexif()
         if exif_data is not None:
-            for tag, value in exif_data.items():
-                if ExifTags.TAGS.get(tag) == 'DateTimeOriginal':
-                    return value
+            if ExifTags.Base.DateTimeOriginal in exif_data:
+                return exif_data.get(ExifTags.Base.DateTimeOriginal)
     except Exception as e: # FIXME: what types of exception?
          st.warning(f"Could not extract date from image metadata. (file: {image_file.name})")
          # TODO: add to logger
     return None
+
+def decimal_coords(coords:tuple, ref:str) -> Fraction:
+    # https://stackoverflow.com/a/73267185
+    decimal_degrees = coords[0] + coords[1] / 60 + coords[2] / 3600
+    if ref == "S" or ref =='W':
+        decimal_degrees = -decimal_degrees
+    return decimal_degrees
+
+
+def get_image_latlon(image_file: UploadedFile) -> tuple[float, float] | None:
+    """
+    Extracts the latitude and longitude from the EXIF metadata of an uploaded image file.
+
+    Args:
+        image_file (UploadedFile): The uploaded image file from which to extract the latitude and longitude.
+
+    Returns:
+        tuple[float, float]: The latitude and longitude as a tuple if available, otherwise None.
+
+    Raises:
+        Warning: If the latitude and longitude could not be extracted from the image metadata.
+    """
+    try:
+        image = Image.open(image_file)
+        exif_data = image._getexif()
+        if exif_data is not None:
+            if ExifTags.Base.GPSInfo in exif_data:
+                gps_ifd = exif_data.get(ExifTags.Base.GPSInfo) 
+                
+                lat = float(decimal_coords(gps_ifd[ExifTags.GPS.GPSLatitude], gps_ifd[ExifTags.GPS.GPSLatitudeRef]))
+                lon = float(decimal_coords(gps_ifd[ExifTags.GPS.GPSLongitude], gps_ifd[ExifTags.GPS.GPSLongitudeRef]))
+            
+                return lat, lon
+            
+    except Exception as e: # FIXME: what types of exception?
+         st.warning(f"Could not extract latitude and longitude from image metadata. (file: {str(image_file)}")
 
 
 # an arbitrary set of defaults so testing is less painful...
