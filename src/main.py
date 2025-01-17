@@ -77,14 +77,14 @@ def metadata2md() -> str:
         
     """
     markdown_str = "\n"
-    for key, value in st.session_state.full_data.items():
+    for key, value in st.session_state.public_observation.items():
             markdown_str += f"- **{key}**: {value}\n"
     return markdown_str
 
 
-def push_observation(tab_log:DeltaGenerator=None):
+def push_observations(tab_log:DeltaGenerator=None):
     """
-    Push the observation to the Hugging Face dataset
+    Push the observations to the Hugging Face dataset
     
     Args:
         tab_log (streamlit.container): The container to log messages to. If not provided,
@@ -94,12 +94,12 @@ def push_observation(tab_log:DeltaGenerator=None):
     """
     # we get the data from session state: 1 is the dict 2 is the image.
     # first, lets do an info display (popup)
-    metadata_str = json.dumps(st.session_state.full_data)
+    metadata_str = json.dumps(st.session_state.public_observation)
     
-    st.toast(f"Uploading observation: {metadata_str}", icon="🦭")
+    st.toast(f"Uploading observations: {metadata_str}", icon="🦭")
     tab_log = st.session_state.tab_log
     if tab_log is not None:
-        tab_log.info(f"Uploading observation: {metadata_str}")
+        tab_log.info(f"Uploading observations: {metadata_str}")
         
     # get huggingface api
     import os 
@@ -111,7 +111,7 @@ def push_observation(tab_log:DeltaGenerator=None):
     f.close()
     st.info(f"temp file: {f.name} with metadata written...")
 
-    path_in_repo= f"metadata/{st.session_state.full_data['author_email']}/{st.session_state.full_data['image_md5']}.json"
+    path_in_repo= f"metadata/{st.session_state.public_observation['author_email']}/{st.session_state.public_observation['image_md5']}.json"
     msg = f"fname: {f.name} | path: {path_in_repo}"
     print(msg)
     st.warning(msg)
@@ -134,7 +134,7 @@ def main() -> None:
 
     The organisation is as follows:
 
-    1. data input (a new observation) is handled in the sidebar
+    1. data input (a new observations) is handled in the sidebar
     2. the rest of the interface is organised in tabs:
     
         - cetean classifier
@@ -161,12 +161,12 @@ def main() -> None:
     st.session_state.tab_log = tab_log
 
 
-    # create a sidebar, and parse all the input (returned as `observation` object)
-    observation = sw_inp.setup_input(viewcontainer=st.sidebar)
+    # create a sidebar, and parse all the input (returned as `observations` object)
+    observations = sw_inp.setup_input(viewcontainer=st.sidebar)
 
         
     if 0:## WIP
-        # goal of this code is to allow the user to override the ML prediction, before transmitting an observation
+        # goal of this code is to allow the user to override the ML prediction, before transmitting an observations
         predicted_class = st.sidebar.selectbox("Predicted Class", sw_wv.WHALE_CLASSES)
         override_prediction = st.sidebar.checkbox("Override Prediction")
 
@@ -236,18 +236,13 @@ def main() -> None:
     # Display submitted data
     if st.sidebar.button("Validate"):
         # create a dictionary with the submitted data
-        submitted_data = observation.to_dict()
-        #print(submitted_data)
-        
-        #full_data.update(**submitted_data)
-        for k, v in submitted_data.items():
-            st.session_state.full_data[k] = v
+        submitted_data = observations
+        st.session_state.full_data = observations
             
-        #st.write(f"full dict of data: {json.dumps(submitted_data)}")
-        #tab_inference.info(f"{st.session_state.full_data}")
         tab_log.info(f"{st.session_state.full_data}")
 
-        df = pd.DataFrame(submitted_data, index=[0])
+        df = pd.DataFrame(submitted_data)
+        print("Dataframe Shape: ", df.shape)
         with tab_data:
             st.table(df)
         
@@ -259,7 +254,7 @@ def main() -> None:
     # - the model predicts the top 3 most likely species from the input image
     # - these species are shown
     # - the user can override the species prediction using the dropdown 
-    # - an observation is uploaded if the user chooses.
+    # - an observations is uploaded if the user chooses.
         
     if tab_inference.button("Identify with cetacean classifier"):
         #pipe = pipeline("image-classification", model="Saving-Willy/cetacean-classifier", trust_remote_code=True)
@@ -271,44 +266,53 @@ def main() -> None:
             # TODO: cleaner design to disable the button until data input done?
             st.info("Please upload an image first.")
         else:
-            # run classifier model on `image`, and persistently store the output
-            out = cetacean_classifier(st.session_state.image) # get top 3 matches
-            st.session_state.whale_prediction1 = out['predictions'][0]
-            st.session_state.classify_whale_done = True
-            msg = f"[D]2 classify_whale_done: {st.session_state.classify_whale_done}, whale_prediction1: {st.session_state.whale_prediction1}"
-            st.info(msg)
-            g_logger.info(msg)
-            
-            # dropdown for selecting/overriding the species prediction
-            #st.info(f"[D] classify_whale_done: {st.session_state.classify_whale_done}, whale_prediction1: {st.session_state.whale_prediction1}")
-            if not st.session_state.classify_whale_done:
-                selected_class = tab_inference.sidebar.selectbox("Species", sw_wv.WHALE_CLASSES, index=None, placeholder="Species not yet identified...", disabled=True)
-            else:
-                pred1 = st.session_state.whale_prediction1
-                # get index of pred1 from WHALE_CLASSES, none if not present
-                print(f"[D] pred1: {pred1}")
-                ix = sw_wv.WHALE_CLASSES.index(pred1) if pred1 in sw_wv.WHALE_CLASSES else None
-                selected_class = tab_inference.selectbox("Species", sw_wv.WHALE_CLASSES, index=ix)
-            
-            st.session_state.full_data['predicted_class'] = selected_class
-            if selected_class != st.session_state.whale_prediction1:
-                st.session_state.full_data['class_overriden'] = selected_class
+            files = st.session_state.files
+            images = st.session_state.images
+            full_data = st.session_state.full_data
+            for file in files: 
+                image = images[file]
+                data = full_data[file]
+                # run classifier model on `image`, and persistently store the output
+                out = cetacean_classifier(image) # get top 3 matches
+                st.session_state.whale_prediction1 = out['predictions'][0]
+                st.session_state.classify_whale_done = True
+                msg = f"[D]2 classify_whale_done: {st.session_state.classify_whale_done}, whale_prediction1: {st.session_state.whale_prediction1}"
+                # st.info(msg)
+                g_logger.info(msg)
                 
-            btn = st.button("Upload observation to THE INTERNET!", on_click=push_observation)
-            # TODO: the metadata only fills properly if `validate` was clicked.
-            tab_inference.markdown(metadata2md())
+                # dropdown for selecting/overriding the species prediction
+                #st.info(f"[D] classify_whale_done: {st.session_state.classify_whale_done}, whale_prediction1: {st.session_state.whale_prediction1}")
+                if not st.session_state.classify_whale_done:
+                    selected_class = tab_inference.sidebar.selectbox("Species", sw_wv.WHALE_CLASSES, 
+                                                                     index=None, placeholder="Species not yet identified...", 
+                                                                     disabled=True)
+                else:
+                    pred1 = st.session_state.whale_prediction1
+                    # get index of pred1 from WHALE_CLASSES, none if not present
+                    print(f"[D] pred1: {pred1}")
+                    ix = sw_wv.WHALE_CLASSES.index(pred1) if pred1 in sw_wv.WHALE_CLASSES else None
+                    selected_class = tab_inference.selectbox("Species", sw_wv.WHALE_CLASSES, index=ix)
+                
+                data['predicted_class'] = selected_class
+                if selected_class != st.session_state.whale_prediction1:
+                    data['class_overriden'] = selected_class
+                
+                st.session_state.public_observation = data
+                st.button("Upload observations to THE INTERNET!", on_click=push_observations)
+                # TODO: the metadata only fills properly if `validate` was clicked.
+                tab_inference.markdown(metadata2md())
 
-            msg = f"[D] full data after inference: {st.session_state.full_data}"
-            g_logger.debug(msg)
-            print(msg)
-            # TODO: add a link to more info on the model, next to the button.
+                msg = f"[D] full data after inference: {data}"
+                g_logger.debug(msg)
+                print(msg)
+                # TODO: add a link to more info on the model, next to the button.
 
-            whale_classes = out['predictions'][:]
-            # render images for the top 3 (that is what the model api returns)
-            with tab_inference:
-                st.markdown("## Species detected")
-                for i in range(len(whale_classes)):
-                    sw_wv.display_whale(whale_classes, i)
+                whale_classes = out['predictions'][:]
+                # render images for the top 3 (that is what the model api returns)
+                with tab_inference:
+                    st.markdown("## Species detected")
+                    for i in range(len(whale_classes)):
+                        sw_wv.display_whale(whale_classes, i)
             
         
 
@@ -325,27 +329,29 @@ def main() -> None:
 
         if st.session_state.image is None:
             st.info("Please upload an image first.")
-            st.info(str(observation.to_dict()))
+            st.info(str(observations.to_dict()))
             
         else:
             col1, col2 = tab_hotdogs.columns(2)
+            for file in st.session_state.files:
+                image = st.session_state.images[file]
+                data = st.session_state.full_data[file]
+                # display the image (use cached version, no need to reread)
+                col1.image(image, use_column_width=True)
+                # and then run inference on the image
+                hotdog_image = Image.fromarray(image)
+                predictions = pipeline_hot_dog(hotdog_image)
 
-            # display the image (use cached version, no need to reread)
-            col1.image(st.session_state.image, use_column_width=True)
-            # and then run inference on the image
-            hotdog_image = Image.fromarray(st.session_state.image)
-            predictions = pipeline_hot_dog(hotdog_image)
-
-            col2.header("Probabilities")
-            first = True
-            for p in predictions:
-                col2.subheader(f"{ p['label'] }: { round(p['score'] * 100, 1)}%")
-                if first:
-                    st.session_state.full_data['predicted_class'] = p['label']
-                    st.session_state.full_data['predicted_score'] = round(p['score'] * 100, 1)
-                    first = False
-            
-            tab_hotdogs.write(f"Session Data: {json.dumps(st.session_state.full_data)}")
+                col2.header("Probabilities")
+                first = True
+                for p in predictions:
+                    col2.subheader(f"{ p['label'] }: { round(p['score'] * 100, 1)}%")
+                    if first:
+                        data['predicted_class'] = p['label']
+                        data['predicted_score'] = round(p['score'] * 100, 1)
+                        first = False
+                
+                tab_hotdogs.write(f"Session Data: {json.dumps(data)}")
             
             
 
