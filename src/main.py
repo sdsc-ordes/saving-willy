@@ -203,7 +203,7 @@ def main() -> None:
             # TODO: cleaner design to disable the button until data input done?
             st.info("Please upload an image first.")
         else:
-            cetacean_classify(cetacean_classifier, tab_inference)
+            cetacean_classify(cetacean_classifier)
                 
         
 
