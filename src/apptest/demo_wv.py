@@ -6,8 +6,18 @@
 #   - TODO: find a cleaner solution for organisation (maybe just config to pytest?)
 
 import streamlit as st
-import whale_viewer as sw_wv
 
+# to run streamlit from this subdir, we need the the src dir on the path
+# NOTE: pytest doesn't need this to run the tests, but to develop the test
+# harness is hard without running streamlit 
+import sys
+from os import path
+# src (parent from here)
+src_dir = path.dirname( path.dirname( path.abspath(__file__) ) )
+sys.path.append(src_dir)
+
+
+import whale_viewer as sw_wv
 
 # a menu to pick one of the images 
 title = st.title("Whale Viewer testing")
