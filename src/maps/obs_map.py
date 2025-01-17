@@ -7,8 +7,8 @@ import streamlit as st
 import folium
 from streamlit_folium import st_folium
 
-import whale_viewer as sw_wv
-from fix_tabrender import js_show_zeroheight_iframe
+import whale_viewer as viewer
+from utils.fix_tabrender import js_show_zeroheight_iframe
 
 m_logger = logging.getLogger(__name__)
 # we can set the log level locally for funcs in this module
@@ -60,7 +60,7 @@ _colors = [
     "#778899" # Light Slate Gray
 ]
 
-whale2color = {k: v for k, v in zip(sw_wv.WHALE_CLASSES, _colors)}
+whale2color = {k: v for k, v in zip(viewer.WHALE_CLASSES, _colors)}
 
 def create_map(tile_name:str, location:Tuple[float], zoom_start: int = 7) -> folium.Map:
     """
