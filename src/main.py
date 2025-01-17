@@ -234,7 +234,11 @@ def main() -> None:
         
 
     # Display submitted data
-    if st.sidebar.button("Validate"):
+    all_inputs_entered = sw_inp.check_inputs_are_set()
+    if not all_inputs_entered:
+        st.sidebar.button("Validate", disabled=True, help="Please fill in all fields.")
+        
+    elif st.sidebar.button("**Validate**"):
         # create a dictionary with the submitted data
         submitted_data = observation.to_dict()
         #print(submitted_data)
@@ -252,16 +256,16 @@ def main() -> None:
             st.table(df)
         
         
-
-        
     # inside the inference tab, on button press we call the model (on huggingface hub)
     # which will be run locally. 
     # - the model predicts the top 3 most likely species from the input image
     # - these species are shown
     # - the user can override the species prediction using the dropdown 
     # - an observation is uploaded if the user chooses.
+    if st.session_state.full_data == {}:
+        tab_inference.button("Identify with cetacean classifier", disabled=True, help="Please validate inputs before proceeding", key="button_infer_ceteans")
         
-    if tab_inference.button("Identify with cetacean classifier"):
+    elif tab_inference.button("Identify with cetacean classifier", key="button_infer_ceteans"):
         #pipe = pipeline("image-classification", model="Saving-Willy/cetacean-classifier", trust_remote_code=True)
         cetacean_classifier = AutoModelForImageClassification.from_pretrained("Saving-Willy/cetacean-classifier", 
                                                                             revision=classifier_revision,

@@ -240,6 +240,38 @@ spoof_metadata = {
     "time": None,
 }
 
+def check_inputs_are_set(debug:bool=False) -> bool:
+    """
+    Checks if all expected inputs have been entered 
+    
+    Implementation: via the Streamlit session state.
+
+    Args:
+        debug (bool): If True, prints and logs the status of each expected input key. Default is False.
+    Returns:
+        bool: True if all expected input keys are set, False otherwise.
+    """
+
+    exp_input_keys = ["input_latitude", "input_longitude", "input_author_email", "input_date", "input_time", "input_image_selector"]
+    vals = []
+    for k in exp_input_keys:
+        val = None
+        if k in st.session_state:
+            val = st.session_state[k]
+        
+        vals.append(val)
+        
+        if debug:
+            msg = f"{k:15}, {(val is not None):8}, {val}"
+            m_logger.debug(msg)
+            print(msg)
+    
+    return all([v is not None for v in vals])
+
+        
+            
+        
+
 #def display_whale(whale_classes:List[str], i:int, viewcontainer=None):
 def setup_input(
     viewcontainer: DeltaGenerator=None,
@@ -269,7 +301,7 @@ def setup_input(
     viewcontainer.title("Input image and data")
 
     # 1. Image Selector
-    uploaded_filename = viewcontainer.file_uploader("Upload an image", type=allowed_image_types)
+    uploaded_filename = viewcontainer.file_uploader("Upload an image", type=allowed_image_types, key="input_image_selector")
     image_datetime = None  # For storing date-time from image
 
     if uploaded_filename is not None:
@@ -292,18 +324,18 @@ def setup_input(
         
 
     # 2. Latitude Entry Box
-    latitude = viewcontainer.text_input("Latitude", spoof_metadata.get('latitude', ""))
+    latitude = viewcontainer.text_input("Latitude", placeholder="from image metadata if present", key="input_latitude")
     if latitude and not is_valid_number(latitude):
         viewcontainer.error("Please enter a valid latitude (numerical only).")
         m_logger.error(f"Invalid latitude entered: {latitude}.")
     # 3. Longitude Entry Box
-    longitude = viewcontainer.text_input("Longitude", spoof_metadata.get('longitude', ""))
+    longitude = viewcontainer.text_input("Longitude", placeholder="from image metadata if present", key="input_longitude")
     if longitude and not is_valid_number(longitude):
         viewcontainer.error("Please enter a valid longitude (numerical only).")
         m_logger.error(f"Invalid latitude entered: {latitude}.")
         
     # 4. Author Box with Email Address Validator
-    author_email = viewcontainer.text_input("Author Email", spoof_metadata.get('author_email', ""))
+    author_email = viewcontainer.text_input("Author Email", placeholder="super@whale.org", key="input_author_email")
 
     if author_email and not is_valid_email(author_email):   
         viewcontainer.error("Please enter a valid email address.")
@@ -318,11 +350,23 @@ def setup_input(
         date_value = datetime.datetime.now().date()
 
     ## if not, give user the option to enter manually
-    date_option = st.sidebar.date_input("Date", value=date_value)
-    time_option = st.sidebar.time_input("Time", time_value)
+    date_option = st.sidebar.date_input("Date", value=date_value, key="input_date")
+    time_option = st.sidebar.time_input("Time", value=time_value, key="input_time")
 
     observation = InputObservation(image=uploaded_filename, latitude=latitude, longitude=longitude, 
                                    author_email=author_email, date=image_datetime, time=None, 
                                    date_option=date_option, time_option=time_option)
+
+    # add a label to say if inputs are all entered yet. use the func check_inputs_are_set
+    # all_set = check_inputs_are_set(True)
+    # if all_set:
+    #     clr = 'gray'
+    # else:
+    #     clr = 'red'
+    # viewcontainer.markdown(f":{clr}[Inputs are all set? {all_set}]")
+
+
+    
+    
     return observation
 
