@@ -11,7 +11,7 @@ from hf_push_observations import push_observations
 from utils.grid_maker import gridder
 from utils.metadata_handler import metadata2md
 
-def cetacean_classify(cetacean_classifier, tab_inference):
+def cetacean_classify(cetacean_classifier):
     files = st.session_state.files
     images = st.session_state.images
     observations = st.session_state.observations
@@ -62,7 +62,6 @@ def cetacean_classify(cetacean_classifier, tab_inference):
 
             whale_classes = out['predictions'][:]
             # render images for the top 3 (that is what the model api returns)
-            #with tab_inference:
             st.markdown(f"Top 3 Predictions for {file.name}")
             for i in range(len(whale_classes)):
                 viewer.display_whale(whale_classes, i)
