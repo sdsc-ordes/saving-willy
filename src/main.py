@@ -156,8 +156,9 @@ def main() -> None:
     #g_logger.warning("warning message")
 
     # Streamlit app
-    #tab_gallery, tab_inference, tab_hotdogs, tab_map, tab_data, tab_log = st.tabs(["Cetecean classifier", "Hotdog classifier", "Map", "Data", "Log", "Beautiful cetaceans"])
-    tab_inference, tab_hotdogs, tab_map, tab_data, tab_log, tab_gallery = st.tabs(["Cetecean classifier", "Hotdog classifier", "Map", "Data", "Log", "Beautiful cetaceans"])
+    #tab_gallery, tab_inference, tab_hotdogs, tab_map, tab_coords, tab_log = st.tabs(["Cetecean classifier", "Hotdog classifier", "Map", "Data", "Log", "Beautiful cetaceans"])
+    tab_inference, tab_hotdogs, tab_map, tab_coords, tab_log, tab_gallery = \
+        st.tabs(["Cetecean classifier", "Hotdog classifier", "Map", "*:gray[Dev:coordinates]*", "Log", "Beautiful cetaceans"])
     st.session_state.tab_log = tab_log
 
 
@@ -180,6 +181,7 @@ def main() -> None:
     with tab_map:
         # visual structure: a couple of toggles at the top, then the map inlcuding a
         # dropdown for tileset selection.
+        sw_map.add_header_text()
         tab_map_ui_cols = st.columns(2)
         with tab_map_ui_cols[0]:
             show_db_points = st.toggle("Show Points from DB", True)
@@ -208,9 +210,13 @@ def main() -> None:
 
         
         
-    with tab_data:
+    with tab_coords:
         # the goal of this tab is to allow selection of the new obsvation's location by map click/adjust.
-        st.markdown("Coming later hope! :construction:")
+        st.markdown("Coming later! :construction:")
+        st.markdown(
+            f"""*The goal is to allow interactive definition for the coordinates of a new
+            observation, by click/drag points on the map.*""")
+        
 
         st.write("Click on the map to capture a location.")
         #m = folium.Map(location=visp_loc, zoom_start=7)
@@ -248,7 +254,7 @@ def main() -> None:
         tab_log.info(f"{st.session_state.full_data}")
 
         df = pd.DataFrame(submitted_data, index=[0])
-        with tab_data:
+        with tab_coords:
             st.table(df)
         
         
@@ -260,12 +266,17 @@ def main() -> None:
     # - these species are shown
     # - the user can override the species prediction using the dropdown 
     # - an observation is uploaded if the user chooses.
+    tab_inference.markdown("""
+                *Run classifer to identify the species of cetean on the uploaded image.
+                Once inference is complete, the top three predictions are shown.
+                You can override the prediction by selecting a species from the dropdown.*""")
         
     if tab_inference.button("Identify with cetacean classifier"):
         #pipe = pipeline("image-classification", model="Saving-Willy/cetacean-classifier", trust_remote_code=True)
         cetacean_classifier = AutoModelForImageClassification.from_pretrained("Saving-Willy/cetacean-classifier", 
                                                                             revision=classifier_revision,
                                                                             trust_remote_code=True)
+
         
         if st.session_state.image is None:
             # TODO: cleaner design to disable the button until data input done?
@@ -317,11 +328,15 @@ def main() -> None:
     # purposes, an hotdog image classifier) which will be run locally.
     # - this model predicts if the image is a hotdog or not, and returns probabilities
     # - the input image is the same as for the ceteacean classifier - defined in the sidebar
+    tab_hotdogs.title("Hot Dog? Or Not?")
+    tab_hotdogs.write("""
+                *Run alternative classifer on input images. Here we are using
+                a binary classifier - hotdog or not - from
+                huggingface.co/julien-c/hotdog-not-hotdog.*""")
 
     if tab_hotdogs.button("Get Hotdog Prediction"):   
         
         pipeline_hot_dog = pipeline(task="image-classification", model="julien-c/hotdog-not-hotdog")
-        tab_hotdogs.title("Hot Dog? Or Not?")
 
         if st.session_state.image is None:
             st.info("Please upload an image first.")
