@@ -27,7 +27,16 @@ allowed_image_types = ['jpg', 'jpeg', 'png', 'webp']
 
 import random
 import string
-def generate_random_md5():
+def generate_random_md5() -> str:
+    """
+    Generates a random MD5 hash.
+
+    This function creates a random string of 16 alphanumeric characters,
+    encodes it, and then computes its MD5 hash.
+
+    Returns:
+        str: The MD5 hash of the generated random string.
+    """
     # Generate a random string
     random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
     # Encode the string and compute its MD5 hash
