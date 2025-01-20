@@ -209,6 +209,11 @@ def decimal_coords(coords:tuple, ref:str) -> Fraction:
         decimal_coords((40, 26, 46), 'W') -> -40.44611111111111
     """
     # https://stackoverflow.com/a/73267185
+    if ref not in ['N', 'S', 'E', 'W']:
+        raise ValueError("Invalid reference direction. Must be 'N', 'S', 'E', or 'W'.")
+    if len(coords) != 3:
+        raise ValueError("Coordinates must be a tuple of three elements (degrees, minutes, seconds).")
+    
     decimal_degrees = coords[0] + coords[1] / 60 + coords[2] / 3600
     if ref == "S" or ref =='W':
         decimal_degrees = -decimal_degrees
