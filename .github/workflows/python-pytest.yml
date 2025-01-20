@@ -5,9 +5,9 @@ name: Execute tests with pytest
 
 on:
   push:
-    branches: [ "test/tests" ]
+    branches: [ "dev" ]
   pull_request:
-    branches: [ "test/tests" ]
+    branches: [ "dev", "main" ]
 permissions:
   contents: read
 jobs:
