@@ -194,6 +194,20 @@ def get_image_datetime(image_file: UploadedFile) -> str | None:
     return None
 
 def decimal_coords(coords:tuple, ref:str) -> Fraction:
+    """
+    Converts coordinates from degrees, minutes, and seconds to decimal degrees.
+
+    Args:
+        coords (tuple): A tuple containing three elements representing degrees, minutes, and seconds.
+        ref (str): A string representing the reference direction ('N', 'S', 'E', 'W').
+
+    Returns:
+        Fraction: The coordinates in decimal degrees. Negative if the reference is 'S' or 'W'.
+
+    Example:
+        decimal_coords((40, 26, 46), 'N') -> 40.44611111111111
+        decimal_coords((40, 26, 46), 'W') -> -40.44611111111111
+    """
     # https://stackoverflow.com/a/73267185
     decimal_degrees = coords[0] + coords[1] / 60 + coords[2] / 3600
     if ref == "S" or ref =='W':
