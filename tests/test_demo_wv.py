@@ -17,7 +17,7 @@ def test_selectbox_ok():
     - finally, we check there are the right number of options (26)
     
     '''
-    at = AppTest.from_file("src/apptest/demo_wv.py").run()
+    at = AppTest.from_file("src/apptest/demo_whale_viewer.py").run()
     assert len(at.selectbox) == 1
     assert at.selectbox[0].value == "beluga"
     assert at.selectbox[0].index == 0
@@ -62,7 +62,7 @@ def test_img_props():
     - then changing the image, we do the same checks again
     
     '''
-    at = AppTest.from_file("src/apptest/demo_wv.py").run()
+    at = AppTest.from_file("src/apptest/demo_whale_viewer.py").run()
     ix = 0 # we didn't interact with the dropdown, so it should be the first one
     # could fetch the property - maybe better in case code example changes
     ix = at.selectbox[0].index 
