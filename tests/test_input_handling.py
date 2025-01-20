@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 
 from input_handling import is_valid_email, is_valid_number
-from input_handling import get_image_datetime, get_image_latlon
+from input_handling import get_image_datetime, get_image_latlon, decimal_coords
 
 # generate tests for is_valid_email
 # - test with valid email
@@ -153,3 +153,56 @@ def test_get_image_latlon():
 def test_get_image_latlon_empty():
     assert get_image_latlon("") == None
     
+# tests for decimal_coords
+# - without input, py raises TypeError 
+# - with the wrong length of input (expecting 3 elements in the tuple), expect ValueError
+# - with string inputs instead of numeric, we get a TypeError (should the func bother checking this? happens as built in)
+# - with ref direction not in ['N', 'S', 'E', 'W'], expect ValueError, try X, x, NW. 
+# - with valid inputs, expect the correct output
+
+
+# test data for decimal_coords: (deg,min,sec), ref, expected output
+coords_conversion_data = [
+    ((30, 1, 2), 'W', -30.01722222),
+    ((30, 1, 2), 'E', 30.01722222),
+    ((30, 1, 2), 'N', 30.01722222),
+    ((30, 1, 2), 'S', -30.01722222),
+    ((46, 31, 6.97), 'N', 46.51860278),
+    ((6, 33, 43.47), 'E', 6.56207500)
+]
+@pytest.mark.parametrize("input_coords, ref, expected_output", coords_conversion_data)
+def test_decimal_coords(input_coords, ref, expected_output):
+    assert decimal_coords(input_coords, ref) == pytest.approx(expected_output)
+    
+def test_decimal_coords_no_input():
+    with pytest.raises(TypeError):
+        decimal_coords()
+        
+def test_decimal_coords_wrong_length():
+    with pytest.raises(ValueError):
+        decimal_coords((1, 2), 'W')
+
+    with pytest.raises(ValueError):
+        decimal_coords((30,), 'W')
+        
+    with pytest.raises(ValueError):
+        decimal_coords((30, 1, 2, 4), 'W')
+
+def test_decimal_coords_non_numeric():
+    with pytest.raises(TypeError):
+        decimal_coords(('1', '2', '3'), 'W')
+        
+    
+def test_decimal_coords_invalid_ref():
+    with pytest.raises(ValueError):
+        decimal_coords((30, 1, 2), 'X')
+        
+    with pytest.raises(ValueError):
+        decimal_coords((30, 1, 2), 'x')
+        
+    with pytest.raises(ValueError):
+        decimal_coords((30, 1, 2), 'NW')
+        
+        
+
+
