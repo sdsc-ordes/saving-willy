@@ -1,4 +1,5 @@
 from typing import List
+import streamlit as st
 from streamlit.delta_generator import DeltaGenerator
 
 from PIL import Image
@@ -133,7 +134,7 @@ def display_whale(whale_classes:List[str], i:int, viewcontainer:DeltaGenerator=N
         None
     
     """
-    import streamlit as st
+    
     if viewcontainer is None:
         viewcontainer = st
 
@@ -147,11 +148,10 @@ def display_whale(whale_classes:List[str], i:int, viewcontainer:DeltaGenerator=N
     
     
     viewcontainer.markdown(
-        "### :whale:  #" + str(i + 1) + ": " + format_whale_name(whale_classes[i])
+        ":whale:  #" + str(i + 1) + ": " + format_whale_name(whale_classes[i])
     )
     current_dir = os.getcwd()
     image_path = os.path.join(current_dir, "src/images/references/")
     image = Image.open(image_path + df_whale_img_ref.loc[whale_classes[i], "WHALE_IMAGES"])
 
-    viewcontainer.image(image, caption=df_whale_img_ref.loc[whale_classes[i], "WHALE_REFERENCES"])
-    # link st.markdown(f"[{df.loc[whale_classes[i], 'WHALE_REFERENCES']}]({df.loc[whale_classes[i], 'WHALE_REFERENCES']})")
+    viewcontainer.image(image, caption=df_whale_img_ref.loc[whale_classes[i], "WHALE_REFERENCES"], use_column_width=True)
