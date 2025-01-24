@@ -1,5 +1,7 @@
 from typing import List
 import streamlit as st
+from streamlit.delta_generator import DeltaGenerator
+
 from PIL import Image
 import pandas as pd
 import os
@@ -117,22 +119,20 @@ def format_whale_name(whale_class:str) -> str:
     return whale_name
 
 
-def display_whale(whale_classes:List[str], i:int, viewcontainer=None):
+def display_whale(whale_classes:List[str], i:int, viewcontainer:DeltaGenerator=None) -> None:
     """
     Display whale image and reference to the provided viewcontainer.
 
     Args:
         whale_classes (List[str]): A list of whale class names.
         i (int): The index of the whale class to display.
-        viewcontainer: The container to display the whale information. If 
-            not provided, use the current streamlit context (works via 
-            'with `container`' syntax)
+        viewcontainer (streamlit.delta_generator.DeltaGenerator): The container
+            to display the whale information. If not provided, use the current
+            streamlit context (works via 'with `container`' syntax)
 
     Returns:
         None
     
-    TODO: how to find the object type of viewcontainer.? they are just "deltagenerators" but 
-    we want the result of the generator.. In any case, it works ok with either call signature.
     """
     
     if viewcontainer is None:

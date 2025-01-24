@@ -190,3 +190,10 @@ def present_obs_map(dataset_id:str = "Saving-Willy/Happywhale-kaggle",
     #st.info("[D]" + str(metadata.column_names))
 
     return st_data
+
+    
+def add_header_text() -> None:
+    """
+    Add brief explainer text to the tab 
+    """
+    st.write("A map showing the observations in the dataset, with markers colored by species.")
