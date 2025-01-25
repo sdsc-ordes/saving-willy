@@ -12,6 +12,11 @@ from utils.grid_maker import gridder
 from utils.metadata_handler import metadata2md
 
 def cetacean_classify(cetacean_classifier):
+    """Cetacean classifier using the saving-willy model from Saving Willy Hugging Face space.
+    For each image in the session state, classify the image and display the top 3 predictions.
+    Args:
+        cetacean_classifier ([type]):  saving-willy model from Saving Willy Hugging Face space
+    """
     images = st.session_state.images
     observations = st.session_state.observations
     hashes = st.session_state.image_hashes
