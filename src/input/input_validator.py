@@ -96,7 +96,8 @@ def decimal_coords(coords:tuple, ref:str) -> Fraction:
     return decimal_degrees
 
 
-def get_image_latlon(image_file: UploadedFile) -> tuple[float, float] | None:
+#def get_image_latlon(image_file: UploadedFile) -> tuple[float, float] | None:
+def get_image_latlon(image_file: UploadedFile) :
     """
     Extracts the latitude and longitude from the EXIF metadata of an uploaded image file.
 

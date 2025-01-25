@@ -66,6 +66,7 @@ def setup_input(
     uploaded_files = viewcontainer.file_uploader("Upload an image", type=allowed_image_types, accept_multiple_files=True)
     observations = {}
     images = {}
+    image_hashes =[]
     if uploaded_files is not None:
         for file in uploaded_files:
 
@@ -108,11 +109,13 @@ def setup_input(
             observation = InputObservation(image=file, latitude=latitude, longitude=longitude, 
                                         author_email=author_email, date=image_datetime, time=None, 
                                         date_option=date_option, time_option=time_option)
-            observations[file.name] = observation
-            images[file.name] = image
+            image_hash = observation.to_dict()["image_md5"]
+            observations[image_hash] = observation
+            images[image_hash] = image
+            image_hashes.append(image_hash)
     
     st.session_state.images = images
     st.session_state.files = uploaded_files
-
-    return observations
+    st.session_state.observations = observations
+    st.session_state.image_hashes = image_hashes
 
