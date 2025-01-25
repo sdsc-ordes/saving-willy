@@ -2,6 +2,14 @@ import streamlit as st
 import math
 
 def gridder(items):
+    """Creates a grid for displaying items in a batched manner.
+    Args:
+        items (list): The items to be displayed.
+    Returns:
+        batch_size (int): The number of items to display in each batch.
+        row_size (int): The number of items to display in each row.
+        page (int): The range of pages available based on the number of items.
+    """
     cols = st.columns(3)
     with cols[0]:
         batch_size = st.select_slider("Batch size:",range(10,110,10), value=10)
