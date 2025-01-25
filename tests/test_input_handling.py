@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 
-from input_handling import is_valid_email, is_valid_number
+from input.input_validator import is_valid_email, is_valid_number
 from input.input_validator import get_image_latlon, decimal_coords, get_image_datetime
 
 # generate tests for is_valid_email
