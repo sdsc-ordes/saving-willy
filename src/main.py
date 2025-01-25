@@ -9,6 +9,7 @@ from streamlit_folium import st_folium
 from transformers import pipeline
 from transformers import AutoModelForImageClassification
 
+from maps.obs_map import add_header_text
 from datasets import disable_caching
 disable_caching()
 
@@ -43,6 +44,9 @@ st.set_page_config(layout="wide")
 # initialise various session state variables
 if "handler" not in st.session_state:
     st.session_state['handler'] = setup_logging()
+
+if "image_hashes" not in st.session_state:
+    st.session_state.image_hashes = []
 
 if "observations" not in st.session_state:
     st.session_state.observations = {}
@@ -100,7 +104,7 @@ def main() -> None:
 
 
     # create a sidebar, and parse all the input (returned as `observations` object)
-    observations = setup_input(viewcontainer=st.sidebar)
+    setup_input(viewcontainer=st.sidebar)
 
         
     if 0:## WIP
@@ -118,7 +122,7 @@ def main() -> None:
     with tab_map:
         # visual structure: a couple of toggles at the top, then the map inlcuding a
         # dropdown for tileset selection.
-        sw_map.add_header_text()
+        add_header_text()
         tab_map_ui_cols = st.columns(2)
         with tab_map_ui_cols[0]:
             show_db_points = st.toggle("Show Points from DB", True)
@@ -179,12 +183,8 @@ def main() -> None:
     # Display submitted observation
     if st.sidebar.button("Validate"):
         # create a dictionary with the submitted observation
-        submitted_data = observations
-        st.session_state.observations = observations
-            
         tab_log.info(f"{st.session_state.observations}")
-
-        df = pd.DataFrame(submitted_data, index=[0])
+        df = pd.DataFrame(st.session_state.observations, index=[0])
         with tab_coords:
             st.table(df)
         

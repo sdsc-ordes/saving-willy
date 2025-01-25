@@ -17,14 +17,14 @@ src_dir = path.dirname( path.dirname( path.abspath(__file__) ) )
 sys.path.append(src_dir)
 
 
-import whale_viewer as sw_wv
+import whale_viewer as whale_viewer
 
 # a menu to pick one of the images 
 title = st.title("Whale Viewer testing")
-species = st.selectbox("Species", sw_wv.WHALE_CLASSES) 
+species = st.selectbox("Species", whale_viewer.WHALE_CLASSES) 
 
 if species is not None:
     # and display the image + reference
     st.write(f"Selected species: {species}")
-    sw_wv.display_whale([species], 0, st)
+    whale_viewer.display_whale([species], 0, st)
     
