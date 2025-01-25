@@ -28,12 +28,23 @@ nav:
   - API:
     - Main app: main.md
     - Modules:
-      - Data entry handling: input_handling.md
+      - Data entry handling: 
+        - Data input: input_handling.md
+        - Data extraction and validation: input_validator.md
+        - Data Object Class: input_observation.md
+      - Classifiers: 
+        - Cetacean Fluke & Fin Recognition: classifier_cetacean.md
+        - (temporary) Hotdog Classifier: hotdog.md
+      - Hugging Face Integration: 
+        - Push Observations to Dataset: hf_push_observations.md
       - Map of observations: obs_map.md
       - Whale gallery: whale_gallery.md
       - Whale viewer: whale_viewer.md
       - Logging: st_logs.md
-      - Tab-rendering fix (js): fix_tabrender.md
+      - Utils: 
+        - Tab-rendering fix (js): fix_tabrender.md
+        - Metadata handling: metadata_handler.md
+        - Grid maker: grid_maker.md
 
     - Development clutter:
       - Demo app: app.md
