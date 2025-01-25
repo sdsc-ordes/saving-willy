@@ -56,6 +56,16 @@ class InputObservation:
         self.date_option = date_option
         self.time_option = time_option
         self.uploaded_filename = uploaded_filename
+        self._top_predictions = []
+
+    def set_top_predictions(self, top_predictions:list):
+        self._top_predictions = top_predictions
+    
+    # add a method to get the top predictions (property?)
+    @property
+    def top_predictions(self):
+        return self._top_predictions
+    
 
     def __str__(self):
         return f"Observation: {self.image}, {self.latitude}, {self.longitude}, {self.author_email}, {self.date}, {self.time}, {self.date_option}, {self.time_option}, {self.uploaded_filename}"
