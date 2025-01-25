@@ -17,8 +17,11 @@ import whale_viewer as viewer
 from input.input_handling import setup_input
 from maps.alps_map import present_alps_map
 from maps.obs_map import present_obs_map
+from maps.obs_map import add_header_text as add_header_text_obs_map
+
 from utils.st_logs import setup_logging, parse_log_buffer
-from classifier.classifier_image import cetacean_classify
+from utils.workflow_state import WorkflowFSM, WorkflowState
+from classifier.classifier_image import cetacean_classify_and_review, cetacean_classify_list, cetacean_show_classifications
 from classifier.classifier_hotdog import hotdog_classify
 
 
@@ -57,14 +60,31 @@ if "public_observation" not in st.session_state:
     st.session_state.public_observation = {}
 
 if "classify_whale_done" not in st.session_state:
-    st.session_state.classify_whale_done = False
+    st.session_state.classify_whale_done = {}
 
 if "whale_prediction1" not in st.session_state:
-    st.session_state.whale_prediction1 = None
+    st.session_state.whale_prediction1 = {}
 
 if "tab_log" not in st.session_state:
     st.session_state.tab_log = None
     
+if "workflow_fsm" not in st.session_state:
+    # create and init the state machine
+    st.session_state.workflow_fsm = WorkflowFSM()
+    
+# add progress indicator to session_state
+if "progress" not in st.session_state:
+    with st.sidebar:
+        st.session_state.disp_progress = [st.empty(), st.empty()]
+
+def refresh_progress():
+    with st.sidebar:
+        tot = st.session_state.workflow_fsm.num_states
+        cur_i = st.session_state.workflow_fsm.state_number
+        cur_t = st.session_state.workflow_fsm.state_name
+        st.session_state.disp_progress[0].markdown(f"*Progress: {cur_i}/{tot}. Current: {cur_t}.*")
+        st.session_state.disp_progress[1].progress(cur_i/tot)
+        
 
 def main() -> None:
     """
@@ -98,11 +118,15 @@ def main() -> None:
         st.tabs(["Cetecean classifier", "Hotdog classifier", "Map", "*:gray[Dev:coordinates]*", "Log", "Beautiful cetaceans"])
     st.session_state.tab_log = tab_log
 
+    refresh_progress()    
+    # add button to sidebar, with the callback to refesh_progress
+    st.sidebar.button("Refresh Progress", on_click=refresh_progress)
+    
 
     # create a sidebar, and parse all the input (returned as `observations` object)
     observations = setup_input(viewcontainer=st.sidebar)
 
-        
+
     if 0:## WIP
         # goal of this code is to allow the user to override the ML prediction, before transmitting an observations
         predicted_class = st.sidebar.selectbox("Predicted Class", viewer.WHALE_CLASSES)
@@ -118,7 +142,7 @@ def main() -> None:
     with tab_map:
         # visual structure: a couple of toggles at the top, then the map inlcuding a
         # dropdown for tileset selection.
-        sw_map.add_header_text()
+        add_header_text_obs_map()
         tab_map_ui_cols = st.columns(2)
         with tab_map_ui_cols[0]:
             show_db_points = st.toggle("Show Points from DB", True)
@@ -178,9 +202,14 @@ def main() -> None:
 
     # Display submitted observation
     if st.sidebar.button("Validate"):
+        # TODO 25.01 - it seems unclear what validation is actually happening *after* the button click. 
+
         # create a dictionary with the submitted observation
         submitted_data = observations
         st.session_state.observations = observations
+        # advance two steps, since the code for enabling the validate button is in a different branch right now
+        st.session_state.workflow_fsm.advance() # init => data_entry_complete
+        st.session_state.workflow_fsm.advance() # data_entry_complete => data_entry_validated
             
         tab_log.info(f"{st.session_state.observations}")
 
@@ -202,20 +231,74 @@ def main() -> None:
                 Once inference is complete, the top three predictions are shown.
                 You can override the prediction by selecting a species from the dropdown.*""")
         
-    if tab_inference.button("Identify with cetacean classifier"):
-        #pipe = pipeline("image-classification", model="Saving-Willy/cetacean-classifier", trust_remote_code=True)
-        cetacean_classifier = AutoModelForImageClassification.from_pretrained("Saving-Willy/cetacean-classifier", 
-                                                                            revision=classifier_revision,
-                                                                            trust_remote_code=True)
+    
+    with tab_inference:
+        # test if the fsm is already at a point where results should be presented
+        cur_state_i = st.session_state.workflow_fsm.state_number
+        # here, if past manual inspection, we show the results
+        # elif past ml_completed, we show the results and the choice to manually validate
+        # else, we run the classifier (and show the results)
+        plan = "?"
+        if cur_state_i >= WorkflowState.MANUAL_REVIEW_COMPLETE.value:
+            plan = "show results"
+        elif cur_state_i >= WorkflowState.ML_COMPLETED.value:
+            plan = "present manual validation (with results shown)"
+        elif cur_state_i >= WorkflowState.DATA_VALIDATED.value:
+            plan = "run classifier"
+
+        st.info(f"Current state: {cur_state_i} [{WorkflowState.ML_COMPLETED.value}]. Plan: {plan}")
+
+        if plan == 'run classifier':
+
+            if tab_inference.button("Identify with cetacean classifier"):
+                #pipe = pipeline("image-classification", model="Saving-Willy/cetacean-classifier", trust_remote_code=True)
+                cetacean_classifier = AutoModelForImageClassification.from_pretrained("Saving-Willy/cetacean-classifier", 
+                                                                                    revision=classifier_revision,
+                                                                                    trust_remote_code=True)
+                r = cetacean_classify_list(cetacean_classifier)
+                if r:
+                    st.session_state.workflow_fsm.advance() # data_entry_validated => ml_classification_started
+                    refresh_progress()
+                #cetacean_classify_and_review(cetacean_classifier)
+                # now, we can trigger the next state, which is the manual review of the classifications
+                st.write(f"megatextc {cur_state_i}")
+                r = cetacean_show_classifications()
+                if r:
+                    st.session_state.workflow_fsm.advance() # ml_classification_completed => manual_inspection_completed
+                    refresh_progress()
+                
+        elif plan == 'present manual validation (with results shown)':
+            # show the results and the choice to manually validate
+                st.write(f"megatexta {cur_state_i}")
+                r = cetacean_show_classifications()
+                if r:
+                    st.session_state.workflow_fsm.advance() # ml_classification_completed => manual_inspection_completed
+        
+        elif plan == 'show results':
+            r = cetacean_show_classifications()
+            # just showing it, no advance.
 
         
-        if st.session_state.images is None:
-            # TODO: cleaner design to disable the button until data input done?
-            st.info("Please upload an image first.")
-        else:
-            cetacean_classify(cetacean_classifier)
+        if 0:
+            if cur_state_i >= WorkflowState.ML_COMPLETED.value:
+                # ML DONE, let's show it
+                with tab_inference:
+                    st.write(f"megatexta {cur_state_i}")
+                    r = cetacean_show_classifications()
+                    if r:
+                        st.session_state.workflow_fsm.advance() # ml_classification_completed => manual_inspection_completed
+            else:
+                with tab_inference:
+                    st.write(f"megatextb {cur_state_i}")
+                # st.session_state.workflow_fsm.advance() # init => data_entry_complete
+                if st.session_state.images is None: # TODO: with FSM we check a state, not just images. 
+                    # TODO: cleaner design to disable the button until data input done?
+                    st.info("Please upload an image first.")
+                else:
+                    pass
+                    
+                        
                 
-        
 
         
     # inside the hotdog tab, on button press we call a 2nd model (totally unrelated at present, just for demo
@@ -240,6 +323,9 @@ def main() -> None:
             hotdog_classify(pipeline_hot_dog, tab_hotdogs)
             
             
+    # after all other processing, we can show the stage/state
+    refresh_progress()
+
 
 if __name__ == "__main__":
     main()
