@@ -1,7 +1,7 @@
 from streamlit.testing.v1 import AppTest
 import pytest # for the exception testing
 
-import whale_viewer as whale_viewer # for data
+import whale_viewer # for data
 
 
 def test_selectbox_ok():
@@ -27,7 +27,7 @@ def test_selectbox_ok():
     assert at.markdown[0].value == "Selected species: beluga"
     # the second markdown should be "### :whale:  #1: Beluga"
     print("markdown 1: ", at.markdown[1].value)
-    assert at.markdown[1].value == "### :whale:  #1: Beluga"
+    assert at.markdown[1].value == ":whale:  #1: Beluga"
 
     # now let's select a different element. index 4 is commersons_dolphin
     v4 = "commersons_dolphin"
@@ -39,7 +39,7 @@ def test_selectbox_ok():
     # the first markdown should be "Selected species: commersons_dolphin"
     assert at.markdown[0].value == f"Selected species: {v4}"
     # the second markdown should be "### :whale:  #1: Commersons Dolphin"
-    assert at.markdown[1].value == f"### :whale:  #1: {v4_str}"
+    assert at.markdown[1].value == f":whale:  #1: {v4_str}"
     
     # test there are the right number of options
     print("PROPS=> ", dir(at.selectbox[0])) # no length unfortunately,
