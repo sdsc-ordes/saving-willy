@@ -21,7 +21,9 @@ from maps.alps_map import present_alps_map
 from maps.obs_map import present_obs_map
 from utils.st_logs import setup_logging, parse_log_buffer
 from utils.workflow_state import WorkflowFSM, FSM_STATES
-from classifier.classifier_image import cetacean_classify
+#from classifier.classifier_image import cetacean_classify
+from classifier.classifier_image import cetacean_just_classify, cetacean_show_results_and_review, cetacean_show_results
+
 from classifier.classifier_hotdog import hotdog_classify
 
 
@@ -229,7 +231,7 @@ def main() -> None:
     
     if st.session_state.workflow_fsm.is_in_state('data_entry_complete'):
         # can we advance state? - only when the validate button is pressed
-        if st.sidebar.button(":white_check_mark:[*Validate*]"):
+        if st.sidebar.button(":white_check_mark:[**Validate**]"):
             # create a dictionary with the submitted observation
             tab_log.info(f"{st.session_state.observations}")
             df = pd.DataFrame(st.session_state.observations, index=[0])
@@ -263,10 +265,14 @@ def main() -> None:
                     revision=classifier_revision, 
                     trust_remote_code=True)
 
-                cetacean_classify(cetacean_classifier)
+                cetacean_just_classify(cetacean_classifier)
                 st.session_state.workflow_fsm.complete_current_state()
+                # trigger a refresh too (refreshhing the prog indicator means the script reruns and 
+                # we can enter the next state - visualising the results / review)
+                # ok it doesn't if done programmatically. maybe interacting with teh button? check docs.
+                refresh_progress()
         
-        if st.session_state.workflow_fsm.is_in_state('ml_classification_completed'):
+        elif st.session_state.workflow_fsm.is_in_state('ml_classification_completed'):
             # show the results, and allow manual validation
             s = ""
             for k, v in st.session_state.whale_prediction1.items():
@@ -281,8 +287,10 @@ def main() -> None:
             if st.button("mock: manual validation done."):
                 st.session_state.workflow_fsm.complete_current_state()
                 # -> manual_inspection_completed
+            
+            cetacean_show_results_and_review()
 
-        if st.session_state.workflow_fsm.is_in_state('manual_inspection_completed'):
+        elif st.session_state.workflow_fsm.is_in_state('manual_inspection_completed'):
             # show the ML results, and allow the user to upload the observation
             st.markdown("""
                         ### Inference Results (after manual validation)
@@ -293,8 +301,10 @@ def main() -> None:
             if st.button("(nooop) Upload observation to THE INTERNET!"):
                 st.session_state.workflow_fsm.complete_current_state()
                 # -> data_uploaded
+
+            cetacean_show_results()
         
-        if st.session_state.workflow_fsm.is_in_state('data_uploaded'):
+        elif st.session_state.workflow_fsm.is_in_state('data_uploaded'):
             # the data has been sent. Lets show the observations again
             # but no buttons to upload (or greyed out ok)
             st.markdown("""
