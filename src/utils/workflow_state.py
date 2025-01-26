@@ -8,7 +8,10 @@ FAIL = '\033[91m'
 ENDC = '\033[0m'
 
 
-FSM_STATES = ['init', 'data_entry_complete', 'data_entry_validated', 'ml_classification_started', 'ml_classification_completed', 'manual_inspection_completed', 'data_uploaded']
+FSM_STATES = ['doing_data_entry', 'data_entry_complete', 'data_entry_validated', 
+              #'ml_classification_started', 
+              'ml_classification_completed', 
+              'manual_inspection_completed', 'data_uploaded']
 
 
 class WorkflowFSM:
@@ -63,6 +66,19 @@ class WorkflowFSM:
             except:
                 return False
         return False
+
+    # add a helper method, to find out if a given state has been reached/passed
+    # we first need to get the index of the current state
+    # then the index of the argument state
+    # compare, and return boolean
+    
+    def is_in_state_or_beyond(self, state_name: str) -> bool:
+        """Check if we have reached or passed the specified state"""
+        if state_name not in self.state_dict:
+            raise ValueError(f"Invalid state: {state_name}")
+        
+        return self.state_dict[state_name] <= self.state_dict[self.state]
+    
 
     @property
     def current_state(self) -> str:
