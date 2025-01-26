@@ -67,10 +67,10 @@ if "public_observation" not in st.session_state:
     st.session_state.public_observation = {}
 
 if "classify_whale_done" not in st.session_state:
-    st.session_state.classify_whale_done = False
+    st.session_state.classify_whale_done = {}
 
 if "whale_prediction1" not in st.session_state:
-    st.session_state.whale_prediction1 = None
+    st.session_state.whale_prediction1 = {}
 
 if "tab_log" not in st.session_state:
     st.session_state.tab_log = None
