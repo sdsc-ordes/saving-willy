@@ -15,10 +15,11 @@ disable_caching()
 
 import whale_gallery as gallery
 import whale_viewer as viewer
-from input.input_handling import setup_input
+from input.input_handling import setup_input, check_inputs_are_set
 from maps.alps_map import present_alps_map
 from maps.obs_map import present_obs_map
 from utils.st_logs import setup_logging, parse_log_buffer
+from utils.workflow_state import WorkflowFSM, FSM_STATES
 from classifier.classifier_image import cetacean_classify
 from classifier.classifier_hotdog import hotdog_classify
 
@@ -48,6 +49,11 @@ if "handler" not in st.session_state:
 if "image_hashes" not in st.session_state:
     st.session_state.image_hashes = []
 
+# TODO: ideally just use image_hashes, but need a unique key for the ui elements
+# to track the user input phase; and these are created before the hash is generated. 
+if "image_filenames" not in st.session_state:
+    st.session_state.image_filenames = []
+
 if "observations" not in st.session_state:
     st.session_state.observations = {}
 
@@ -69,6 +75,23 @@ if "whale_prediction1" not in st.session_state:
 if "tab_log" not in st.session_state:
     st.session_state.tab_log = None
     
+if "workflow_fsm" not in st.session_state:
+    # create and init the state machine
+    st.session_state.workflow_fsm = WorkflowFSM(FSM_STATES)
+    
+# add progress indicator to session_state
+if "progress" not in st.session_state:
+    with st.sidebar:
+        st.session_state.disp_progress = [st.empty(), st.empty()]
+
+def refresh_progress():
+    with st.sidebar:
+        tot = st.session_state.workflow_fsm.num_states
+        cur_i = st.session_state.workflow_fsm.current_state_index
+        cur_t = st.session_state.workflow_fsm.current_state
+        st.session_state.disp_progress[0].markdown(f"*Progress: {cur_i}/{tot}. Current: {cur_t}.*")
+        st.session_state.disp_progress[1].progress(cur_i/tot)
+        
 
 def main() -> None:
     """
@@ -102,6 +125,10 @@ def main() -> None:
         st.tabs(["Cetecean classifier", "Hotdog classifier", "Map", "*:gray[Dev:coordinates]*", "Log", "Beautiful cetaceans"])
     st.session_state.tab_log = tab_log
 
+    refresh_progress()    
+    # add button to sidebar, with the callback to refesh_progress
+    st.sidebar.button("Refresh Progress", on_click=refresh_progress)
+    
 
     # create a sidebar, and parse all the input (returned as `observations` object)
     setup_input(viewcontainer=st.sidebar)
@@ -181,14 +208,25 @@ def main() -> None:
         
 
     # Display submitted observation
-    if st.sidebar.button("Validate"):
-        # create a dictionary with the submitted observation
-        tab_log.info(f"{st.session_state.observations}")
-        df = pd.DataFrame(st.session_state.observations, index=[0])
-        with tab_coords:
-            st.table(df)
+    all_inputs_set = check_inputs_are_set(debug=True)
+    if not all_inputs_set:
+        st.sidebar.button(":gray[*Validate*]", disabled=True, help="Please fill in all fields.")
+
+    else:
+        if st.session_state.workflow_fsm.is_in_state('init'):
+            st.session_state.workflow_fsm.complete_current_state()
         
+        if st.sidebar.button("**Validate**"):
+            if st.session_state.workflow_fsm.is_in_state('data_entry_complete'):
+                st.session_state.workflow_fsm.complete_current_state()
         
+            # create a dictionary with the submitted observation
+            tab_log.info(f"{st.session_state.observations}")
+            df = pd.DataFrame(st.session_state.observations, index=[0])
+            with tab_coords:
+                st.table(df)
+            
+            
 
         
     # inside the inference tab, on button press we call the model (on huggingface hub)
@@ -240,6 +278,9 @@ def main() -> None:
             hotdog_classify(pipeline_hot_dog, tab_hotdogs)
             
             
+    # after all other processing, we can show the stage/state
+    refresh_progress()
+
 
 if __name__ == "__main__":
     main()

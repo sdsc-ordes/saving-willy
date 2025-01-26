@@ -30,6 +30,43 @@ spoof_metadata = {
     "time": None,
 }
 
+def check_inputs_are_set(empty_ok:bool=False, debug:bool=False) -> bool:
+    """
+    Checks if all expected inputs have been entered 
+    
+    Implementation: via the Streamlit session state.
+
+    Args:
+        empty_ok (bool): If True, returns True if no inputs are set. Default is False.
+        debug (bool): If True, prints and logs the status of each expected input key. Default is False.
+    Returns:
+        bool: True if all expected input keys are set, False otherwise.
+    """
+    filenames = st.session_state.image_filenames
+    if len(filenames) == 0:
+        return empty_ok
+    
+
+
+    exp_input_key_stubs = ["input_latitude", "input_longitude"]
+    #exp_input_key_stubs = ["input_latitude", "input_longitude", "input_author_email", "input_date", "input_time", "input_image_selector"]
+    vals = []
+    for image_filename in filenames:
+        for stub in exp_input_key_stubs:
+            key = f"{stub}_{image_filename}"
+            val = None
+            if key in st.session_state:
+                val = st.session_state[key]
+            vals.append(val)
+            if debug:
+                msg = f"{key:15}, {(val is not None):8}, {val}"
+                m_logger.debug(msg)
+                print(msg)
+    
+    return all([v is not None for v in vals])
+
+        
+
 def setup_input(
     viewcontainer: DeltaGenerator=None,
     _allowed_image_types: list=None, ) -> InputObservation:
@@ -66,7 +103,8 @@ def setup_input(
     uploaded_files = viewcontainer.file_uploader("Upload an image", type=allowed_image_types, accept_multiple_files=True)
     observations = {}
     images = {}
-    image_hashes =[]
+    image_hashes = []
+    filenames = []
     if uploaded_files is not None:
         for file in uploaded_files:
 
@@ -76,6 +114,7 @@ def setup_input(
             # load image using cv2 format, so it is compatible with the ML models
             file_bytes = np.asarray(bytearray(file.read()), dtype=np.uint8)
             filename = file.name
+            filenames.append(filename) 
             image = cv2.imdecode(file_bytes, 1)
             # Extract and display image date-time
             image_datetime = None  # For storing date-time from image
@@ -84,12 +123,18 @@ def setup_input(
         
 
             # 3. Latitude Entry Box
-            latitude = viewcontainer.text_input("Latitude for "+filename, spoof_metadata.get('latitude', ""))
+            latitude = viewcontainer.text_input(
+                "Latitude for "+filename, 
+                spoof_metadata.get('latitude', ""),
+                key=f"input_latitude_{filename}")
             if latitude and not is_valid_number(latitude):
                 viewcontainer.error("Please enter a valid latitude (numerical only).")
                 m_logger.error(f"Invalid latitude entered: {latitude}.")
             # 4. Longitude Entry Box
-            longitude = viewcontainer.text_input("Longitude for "+filename, spoof_metadata.get('longitude', ""))
+            longitude = viewcontainer.text_input(
+                "Longitude for "+filename, 
+                spoof_metadata.get('longitude', ""),
+                key=f"input_longitude_{filename}")
             if longitude and not is_valid_number(longitude):
                 viewcontainer.error("Please enter a valid longitude (numerical only).")
                 m_logger.error(f"Invalid latitude entered: {latitude}.")
@@ -118,4 +163,6 @@ def setup_input(
     st.session_state.files = uploaded_files
     st.session_state.observations = observations
     st.session_state.image_hashes = image_hashes
+    st.session_state.image_filenames = filenames
+
 
