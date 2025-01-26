@@ -33,25 +33,25 @@ def cetacean_classify(cetacean_classifier):
             observation = observations[hash].to_dict()
             # run classifier model on `image`, and persistently store the output
             out = cetacean_classifier(image) # get top 3 matches
-            st.session_state.whale_prediction1 = out['predictions'][0]
-            st.session_state.classify_whale_done = True
-            msg = f"[D]2 classify_whale_done: {st.session_state.classify_whale_done}, whale_prediction1: {st.session_state.whale_prediction1}"
+            st.session_state.whale_prediction1[hash] = out['predictions'][0]
+            st.session_state.classify_whale_done[hash] = True
+            msg = f"[D]2 classify_whale_done for {hash}: {st.session_state.classify_whale_done[hash]}, whale_prediction1: {st.session_state.whale_prediction1[hash]}"
             g_logger.info(msg)
             
             # dropdown for selecting/overriding the species prediction
-            if not st.session_state.classify_whale_done:
+            if not st.session_state.classify_whale_done[hash]:
                 selected_class = st.sidebar.selectbox("Species", viewer.WHALE_CLASSES, 
                                                                 index=None, placeholder="Species not yet identified...", 
                                                                 disabled=True)
             else:
-                pred1 = st.session_state.whale_prediction1
+                pred1 = st.session_state.whale_prediction1[hash]
                 # get index of pred1 from WHALE_CLASSES, none if not present
                 print(f"[D] pred1: {pred1}")
                 ix = viewer.WHALE_CLASSES.index(pred1) if pred1 in viewer.WHALE_CLASSES else None
                 selected_class = st.selectbox(f"Species for observation {str(o)}", viewer.WHALE_CLASSES, index=ix)
             
             observation['predicted_class'] = selected_class
-            if selected_class != st.session_state.whale_prediction1:
+            if selected_class != st.session_state.whale_prediction1[hash]:
                 observation['class_overriden'] = selected_class
             
             st.session_state.public_observation = observation
