@@ -11,6 +11,15 @@ from hf_push_observations import push_observations
 from utils.grid_maker import gridder
 from utils.metadata_handler import metadata2md
 
+def add_header_text() -> None:
+    """
+    Add brief explainer text about cetacean classification to the tab 
+    """
+    st.markdown("""
+                *Run classifer to identify the species of cetean on the uploaded image.
+                Once inference is complete, the top three predictions are shown.
+                You can override the prediction by selecting a species from the dropdown.*""")
+
 def cetacean_classify(cetacean_classifier):
     """Cetacean classifier using the saving-willy model from Saving Willy Hugging Face space.
     For each image in the session state, classify the image and display the top 3 predictions.
