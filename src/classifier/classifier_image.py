@@ -20,7 +20,144 @@ def add_header_text() -> None:
                 Once inference is complete, the top three predictions are shown.
                 You can override the prediction by selecting a species from the dropdown.*""")
 
-def cetacean_classify(cetacean_classifier):
+# func to just run classification, store results.
+def cetacean_just_classify(cetacean_classifier):
+
+    images = st.session_state.images
+    observations = st.session_state.observations
+    hashes = st.session_state.image_hashes
+    
+    for hash in hashes: 
+        image = images[hash]
+        observation = observations[hash].to_dict()
+        # run classifier model on `image`, and persistently store the output
+        out = cetacean_classifier(image) # get top 3 matches
+        st.session_state.whale_prediction1[hash] = out['predictions'][0]
+        st.session_state.classify_whale_done[hash] = True
+        st.session_state.observations[hash].set_top_predictions(out['predictions'][:])
+
+        msg = f"[D]2 classify_whale_done for {hash}: {st.session_state.classify_whale_done[hash]}, whale_prediction1: {st.session_state.whale_prediction1[hash]}"
+        g_logger.info(msg)
+
+        # TODO: what is the difference between public and regular; and why is this not array-ready?
+        st.session_state.public_observation = observation
+        st.write(f"*[D] Observation {hash} classified as {st.session_state.whale_prediction1[hash]}*")
+       
+        
+# func to show results and allow review
+def cetacean_show_results_and_review():
+    images = st.session_state.images
+    observations = st.session_state.observations
+    hashes = st.session_state.image_hashes
+    batch_size, row_size, page = gridder(hashes)
+    
+    grid = st.columns(row_size)
+    col = 0
+    o = 1
+
+    for hash in hashes:
+        image = images[hash]
+        observation = observations[hash].to_dict()
+    
+        with grid[col]:
+            st.image(image, use_column_width=True)
+            
+            # dropdown for selecting/overriding the species prediction
+            if not st.session_state.classify_whale_done[hash]:
+                selected_class = st.sidebar.selectbox("Species", viewer.WHALE_CLASSES, 
+                                                                index=None, placeholder="Species not yet identified...", 
+                                                                disabled=True)
+            else:
+                pred1 = st.session_state.whale_prediction1[hash]
+                # get index of pred1 from WHALE_CLASSES, none if not present
+                print(f"[D] pred1: {pred1}")
+                ix = viewer.WHALE_CLASSES.index(pred1) if pred1 in viewer.WHALE_CLASSES else None
+                selected_class = st.selectbox(f"Species for observation {str(o)}", viewer.WHALE_CLASSES, index=ix)
+            
+            observation['predicted_class'] = selected_class
+            if selected_class != st.session_state.whale_prediction1[hash]:
+                observation['class_overriden'] = selected_class # TODO: this should be boolean!
+            
+            st.session_state.public_observation = observation
+            st.button(f"Upload observation {str(o)} to THE INTERNET!", on_click=push_observations)
+            # TODO: the metadata only fills properly if `validate` was clicked.
+            st.markdown(metadata2md())
+
+            msg = f"[D] full observation after inference: {observation}"
+            g_logger.debug(msg)
+            print(msg)
+            # TODO: add a link to more info on the model, next to the button.
+
+            whale_classes = observations[hash].top_predictions
+            # render images for the top 3 (that is what the model api returns)
+            n = len(whale_classes)
+            st.markdown(f"Top {n} Predictions for observation {str(o)}")
+            for i in range(n):
+                viewer.display_whale(whale_classes, i)
+        o += 1
+        col = (col + 1) % row_size
+
+
+# func to just present results
+def cetacean_show_results():
+    images = st.session_state.images
+    observations = st.session_state.observations
+    hashes = st.session_state.image_hashes
+    batch_size, row_size, page = gridder(hashes)
+    
+    
+    grid = st.columns(row_size)
+    col = 0
+    o = 1
+
+    for hash in hashes:
+        image = images[hash]
+        observation = observations[hash].to_dict()
+    
+        with grid[col]:
+            st.image(image, use_column_width=True)
+            
+            # # dropdown for selecting/overriding the species prediction
+            # if not st.session_state.classify_whale_done[hash]:
+            #     selected_class = st.sidebar.selectbox("Species", viewer.WHALE_CLASSES, 
+            #                                                     index=None, placeholder="Species not yet identified...", 
+            #                                                     disabled=True)
+            # else:
+            #     pred1 = st.session_state.whale_prediction1[hash]
+            #     # get index of pred1 from WHALE_CLASSES, none if not present
+            #     print(f"[D] pred1: {pred1}")
+            #     ix = viewer.WHALE_CLASSES.index(pred1) if pred1 in viewer.WHALE_CLASSES else None
+            #     selected_class = st.selectbox(f"Species for observation {str(o)}", viewer.WHALE_CLASSES, index=ix)
+            
+            # observation['predicted_class'] = selected_class
+            # if selected_class != st.session_state.whale_prediction1[hash]:
+            #     observation['class_overriden'] = selected_class # TODO: this should be boolean!
+            
+            # st.session_state.public_observation = observation
+            st.button(f"Upload observation {str(o)} to THE INTERNET!", on_click=push_observations)
+            # TODO: the metadata only fills properly if `validate` was clicked.
+            st.markdown(metadata2md())
+            st.markdown(f"- **hash**: {hash}")
+
+            msg = f"[D] full observation after inference: {observation}"
+            g_logger.debug(msg)
+            print(msg)
+            # TODO: add a link to more info on the model, next to the button.
+
+            whale_classes = observations[hash].top_predictions
+            # render images for the top 3 (that is what the model api returns)
+            n = len(whale_classes)
+            st.markdown(f"Top {n} Predictions for observation {str(o)}")
+            for i in range(n):
+                viewer.display_whale(whale_classes, i)
+        o += 1
+        col = (col + 1) % row_size
+
+
+
+
+# func to do all in one
+def cetacean_classify_show_and_review(cetacean_classifier):
     """Cetacean classifier using the saving-willy model from Saving Willy Hugging Face space.
     For each image in the session state, classify the image and display the top 3 predictions.
     Args:
