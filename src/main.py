@@ -227,7 +227,7 @@ def main() -> None:
 
     if st.session_state.workflow_fsm.is_in_state('doing_data_entry'):
         # can we advance state? - only when all inputs are set for all uploaded files
-        all_inputs_set = check_inputs_are_set(debug=True)
+        all_inputs_set = check_inputs_are_set(debug=True, empty_ok=False)
         if all_inputs_set:
             st.session_state.workflow_fsm.complete_current_state()
             # -> data_entry_complete

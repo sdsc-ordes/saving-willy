@@ -34,10 +34,6 @@ spoof_metadata = {
 }
 
 def check_inputs_are_set(empty_ok:bool=False, debug:bool=False) -> bool:
-    return check_inputs_are_set_by_hash(empty_ok=empty_ok, debug=debug)
-
-
-def check_inputs_are_set_by_hash(empty_ok:bool=False, debug:bool=False) -> bool:
     """
     Checks if all expected inputs have been entered 
     
@@ -53,16 +49,36 @@ def check_inputs_are_set_by_hash(empty_ok:bool=False, debug:bool=False) -> bool:
     if len(image_hashes) == 0:
         return empty_ok
     
+    exp_input_key_stubs = ["input_latitude", "input_longitude", "input_date", "input_time"]
+    #exp_input_key_stubs = ["input_latitude", "input_longitude", "input_author_email", "input_date", "input_time", 
 
-    exp_input_key_stubs = ["input_latitude", "input_longitude"]
-    #exp_input_key_stubs = ["input_latitude", "input_longitude", "input_author_email", "input_date", "input_time", "input_image_selector"]
     vals = []
+    # the author_email is global/one-off - no hash extension.
+    if "input_author_email" in st.session_state:
+        val = st.session_state["input_author_email"]
+        vals.append(val)
+        if debug:
+            msg = f"{'input_author_email':15}, {(val is not None):8}, {val}"
+            m_logger.debug(msg)
+            print(msg)
+
+
     for image_hash in image_hashes:
         for stub in exp_input_key_stubs:
             key = f"{stub}_{image_hash}"
             val = None
             if key in st.session_state:
                 val = st.session_state[key]
+            
+            # handle cases where it is defined but empty 
+            # if val is a string and empty, set to None
+            if isinstance(val, str) and not val:
+                val = None
+            # if val is a list and empty, set to None (not sure what UI elements would return a list?)
+            if isinstance(val, list) and not val:
+                val = None
+            # number 0 is ok - possibly. could be on the equator, e.g.
+            
             vals.append(val)
             if debug:
                 msg = f"{key:15}, {(val is not None):8}, {val}"
@@ -70,42 +86,6 @@ def check_inputs_are_set_by_hash(empty_ok:bool=False, debug:bool=False) -> bool:
                 print(msg)
 
 
-    
-    return all([v is not None for v in vals])
-
-
-def check_inputs_are_set_by_fname(empty_ok:bool=False, debug:bool=False) -> bool:
-    """
-    Checks if all expected inputs have been entered 
-    
-    Implementation: via the Streamlit session state.
-
-    Args:
-        empty_ok (bool): If True, returns True if no inputs are set. Default is False.
-        debug (bool): If True, prints and logs the status of each expected input key. Default is False.
-    Returns:
-        bool: True if all expected input keys are set, False otherwise.
-    """
-    filenames = st.session_state.image_filenames
-    if len(filenames) == 0:
-        return empty_ok
-    
-
-
-    exp_input_key_stubs = ["input_latitude", "input_longitude"]
-    #exp_input_key_stubs = ["input_latitude", "input_longitude", "input_author_email", "input_date", "input_time", "input_image_selector"]
-    vals = []
-    for image_filename in filenames:
-        for stub in exp_input_key_stubs:
-            key = f"{stub}_{image_filename}"
-            val = None
-            if key in st.session_state:
-                val = st.session_state[key]
-            vals.append(val)
-            if debug:
-                msg = f"{key:15}, {(val is not None):8}, {val}"
-                m_logger.debug(msg)
-                print(msg)
     
     return all([v is not None for v in vals])
 
@@ -138,7 +118,7 @@ def process_one_file(file:UploadedFile) -> Tuple[np.ndarray, str, str, InputObse
     # 3. Latitude Entry Box
     latitude = viewcontainer.text_input(
         "Latitude for " + filename, 
-        spoof_metadata.get('latitude', ""),
+        #spoof_metadata.get('latitude', ""),
         key=f"input_latitude_{ukey}")
     if latitude and not is_valid_number(latitude):
         viewcontainer.error("Please enter a valid latitude (numerical only).")
@@ -260,11 +240,6 @@ def setup_input(
     _setup_oneoff_inputs()
     # amazingly we just have to add the uploader and its callback, and the rest is dynamic.
     
-    # # check if the inputs are set
-    # if check_inputs_are_set(empty_ok=True):
-    #     st.sidebar.success("All inputs are set.")
-    # else:
-    #     st.sidebar.warning("Please fill in all the required inputs.")
 
 def setup_input_monolithic(
     viewcontainer: DeltaGenerator=None,
