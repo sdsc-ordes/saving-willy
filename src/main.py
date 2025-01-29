@@ -97,6 +97,12 @@ if "progress" not in st.session_state:
         st.sidebar.button("Refresh Progress", on_click=refresh_progress)
 
         
+def dbg_show_obs_hashes():
+    # a debug: we seem to be losing the whale classes?
+    st.write(f"[D] num observations: {len(st.session_state.observations)}")
+    for hash in st.session_state.observations.keys():
+        st.markdown(f"- [D] observation {hash} has {len(st.session_state.observations[hash].top_predictions)} predictions")
+
 
 def main() -> None:
     """
@@ -134,7 +140,8 @@ def main() -> None:
     refresh_progress()    
 
     # create a sidebar, and parse all the input (returned as `observations` object)
-    setup_input(viewcontainer=st.sidebar)
+    with st.sidebar:
+        setup_input(viewcontainer=st.sidebar)
 
         
     if 0:## WIP
@@ -250,6 +257,9 @@ def main() -> None:
     # 6. manual validation done -> enable the upload buttons
     # 
     with tab_inference:
+        
+        dbg_show_obs_hashes()
+
         add_classifier_header()
         # if we are before data_entry_validated, show the button, disabled.
         if not st.session_state.workflow_fsm.is_in_state_or_beyond('data_entry_validated'):

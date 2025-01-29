@@ -44,6 +44,9 @@ class InputObservation:
         from_input(input):
             Creates an observation from another input observation.
     """
+
+    _inst_count = 0 
+    
     def __init__(self, image=None, latitude=None, longitude=None, 
                  author_email=None, date=None, time=None, date_option=None, time_option=None, 
                  uploaded_filename=None):
@@ -56,7 +59,12 @@ class InputObservation:
         self.date_option = date_option
         self.time_option = time_option
         self.uploaded_filename = uploaded_filename
+        self._image_md5 = None
         self._top_predictions = []
+
+        InputObservation._inst_count += 1
+        self._inst_id = InputObservation._inst_count
+        self.assign_image_md5()
 
     def set_top_predictions(self, top_predictions:list):
         self._top_predictions = top_predictions
@@ -66,6 +74,11 @@ class InputObservation:
     def top_predictions(self):
         return self._top_predictions
     
+    # add a method to assign the image_md5 only once
+    def assign_image_md5(self):
+        if not self._image_md5:
+            self._image_md5 = hashlib.md5(self.uploaded_filename.read()).hexdigest() if self.uploaded_filename else generate_random_md5()
+
 
     def __str__(self):
         return f"Observation: {self.image}, {self.latitude}, {self.longitude}, {self.author_email}, {self.date}, {self.time}, {self.date_option}, {self.time_option}, {self.uploaded_filename}"
@@ -88,7 +101,8 @@ class InputObservation:
         return {
             #"image": self.image,
             "image_filename": self.uploaded_filename.name if self.uploaded_filename else None,
-            "image_md5": hashlib.md5(self.uploaded_filename.read()).hexdigest() if self.uploaded_filename else generate_random_md5(),
+            "image_md5": self._image_md5,
+            #"image_md5": hashlib.md5(self.uploaded_filename.read()).hexdigest() if self.uploaded_filename else generate_random_md5(),
             "latitude": self.latitude,
             "longitude": self.longitude,
             "author_email": self.author_email,
