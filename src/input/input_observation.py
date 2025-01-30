@@ -7,7 +7,7 @@ class InputObservation:
     A class to hold an input observation and associated metadata
 
     Attributes:
-        image (Any): 
+        image (ndarray): 
             The image associated with the observation.
         latitude (float): 
             The latitude where the observation was made.
@@ -15,16 +15,16 @@ class InputObservation:
             The longitude where the observation was made.
         author_email (str): 
             The email of the author of the observation.
-        date (str): 
+        date (Any):  # FIXME: specify the type
             The date when the observation was made.
-        time (str): 
+        time (Any):  # FIXME: specify the type
             The time when the observation was made.
-        date_option (str): 
+        date_option (datetime.date): 
             Additional date option for the observation.
-        time_option (str): 
+        time_option (datetime.time): 
             Additional time option for the observation.
-        uploaded_filename (Any): 
-            The uploaded filename associated with the observation.
+        uploaded_file (UploadedFile): 
+            The uploaded file associated with the observation.
         image_md5 (str):
             The MD5 hash of the image associated with the observation.
 
@@ -37,6 +37,8 @@ class InputObservation:
             Checks if two observations are equal.
         __ne__(other):
             Checks if two observations are not equal.
+        show_diff(other):
+            Shows the differences between two observations.
         to_dict():
             Converts the observation to a dictionary.
         from_dict(data):
@@ -47,9 +49,12 @@ class InputObservation:
 
     _inst_count = 0 
     
-    def __init__(self, image=None, latitude=None, longitude=None, 
-                 author_email=None, date=None, time=None, date_option=None, time_option=None, 
-                 uploaded_filename=None, image_md5=None):
+    def __init__(
+        self, image:ndarray=None, latitude:float=None, longitude:float=None, 
+        author_email:str=None, date=None, time=None, date_option:datetime.date=None, 
+        time_option:datetime.time=None, 
+        uploaded_file:UploadedFile=None, image_md5:str=None):
+
         self.image = image
         self.latitude = latitude
         self.longitude = longitude
@@ -58,7 +63,7 @@ class InputObservation:
         self.time = time
         self.date_option = date_option
         self.time_option = time_option
-        self.uploaded_filename = uploaded_filename
+        self.uploaded_file = uploaded_file
         self.image_md5 = image_md5
         self._top_predictions = []
 
@@ -80,10 +85,10 @@ class InputObservation:
     def assign_image_md5(self):
         raise DeprecationWarning("This method is deprecated. hash is a required constructor argument.")
         if not self.image_md5:
-            self.image_md5 = hashlib.md5(self.uploaded_filename.read()).hexdigest() if self.uploaded_filename else generate_random_md5()
+            self.image_md5 = hashlib.md5(self.uploaded_file.read()).hexdigest() if self.uploaded_file else generate_random_md5()
 
 			# new comment / hybj hunk
-            self._cprint(f"[D] Assigned image md5: {self.image_md5} for {self.uploaded_filename}")
+            self._cprint(f"[D] Assigned image md5: {self.image_md5} for {self.uploaded_file}")
 
     def _cprint(self, msg:str, color:str=OKGREEN):
         """Print colored message"""
@@ -94,7 +99,7 @@ class InputObservation:
         return (
             f"Observation: {_im_str}, {self.latitude}, {self.longitude}, "
             f"{self.author_email}, {self.date}, {self.time}, {self.date_option}, " 
-            f"{self.time_option}, {self.uploaded_filename}, {self.image_md5}"
+            f"{self.time_option}, {self.uploaded_file}, {self.image_md5}"
         )
 
     def __repr__(self):
@@ -109,7 +114,7 @@ class InputObservation:
             f"Time: {self.time}, "
             f"Date Option: {self.date_option}, "
             f"Time Option: {self.time_option}, "
-            f"Uploaded Filename: {self.uploaded_filename}"
+            f"Uploaded Filename: {self.uploaded_file}"
             f"Image MD5 hash: {self.image_md5}"
         )
 
@@ -132,7 +137,7 @@ class InputObservation:
             self.date_option == other.date_option and
             # temporarily skip time_option, it is followed by the clock and that is always differnt 
             #self.time_option == other.time_option and 
-            self.uploaded_filename == other.uploaded_filename and 
+            self.uploaded_file == other.uploaded_file and 
             self.image_md5 == other.image_md5
             )
         return equality
@@ -165,7 +170,7 @@ class InputObservation:
             differences.append(f"   Date option is different. (self: {self.date_option}, other: {other.date_option})")
         if self.time_option != other.time_option:
             differences.append(f"   Time option is different. (self: {self.time_option}, other: {other.time_option})")
-        if self.uploaded_filename != other.uploaded_filename:
+        if self.uploaded_file != other.uploaded_file:
             differences.append("   Uploaded filename is different.")
         if self.image_md5 != other.image_md5:
             differences.append("   Image MD5 hash is different.")
@@ -183,9 +188,9 @@ class InputObservation:
     def to_dict(self):
         return {
             #"image": self.image,
-            "image_filename": self.uploaded_filename.name if self.uploaded_filename else None,
+            "image_filename": self.uploaded_file.name if self.uploaded_file else None,
             "image_md5": self.image_md5,
-            #"image_md5": hashlib.md5(self.uploaded_filename.read()).hexdigest() if self.uploaded_filename else generate_random_md5(),
+            #"image_md5": hashlib.md5(self.uploaded_file.read()).hexdigest() if self.uploaded_file else generate_random_md5(),
             "latitude": self.latitude,
             "longitude": self.longitude,
             "author_email": self.author_email,
@@ -193,7 +198,7 @@ class InputObservation:
             "time": self.time,
             "date_option": str(self.date_option),
             "time_option": str(self.time_option),
-            "uploaded_filename": self.uploaded_filename
+            "uploaded_file": self.uploaded_file
         }
 
     @classmethod
@@ -207,7 +212,7 @@ class InputObservation:
             time=data.get("time"),
             date_option=data.get("date_option"),
             time_option=data.get("time_option"),
-            uploaded_filename=data.get("uploaded_filename"),
+            uploaded_file=data.get("uploaded_file"),
             image_hash=data.get("image_md5")
         )
 
@@ -222,7 +227,7 @@ class InputObservation:
             time=input.time,
             date_option=input.date_option,
             time_option=input.time_option,
-            uploaded_filename=input.uploaded_filename,
+            uploaded_file=input.uploaded_file,
             image_hash=input.image_hash
         )
 

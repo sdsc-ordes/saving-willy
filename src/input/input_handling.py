@@ -155,7 +155,7 @@ def process_one_file(file:UploadedFile, ix:int=0) -> Tuple[np.ndarray, str, str,
     observation = InputObservation(image=file, latitude=latitude, longitude=longitude,
                                 author_email=author_email, date=image_datetime, time=None,
                                 date_option=date_option, time_option=time_option,
-                                uploaded_filename=file,
+                                uploaded_file=file,
                                 )
 
     #the_data = [] \
@@ -306,7 +306,7 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     observation = InputObservation(image=image, latitude=latitude, longitude=longitude,
                                 author_email=author_email, date=image_datetime, time=None,
                                 date_option=date_option, time_option=time_option,
-                                uploaded_filename=file, image_md5=image_hash
+                                uploaded_file=file, image_md5=image_hash
                                 )
 
     # TODO: pass in the hash to InputObservation, so it is done once only. (need to refactor the class a bit)
