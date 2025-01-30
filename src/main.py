@@ -82,6 +82,15 @@ if "workflow_fsm" not in st.session_state:
     # create and init the state machine
     st.session_state.workflow_fsm = WorkflowFSM(FSM_STATES)
     
+if "container_per_file_input_elems" not in st.session_state:
+    st.session_state.container_per_file_input_elems = None
+
+if "container_file_uploader" not in st.session_state:
+    st.session_state.container_file_uploader = None
+
+if "container_metadata_inputs" not in st.session_state:
+    st.session_state.container_metadata_inputs = None
+    
 def refresh_progress():
     with st.sidebar:
         tot = st.session_state.workflow_fsm.num_states - 1
@@ -100,8 +109,14 @@ if "progress" not in st.session_state:
 def dbg_show_obs_hashes():
     # a debug: we seem to be losing the whale classes?
     st.write(f"[D] num observations: {len(st.session_state.observations)}")
+    s = ""
     for hash in st.session_state.observations.keys():
-        st.markdown(f"- [D] observation {hash} has {len(st.session_state.observations[hash].top_predictions)} predictions")
+        obs = st.session_state.observations[hash]
+        s += f"- [D] observation {hash} ({obs._inst_id}) has {len(obs.top_predictions)} predictions\n"
+        
+        #st.markdown(f"- [D] observation {hash} has {len(st.session_state.observations[hash].top_predictions)} predictions")
+    
+    st.markdown(s)
 
 
 def main() -> None:
@@ -141,6 +156,16 @@ def main() -> None:
 
     # create a sidebar, and parse all the input (returned as `observations` object)
     with st.sidebar:
+        st.divider()
+        
+        st.markdown('<style>.st-key-container_file_uploader_id { border: 1px solid skyblue; border-radius: 5px; }</style>', unsafe_allow_html=True)
+        container_file_uploader = st.container(border=True, key="container_file_uploader_id")
+        st.session_state.container_file_uploader = container_file_uploader
+        st.markdown('<style>.st-key-container_metadata_inputs_id { border: 1px solid lightgreen; border-radius: 5px; }</style>', unsafe_allow_html=True)
+        container_metadata_inputs = st.container(border=True, key="container_metadata_inputs_id")
+        container_metadata_inputs.write("Metadata Inputs... wait for file upload ")
+        st.session_state.container_metadata_inputs = container_metadata_inputs
+
         setup_input(viewcontainer=st.sidebar)
 
         
@@ -281,6 +306,8 @@ def main() -> None:
                 # we can enter the next state - visualising the results / review)
                 # ok it doesn't if done programmatically. maybe interacting with teh button? check docs.
                 refresh_progress()
+                #TODO: validate this doesn't harm performance adversely.
+                st.rerun()
         
         elif st.session_state.workflow_fsm.is_in_state('ml_classification_completed'):
             # show the results, and allow manual validation
