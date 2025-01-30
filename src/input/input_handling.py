@@ -90,7 +90,21 @@ def check_inputs_are_set(empty_ok:bool=False, debug:bool=False) -> bool:
     return all([v is not None for v in vals])
 
 
-def buffer_files():
+def buffer_uploaded_files():
+    """
+    Buffers uploaded files to session_state (images, image_hashes, filenames).
+
+    Buffers uploaded files by extracting and storing filenames, images, and
+    image hashes in the session state.
+
+    Adds the following keys to `st.session_state`:
+    - `images`: dict mapping image hashes to image data (numpy arrays)
+    - `files`: list of uploaded files
+    - `image_hashes`: list of image hashes
+    - `image_filenames`: list of filenames
+    """
+
+    
     # buffer info from the file_uploader that doesn't require further user input
     # - the image, the hash, the filename
     # a separate function takes care of per-file user inputs for metadata
@@ -126,6 +140,17 @@ def buffer_files():
 
     
 def load_file_and_hash(file:UploadedFile) -> Tuple[np.ndarray, str]:
+    """
+    Loads an image file and computes its MD5 hash.
+    
+    Since both operations require reading the full file contentsV, they are done
+    together for efficiency.
+    
+    Args:
+        file (UploadedFile): The uploaded file to be processed.
+    Returns:
+        Tuple[np.ndarray, str]: A tuple containing the decoded image as a NumPy array and the MD5 hash of the file's contents.
+    """
     # two operations that require reading the file done together for efficiency
     # load the file, compute the hash, return the image and hash
     _bytes = file.read()
@@ -137,13 +162,23 @@ def load_file_and_hash(file:UploadedFile) -> Tuple[np.ndarray, str]:
     
         
 def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) -> InputObservation:
+    """
+    Creates and parses metadata inputs for a single file
+    
+    Args:
+        file (UploadedFile): The uploaded file for which metadata is being handled.
+        image_hash (str): The hash of the image.
+        dbg_ix (int, optional): Debug index to differentiate data in each input group. Defaults to 0.
+    Returns:
+        InputObservation: An object containing the metadata and other information for the input file.
+    """
     # dbg_ix is a hack to have different data in each input group, checking persistence
     
     if st.session_state.container_metadata_inputs is not None:
         _viewcontainer = st.session_state.container_metadata_inputs
     else:
         _viewcontainer = st.sidebar
-        print(f"[W] `container_metadata_inputs` is None, using sidebar")
+        m_logger.warning(f"[W] `container_metadata_inputs` is None, using sidebar")
         
 
 
@@ -197,12 +232,18 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
                                 uploaded_file=file, image_md5=image_hash
                                 )
 
-    # TODO: pass in the hash to InputObservation, so it is done once only. (need to refactor the class a bit)
     return observation
     
 
     
 def _setup_dynamic_inputs() -> None:
+    """
+    Setup metadata inputs dynamically for each uploaded file, and process.
+    
+    This operates on the data buffered in the session state, and writes 
+    the observation objects back to the session state.
+    
+    """
 
     # for each file uploaded,
     # - add the UI elements for the metadata
@@ -237,26 +278,14 @@ def _setup_dynamic_inputs() -> None:
 
 def _setup_oneoff_inputs() -> None:
     '''
-    Add the UI input elements for which we have one each
+    Add the UI input elements for which we have one covering all files
     
+    - author email
+    - file uploader (accepts multiple files)
     '''
-    st.title("Input image and data")
 
-    # setup containers for consistent layout order with dynamic elements
-    #container_file_uploader = st.container(border=False, key="container_file_uploader")
+    # fetch the container for the file uploader input elements
     container_file_uploader = st.session_state.container_file_uploader 
-    # - a container for the dynamic input elements (this one matters)
-    #if "container_per_file_input_elems" not in st.session_state:
-    # if st.session_state.container_per_file_input_elems is None:
-    #     #st.session_state.container_per_file_input_elems = None
-    #     c = st.container(border=True, key="container_per_file_input_elems")
-    #     with c:
-    #         st.write("No files uploaded yet.")
-    #     print(f"[D] initialised the container..... {id(c)} | {c=}")
-    #     st.session_state.container_per_file_input_elems = c
-    # else:
-    #     print(f"[D] already present, don't redo... {id(st.session_state.container_per_file_input_elems)} | {st.session_state.container_per_file_input_elems=}")
-        
 
     with container_file_uploader:
         # 1. Input the author email 
@@ -266,18 +295,12 @@ def _setup_oneoff_inputs() -> None:
             st.error("Please enter a valid email address.")
 
         # 2. Image Selector
-        st.file_uploader("Upload one or more images", type=["png", 'jpg', 'jpeg', 'webp'],
-                                        accept_multiple_files=True, 
-                                        key="file_uploader_data", 
-                                        on_change=buffer_files)
-    if 1:
+        st.file_uploader(
+            "Upload one or more images", type=["png", 'jpg', 'jpeg', 'webp'],
+            accept_multiple_files=True, 
+            key="file_uploader_data", on_change=buffer_uploaded_files)
 
-        uploaded_files = st.session_state.file_uploader_data
-    
-        for ix, file in enumerate(uploaded_files):
-            print(f"[DD] rechecking file {file.name}. {file.file_id} {file.type} {file.size}")
-            pass
-                                        
+        
                                     
                                     
     
@@ -302,4 +325,38 @@ def setup_input() -> None:
     # setup dynamic UI input elements, based on the data that is buffered in session_state
     _setup_dynamic_inputs()
     
+
+def init_input_container_states() -> None:
+    '''
+    Initialise the layout containers used in the input handling
+    '''
+    #if "container_per_file_input_elems" not in st.session_state:
+    #    st.session_state.container_per_file_input_elems = None
+
+    if "container_file_uploader" not in st.session_state:
+        st.session_state.container_file_uploader = None
+
+    if "container_metadata_inputs" not in st.session_state:
+        st.session_state.container_metadata_inputs = None    
+
     
+def add_input_UI_elements() -> None:
+    '''
+    Create the containers within which user input elements will be placed
+    '''
+    # we make containers ahead of time, allowing consistent order of elements
+    # which are not created in the same order.
+    
+    st.divider()
+    st.title("Input image and data")
+    
+    # create and style a container for the file uploader/other one-off inputs
+    st.markdown('<style>.st-key-container_file_uploader_id { border: 1px solid skyblue; border-radius: 5px; }</style>', unsafe_allow_html=True)
+    container_file_uploader = st.container(border=True, key="container_file_uploader_id")
+    st.session_state.container_file_uploader = container_file_uploader
+
+    # create and style a container for the dynamic metadata inputs
+    st.markdown('<style>.st-key-container_metadata_inputs_id { border: 1px solid lightgreen; border-radius: 5px; }</style>', unsafe_allow_html=True)
+    container_metadata_inputs = st.container(border=True, key="container_metadata_inputs_id")
+    container_metadata_inputs.write("Metadata Inputs... wait for file upload ")
+    st.session_state.container_metadata_inputs = container_metadata_inputs
