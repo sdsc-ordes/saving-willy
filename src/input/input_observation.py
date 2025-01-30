@@ -25,6 +25,8 @@ class InputObservation:
             Additional time option for the observation.
         uploaded_filename (Any): 
             The uploaded filename associated with the observation.
+        image_md5 (str):
+            The MD5 hash of the image associated with the observation.
 
     Methods:
         __str__():
@@ -35,8 +37,6 @@ class InputObservation:
             Checks if two observations are equal.
         __ne__(other):
             Checks if two observations are not equal.
-        __hash__():
-            Returns the hash of the observation.
         to_dict():
             Converts the observation to a dictionary.
         from_dict(data):
@@ -49,7 +49,7 @@ class InputObservation:
     
     def __init__(self, image=None, latitude=None, longitude=None, 
                  author_email=None, date=None, time=None, date_option=None, time_option=None, 
-                 uploaded_filename=None):
+                 uploaded_filename=None, image_md5=None):
         self.image = image
         self.latitude = latitude
         self.longitude = longitude
@@ -59,12 +59,14 @@ class InputObservation:
         self.date_option = date_option
         self.time_option = time_option
         self.uploaded_filename = uploaded_filename
-        self._image_md5 = None
+        self.image_md5 = image_md5
         self._top_predictions = []
 
         InputObservation._inst_count += 1
         self._inst_id = InputObservation._inst_count
-        self.assign_image_md5()
+
+        #self.assign_image_md5()
+
 
     def set_top_predictions(self, top_predictions:list):
         self._top_predictions = top_predictions
@@ -76,32 +78,65 @@ class InputObservation:
     
     # add a method to assign the image_md5 only once
     def assign_image_md5(self):
-        if not self._image_md5:
-            self._image_md5 = hashlib.md5(self.uploaded_filename.read()).hexdigest() if self.uploaded_filename else generate_random_md5()
+        raise DeprecationWarning("This method is deprecated. hash is a required constructor argument.")
+        if not self.image_md5:
+            self.image_md5 = hashlib.md5(self.uploaded_filename.read()).hexdigest() if self.uploaded_filename else generate_random_md5()
 
+			# new comment / hybj hunk
+            self._cprint(f"[D] Assigned image md5: {self.image_md5} for {self.uploaded_filename}")
+
+    def _cprint(self, msg:str, color:str=OKGREEN):
+        """Print colored message"""
+        print(f"{color}{msg}{ENDC}")
 
     def __str__(self):
-        return f"Observation: {self.image}, {self.latitude}, {self.longitude}, {self.author_email}, {self.date}, {self.time}, {self.date_option}, {self.time_option}, {self.uploaded_filename}"
+        _im_str = "None" if self.image is None else f"image dims: {self.image.shape}"
+        return (
+            f"Observation: {_im_str}, {self.latitude}, {self.longitude}, "
+            f"{self.author_email}, {self.date}, {self.time}, {self.date_option}, " 
+            f"{self.time_option}, {self.uploaded_filename}, {self.image_md5}"
+        )
 
     def __repr__(self):
-        return f"Observation: {self.image}, {self.latitude}, {self.longitude}, {self.author_email}, {self.date}, {self.time}, {self.date_option}, {self.time_option}, {self.uploaded_filename}"
+        _im_str = "None" if self.image is None else f"image dims: {self.image.shape}"
+        return (
+            f"Observation: "
+            f"Image: {_im_str}, "
+            f"Latitude: {self.latitude}, "
+            f"Longitude: {self.longitude}, "
+            f"Author Email: {self.author_email}, "
+            f"Date: {self.date}, "
+            f"Time: {self.time}, "
+            f"Date Option: {self.date_option}, "
+            f"Time Option: {self.time_option}, "
+            f"Uploaded Filename: {self.uploaded_filename}"
+            f"Image MD5 hash: {self.image_md5}"
+        )
+
 
     def __eq__(self, other):
-        return (self.image == other.image and self.latitude == other.latitude and self.longitude == other.longitude and 
-                self.author_email == other.author_email and self.date == other.date and self.time == other.time and 
-                self.date_option == other.date_option and self.time_option == other.time_option and self.uploaded_filename == other.uploaded_filename)
+        # TODO: ensure this covers all the attributes (some have been added?)
+        # - except inst_id which is unique
+        return (
+            self.image == other.image and self.latitude == other.latitude and 
+            self.longitude == other.longitude and 
+            self.author_email == other.author_email and
+            self.date == other.date and self.time == other.time and 
+            self.date_option == other.date_option and
+            self.time_option == other.time_option and 
+            self.uploaded_filename == other.uploaded_filename and 
+            self.image_md5 == other._image_md5
+            )
+        
 
     def __ne__(self, other):
         return not self.__eq__(other)
-
-    def __hash__(self):
-        return hash((self.image, self.latitude, self.longitude, self.author_email, self.date, self.time, self.date_option, self.time_option, self.uploaded_filename))
 
     def to_dict(self):
         return {
             #"image": self.image,
             "image_filename": self.uploaded_filename.name if self.uploaded_filename else None,
-            "image_md5": self._image_md5,
+            "image_md5": self.image_md5,
             #"image_md5": hashlib.md5(self.uploaded_filename.read()).hexdigest() if self.uploaded_filename else generate_random_md5(),
             "latitude": self.latitude,
             "longitude": self.longitude,
@@ -115,19 +150,34 @@ class InputObservation:
 
     @classmethod
     def from_dict(cls, data):
-        return cls(data["image"], data["latitude"], data["longitude"], data["author_email"], data["date"], data["time"], data["date_option"], data["time_option"], data["uploaded_filename"])
+        return cls(
+            image=data.get("image"),
+            latitude=data.get("latitude"),
+            longitude=data.get("longitude"),
+            author_email=data.get("author_email"),
+            date=data.get("date"),
+            time=data.get("time"),
+            date_option=data.get("date_option"),
+            time_option=data.get("time_option"),
+            uploaded_filename=data.get("uploaded_filename"),
+            image_hash=data.get("image_md5")
+        )
 
     @classmethod
     def from_input(cls, input):
-        return cls(input.image, input.latitude, input.longitude, input.author_email, input.date, input.time, input.date_option, input.time_option, input.uploaded_filename)
+        return cls(
+            image=input.image,
+            latitude=input.latitude,
+            longitude=input.longitude,
+            author_email=input.author_email,
+            date=input.date,
+            time=input.time,
+            date_option=input.date_option,
+            time_option=input.time_option,
+            uploaded_filename=input.uploaded_filename,
+            image_hash=input.image_hash
+        )
 
-    @staticmethod
-    def from_input(input):
-        return InputObservation(input.image, input.latitude, input.longitude, input.author_email, input.date, input.time, input.date_option, input.time_option, input.uploaded_filename)
-
-    @staticmethod
-    def from_dict(data):
-        return InputObservation(data["image"], data["latitude"], data["longitude"], data["author_email"], data["date"], data["time"], data["date_option"], data["time_option"], data["uploaded_filename"])
 
 
 
