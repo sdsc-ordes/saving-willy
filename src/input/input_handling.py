@@ -339,6 +339,28 @@ def init_input_container_states() -> None:
     if "container_metadata_inputs" not in st.session_state:
         st.session_state.container_metadata_inputs = None    
 
+def init_input_data_session_states() -> None:
+    '''
+    Initialise the session state variables used in the input handling
+    '''
+
+    if "image_hashes" not in st.session_state:
+        st.session_state.image_hashes = []
+
+    # TODO: ideally just use image_hashes, but need a unique key for the ui elements
+    # to track the user input phase; and these are created before the hash is generated. 
+    if "image_filenames" not in st.session_state:
+        st.session_state.image_filenames = []
+
+    if "observations" not in st.session_state:
+        st.session_state.observations = {}
+
+    if "images" not in st.session_state:
+        st.session_state.images = {}
+
+    if "files" not in st.session_state:
+        st.session_state.files = {}
+
     
 def add_input_UI_elements() -> None:
     '''
