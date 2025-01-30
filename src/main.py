@@ -17,12 +17,13 @@ disable_caching()
 import whale_gallery as gallery
 import whale_viewer as viewer
 from input.input_handling import setup_input, check_inputs_are_set
-from input.input_handling import init_input_container_states, add_input_UI_elements
+from input.input_handling import init_input_container_states, add_input_UI_elements, init_input_data_session_states
 
 from maps.alps_map import present_alps_map
 from maps.obs_map import present_obs_map
 from utils.st_logs import setup_logging, parse_log_buffer
 from utils.workflow_state import WorkflowFSM, FSM_STATES
+from utils.workflow_ui import refresh_progress, init_workflow_viz
 #from classifier.classifier_image import cetacean_classify
 from classifier.classifier_image import cetacean_just_classify, cetacean_show_results_and_review, cetacean_show_results
 
@@ -51,22 +52,6 @@ st.set_page_config(layout="wide")
 if "handler" not in st.session_state:
     st.session_state['handler'] = setup_logging()
 
-if "image_hashes" not in st.session_state:
-    st.session_state.image_hashes = []
-
-# TODO: ideally just use image_hashes, but need a unique key for the ui elements
-# to track the user input phase; and these are created before the hash is generated. 
-if "image_filenames" not in st.session_state:
-    st.session_state.image_filenames = []
-
-if "observations" not in st.session_state:
-    st.session_state.observations = {}
-
-if "images" not in st.session_state:
-    st.session_state.images = {}
-
-if "files" not in st.session_state:
-    st.session_state.files = {}
 
 if "public_observation" not in st.session_state:
     st.session_state.public_observation = {}
@@ -84,22 +69,11 @@ if "workflow_fsm" not in st.session_state:
     # create and init the state machine
     st.session_state.workflow_fsm = WorkflowFSM(FSM_STATES)
     
+init_input_data_session_states()
 init_input_container_states()
-    
-def refresh_progress():
-    with st.sidebar:
-        tot = st.session_state.workflow_fsm.num_states - 1
-        cur_i = st.session_state.workflow_fsm.current_state_index
-        cur_t = st.session_state.workflow_fsm.current_state
-        st.session_state.disp_progress[0].markdown(f"*Progress: {cur_i}/{tot}. Current: {cur_t}.*")
-        st.session_state.disp_progress[1].progress(cur_i/tot)
-# add progress indicator to session_state
-if "progress" not in st.session_state:
-    with st.sidebar:
-        st.session_state.disp_progress = [st.empty(), st.empty()]
-        # add button to sidebar, with the callback to refesh_progress
-        st.sidebar.button("Refresh Progress", on_click=refresh_progress)
+init_workflow_viz()
 
+    
         
 def dbg_show_obs_hashes():
     # a debug: we seem to be losing the whale classes?
