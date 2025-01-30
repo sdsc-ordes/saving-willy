@@ -117,17 +117,65 @@ class InputObservation:
     def __eq__(self, other):
         # TODO: ensure this covers all the attributes (some have been added?)
         # - except inst_id which is unique
-        return (
-            self.image == other.image and self.latitude == other.latitude and 
+        _image_equality = False
+        if self.image is None or other.image is None:
+            _image_equality = other.image == self.image
+        else: # maybe strong assumption: both are correctly ndarray.. should I test types intead?
+            _image_equality = (self.image == other.image).all()
+        equality = (
+            #self.image == other.image and 
+            _image_equality and
+            self.latitude == other.latitude and 
             self.longitude == other.longitude and 
             self.author_email == other.author_email and
             self.date == other.date and self.time == other.time and 
             self.date_option == other.date_option and
-            self.time_option == other.time_option and 
+            # temporarily skip time_option, it is followed by the clock and that is always differnt 
+            #self.time_option == other.time_option and 
             self.uploaded_filename == other.uploaded_filename and 
-            self.image_md5 == other._image_md5
+            self.image_md5 == other.image_md5
             )
+        return equality
+    
+    # define a function show_diff(other) that shows the differences between two observations
+    # only highlight the differences, if element is the same don't show it
+    # have a summary at the top that shows if the observations are the same or not
+
+    def show_diff(self, other):
+        """Show the differences between two observations"""
+        differences = []
+        if self.image is None or other.image is None:
+            if other.image != self.image:
+                differences.append(f"   Image is different. (types mismatch: {type(self.image)} vs {type(other.image)})")
+        else:
+            if (self.image != other.image).any():
+                cnt = (self.image != other.image).sum()
+                differences.append(f"   Image is different: {cnt} different pixels.")
+        if self.latitude != other.latitude:
+            differences.append(f"   Latitude is different. (self: {self.latitude}, other: {other.latitude})")
+        if self.longitude != other.longitude:
+            differences.append(f"   Longitude is different. (self: {self.longitude}, other: {other.longitude})")
+        if self.author_email != other.author_email:
+            differences.append(f"   Author email is different. (self: {self.author_email}, other: {other.author_email})")
+        if self.date != other.date:
+            differences.append(f"   Date is different. (self: {self.date}, other: {other.date})")
+        if self.time != other.time:
+            differences.append(f"   Time is different. (self: {self.time}, other: {other.time})")
+        if self.date_option != other.date_option:
+            differences.append(f"   Date option is different. (self: {self.date_option}, other: {other.date_option})")
+        if self.time_option != other.time_option:
+            differences.append(f"   Time option is different. (self: {self.time_option}, other: {other.time_option})")
+        if self.uploaded_filename != other.uploaded_filename:
+            differences.append("   Uploaded filename is different.")
+        if self.image_md5 != other.image_md5:
+            differences.append("   Image MD5 hash is different.")
         
+        if differences:
+            print(f"Observations have {len(differences)} differences:")
+            for diff in differences:
+                print(diff)
+        else:
+            print("Observations are the same.")
 
     def __ne__(self, other):
         return not self.__eq__(other)
