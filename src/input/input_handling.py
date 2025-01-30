@@ -248,7 +248,7 @@ def process_files():
     st.session_state.image_filenames = filenames
 
         
-def metadata_inputs_one_file(file:UploadedFile, ukey:str, dbg_ix:int=0) -> InputObservation:
+def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) -> InputObservation:
     # dbg_ix is a hack to have different data in each input group, checking persistence
     
     if st.session_state.container_metadata_inputs is not None:
@@ -262,6 +262,7 @@ def metadata_inputs_one_file(file:UploadedFile, ukey:str, dbg_ix:int=0) -> Input
     author_email = st.session_state["input_author_email"]
     filename = file.name
     image_datetime = get_image_datetime(file)
+    image = st.session_state.images.get(image_hash, None)
     # add the UI elements
     #viewcontainer.title(f"Metadata for {filename}")
     viewcontainer = _viewcontainer.expander(f"Metadata for {file.name}", expanded=True)
@@ -276,7 +277,7 @@ def metadata_inputs_one_file(file:UploadedFile, ukey:str, dbg_ix:int=0) -> Input
     latitude = viewcontainer.text_input(
         "Latitude for " + filename, 
         spoof_metadata.get('latitude', 0) + dbg_ix,
-        key=f"input_latitude_{ukey}")
+        key=f"input_latitude_{image_hash}")
     if latitude and not is_valid_number(latitude):
         viewcontainer.error("Please enter a valid latitude (numerical only).")
         m_logger.error(f"Invalid latitude entered: {latitude}.")
@@ -284,7 +285,7 @@ def metadata_inputs_one_file(file:UploadedFile, ukey:str, dbg_ix:int=0) -> Input
     longitude = viewcontainer.text_input(
         "Longitude for " + filename, 
         spoof_metadata.get('longitude', ""),
-        key=f"input_longitude_{ukey}")
+        key=f"input_longitude_{image_hash}")
     if longitude and not is_valid_number(longitude):
         viewcontainer.error("Please enter a valid longitude (numerical only).")
         m_logger.error(f"Invalid latitude entered: {latitude}.")
@@ -299,13 +300,13 @@ def metadata_inputs_one_file(file:UploadedFile, ukey:str, dbg_ix:int=0) -> Input
         date_value = datetime.datetime.now().date()
 
     ## if not, give user the option to enter manually
-    date_option = viewcontainer.date_input("Date for "+filename, value=date_value, key=f"input_date_{ukey}")
-    time_option = viewcontainer.time_input("Time for "+filename, time_value, key=f"input_time_{ukey}")
+    date_option = viewcontainer.date_input("Date for "+filename, value=date_value, key=f"input_date_{image_hash}")
+    time_option = viewcontainer.time_input("Time for "+filename, time_value, key=f"input_time_{image_hash}")
 
-    observation = InputObservation(image=file, latitude=latitude, longitude=longitude,
+    observation = InputObservation(image=image, latitude=latitude, longitude=longitude,
                                 author_email=author_email, date=image_datetime, time=None,
                                 date_option=date_option, time_option=time_option,
-                                uploaded_filename=file,
+                                uploaded_filename=file, image_md5=image_hash
                                 )
 
     # TODO: pass in the hash to InputObservation, so it is done once only. (need to refactor the class a bit)
@@ -330,7 +331,15 @@ def _setup_dynamic_inputs() -> None:
     for ix, file in enumerate(uploaded_files):
         hash = hashes[ix]
         observation = metadata_inputs_one_file(file, hash, ix)
-        observations[hash] = observation
+        old_obs = st.session_state.observations.get(hash, None)
+        if old_obs is not None:
+            if old_obs == observation:
+                observations[hash] = old_obs
+            else:
+                observations[hash] = observation
+                observation.show_diff(old_obs)
+        else:
+            observations[hash] = observation
         
     st.session_state.observations = observations
 
