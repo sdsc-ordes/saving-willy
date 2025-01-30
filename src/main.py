@@ -17,6 +17,8 @@ disable_caching()
 import whale_gallery as gallery
 import whale_viewer as viewer
 from input.input_handling import setup_input, check_inputs_are_set
+from input.input_handling import init_input_container_states, add_input_UI_elements
+
 from maps.alps_map import present_alps_map
 from maps.obs_map import present_obs_map
 from utils.st_logs import setup_logging, parse_log_buffer
@@ -82,14 +84,7 @@ if "workflow_fsm" not in st.session_state:
     # create and init the state machine
     st.session_state.workflow_fsm = WorkflowFSM(FSM_STATES)
     
-if "container_per_file_input_elems" not in st.session_state:
-    st.session_state.container_per_file_input_elems = None
-
-if "container_file_uploader" not in st.session_state:
-    st.session_state.container_file_uploader = None
-
-if "container_metadata_inputs" not in st.session_state:
-    st.session_state.container_metadata_inputs = None
+init_input_container_states()
     
 def refresh_progress():
     with st.sidebar:
@@ -157,16 +152,9 @@ def main() -> None:
 
     # create a sidebar, and parse all the input (returned as `observations` object)
     with st.sidebar:
-        st.divider()
-        
-        st.markdown('<style>.st-key-container_file_uploader_id { border: 1px solid skyblue; border-radius: 5px; }</style>', unsafe_allow_html=True)
-        container_file_uploader = st.container(border=True, key="container_file_uploader_id")
-        st.session_state.container_file_uploader = container_file_uploader
-        st.markdown('<style>.st-key-container_metadata_inputs_id { border: 1px solid lightgreen; border-radius: 5px; }</style>', unsafe_allow_html=True)
-        container_metadata_inputs = st.container(border=True, key="container_metadata_inputs_id")
-        container_metadata_inputs.write("Metadata Inputs... wait for file upload ")
-        st.session_state.container_metadata_inputs = container_metadata_inputs
-
+        # layout handling
+        add_input_UI_elements()
+        # input elements (file upload, text input, etc)
         setup_input()
 
         
