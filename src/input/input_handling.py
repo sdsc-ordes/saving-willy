@@ -26,7 +26,7 @@ allowed_image_types = ['jpg', 'jpeg', 'png', 'webp']
 # an arbitrary set of defaults so testing is less painful...
 # ideally we add in some randomization to the defaults
 spoof_metadata = {
-    "latitude": 23.5,
+    "latitude": 0.5,
     "longitude": 44,
     "author_email": "super@whale.org",
     "date": None,
@@ -90,13 +90,20 @@ def check_inputs_are_set(empty_ok:bool=False, debug:bool=False) -> bool:
     return all([v is not None for v in vals])
 
 
-def process_one_file(file:UploadedFile) -> Tuple[np.ndarray, str, str, InputObservation]:
+def process_one_file(file:UploadedFile, ix:int=0) -> Tuple[np.ndarray, str, str, InputObservation]:
     # do all the non-UI calcs
     # add the UI elements
     # and in-line, do processing/validation of the inputs
     # - how to deal with the gathered data? a) push into session state, b) return all the elements needed?
     
-    viewcontainer = st.sidebar
+    #viewcontainer = st.sidebarif st.session_state.container_per_file_input_elems is None:
+    if st.session_state.container_metadata_inputs is not None:
+        viewcontainer = st.session_state.container_metadata_inputs
+    else:
+        viewcontainer = st.sidebar
+        msg = f"[W] `container_metadata_inputs` is None, using sidebar"
+        m_logger.warning(msg) ; print(msg)
+        
 
     # do all the non-UI calcs first
     ## get the bytes first, then convert into 1) image, 2) md5
@@ -118,7 +125,7 @@ def process_one_file(file:UploadedFile) -> Tuple[np.ndarray, str, str, InputObse
     # 3. Latitude Entry Box
     latitude = viewcontainer.text_input(
         "Latitude for " + filename, 
-        #spoof_metadata.get('latitude', ""),
+        spoof_metadata.get('latitude', 0) + ix,
         key=f"input_latitude_{ukey}")
     if latitude and not is_valid_number(latitude):
         viewcontainer.error("Please enter a valid latitude (numerical only).")
@@ -142,8 +149,8 @@ def process_one_file(file:UploadedFile) -> Tuple[np.ndarray, str, str, InputObse
         date_value = datetime.datetime.now().date()
 
     ## if not, give user the option to enter manually
-    date_option = st.sidebar.date_input("Date for "+filename, value=date_value, key=f"input_date_{ukey}")
-    time_option = st.sidebar.time_input("Time for "+filename, time_value, key=f"input_time_{ukey}")
+    date_option = viewcontainer.date_input("Date for "+filename, value=date_value, key=f"input_date_{ukey}")
+    time_option = viewcontainer.time_input("Time for "+filename, time_value, key=f"input_time_{ukey}")
 
     observation = InputObservation(image=file, latitude=latitude, longitude=longitude,
                                 author_email=author_email, date=image_datetime, time=None,
@@ -161,11 +168,50 @@ def process_one_file(file:UploadedFile) -> Tuple[np.ndarray, str, str, InputObse
     return the_data
 
 
+def buffer_files():
+    # buffer info from the file_uploader that doesn't require further user input
+    # - the image, the hash, the filename
+    # a separate function takes care of per-file user inputs for metadata
+    # - this is necessary because dynamically producing more widgets should be
+    #   avoided inside callbacks (tl;dr: they dissapear)
+    
+    # - note that the UploadedFile objects have file_ids, which are unique to each file
+    #   - these file_ids are not persistent between sessions, seem to just be random identifiers. 
+    
+
+    # get files from state 
+    uploaded_files = st.session_state.file_uploader_data
+    
+    filenames = []
+    images = {}
+    image_hashes = []
+    
+    for ix, file in enumerate(uploaded_files):
+        filename:str = file.name
+        print(f"[D] processing {ix}th file {filename}. {file.file_id} {file.type} {file.size}")
+        # image to np and hash both require reading the file so do together
+        image, image_hash = load_file_and_hash(file)
+        
+        filenames.append(filename)
+        image_hashes.append(image_hash)
+
+        images[image_hash] = image
+        
+    st.session_state.images = images
+    st.session_state.files = uploaded_files
+    st.session_state.image_hashes = image_hashes
+    st.session_state.image_filenames = filenames
 
     
-    # 
-
+def load_file_and_hash(file:UploadedFile) -> Tuple[np.ndarray, str]:
+    # two operations that require reading the file done together for efficiency
+    # load the file, compute the hash, return the image and hash
+    _bytes = file.read()
+    image_hash = hashlib.md5(_bytes).hexdigest()
+    image: np.ndarray = cv2.imdecode(np.asarray(bytearray(_bytes), dtype=np.uint8), 1)
     
+    return (image, image_hash)
+
     
 
 def process_files():
@@ -184,8 +230,9 @@ def process_files():
     image_hashes = []
     filenames = []
     
-    for file in uploaded_files:
-        (image, image_hash, filename, observation) = process_one_file(file)
+    for ix, file in enumerate(uploaded_files):
+        print(f"[D] processing file {file.name}. {file.file_id} {file.type} {file.size}")
+        (image, image_hash, filename, observation) = process_one_file(file, ix)
         # big old debug because of pain.
         
         filenames.append(filename)
@@ -201,9 +248,91 @@ def process_files():
     st.session_state.image_filenames = filenames
 
         
+def metadata_inputs_one_file(file:UploadedFile, ukey:str, dbg_ix:int=0) -> InputObservation:
+    # dbg_ix is a hack to have different data in each input group, checking persistence
+    
+    if st.session_state.container_metadata_inputs is not None:
+        _viewcontainer = st.session_state.container_metadata_inputs
+    else:
+        _viewcontainer = st.sidebar
+        print(f"[W] `container_metadata_inputs` is None, using sidebar")
+        
+
+
+    author_email = st.session_state["input_author_email"]
+    filename = file.name
+    image_datetime = get_image_datetime(file)
+    # add the UI elements
+    #viewcontainer.title(f"Metadata for {filename}")
+    viewcontainer = _viewcontainer.expander(f"Metadata for {file.name}", expanded=True)
+
+    # TODO: use session state so any changes are persisted within session -- currently I think
+    # we are going to take the defaults over and over again -- if the user adjusts coords, or date, it will get lost
+    # - it is a bit complicated, if no values change, they persist (the widget definition: params, name, key, etc)
+    #   even if the code is re-run. but if the value changes, it is lost.
     
 
+    # 3. Latitude Entry Box
+    latitude = viewcontainer.text_input(
+        "Latitude for " + filename, 
+        spoof_metadata.get('latitude', 0) + dbg_ix,
+        key=f"input_latitude_{ukey}")
+    if latitude and not is_valid_number(latitude):
+        viewcontainer.error("Please enter a valid latitude (numerical only).")
+        m_logger.error(f"Invalid latitude entered: {latitude}.")
+    # 4. Longitude Entry Box
+    longitude = viewcontainer.text_input(
+        "Longitude for " + filename, 
+        spoof_metadata.get('longitude', ""),
+        key=f"input_longitude_{ukey}")
+    if longitude and not is_valid_number(longitude):
+        viewcontainer.error("Please enter a valid longitude (numerical only).")
+        m_logger.error(f"Invalid latitude entered: {latitude}.")
 
+    # 5. Date/time
+    ## first from image metadata
+    if image_datetime is not None:
+        time_value = datetime.datetime.strptime(image_datetime, '%Y:%m:%d %H:%M:%S').time()
+        date_value = datetime.datetime.strptime(image_datetime, '%Y:%m:%d %H:%M:%S').date()
+    else:
+        time_value = datetime.datetime.now().time()  # Default to current time
+        date_value = datetime.datetime.now().date()
+
+    ## if not, give user the option to enter manually
+    date_option = viewcontainer.date_input("Date for "+filename, value=date_value, key=f"input_date_{ukey}")
+    time_option = viewcontainer.time_input("Time for "+filename, time_value, key=f"input_time_{ukey}")
+
+    observation = InputObservation(image=file, latitude=latitude, longitude=longitude,
+                                author_email=author_email, date=image_datetime, time=None,
+                                date_option=date_option, time_option=time_option,
+                                uploaded_filename=file,
+                                )
+
+    # TODO: pass in the hash to InputObservation, so it is done once only. (need to refactor the class a bit)
+    return observation
+    
+
+    
+def _setup_dynamic_inputs() -> None:
+
+    # for each file uploaded,
+    # - add the UI elements for the metadata
+    # - validate the data
+    # end of cycle should have observation objects set for each file.
+    # - and these go into session state
+    
+    # load the files from the session state
+    uploaded_files = st.session_state.files
+    hashes = st.session_state.image_hashes
+    #images = st.session_state.images
+    observations = {}
+    
+    for ix, file in enumerate(uploaded_files):
+        hash = hashes[ix]
+        observation = metadata_inputs_one_file(file, hash, ix)
+        observations[hash] = observation
+        
+    st.session_state.observations = observations
 
 
 def _setup_oneoff_inputs() -> None:
@@ -211,22 +340,47 @@ def _setup_oneoff_inputs() -> None:
     Add the UI input elements for which we have one each
     
     '''
-    viewcontainer = st.sidebar
-    viewcontainer.title("Input image and data")
+    st.title("Input image and data")
 
-    # 1. Input the author email 
-    author_email = viewcontainer.text_input("Author Email", spoof_metadata.get('author_email', ""),
-                                            key="input_author_email")
-    if author_email and not is_valid_email(author_email):   
-        viewcontainer.error("Please enter a valid email address.")
+    # setup containers for consistent layout order with dynamic elements
+    #container_file_uploader = st.container(border=False, key="container_file_uploader")
+    container_file_uploader = st.session_state.container_file_uploader 
+    # - a container for the dynamic input elements (this one matters)
+    #if "container_per_file_input_elems" not in st.session_state:
+    # if st.session_state.container_per_file_input_elems is None:
+    #     #st.session_state.container_per_file_input_elems = None
+    #     c = st.container(border=True, key="container_per_file_input_elems")
+    #     with c:
+    #         st.write("No files uploaded yet.")
+    #     print(f"[D] initialised the container..... {id(c)} | {c=}")
+    #     st.session_state.container_per_file_input_elems = c
+    # else:
+    #     print(f"[D] already present, don't redo... {id(st.session_state.container_per_file_input_elems)} | {st.session_state.container_per_file_input_elems=}")
+        
 
-    # 2. Image Selector
-    #uploaded_files = viewcontainer.file_uploader("Upload an image", type=allowed_image_types, accept_multiple_files=True)
+    with container_file_uploader:
+        # 1. Input the author email 
+        author_email = st.text_input("Author Email", spoof_metadata.get('author_email', ""),
+                                                key="input_author_email")
+        if author_email and not is_valid_email(author_email):   
+            st.error("Please enter a valid email address.")
 
-    st.file_uploader("Upload one or more images", type=["png", 'jpg', 'jpeg', 'webp'],
-                                    accept_multiple_files=True, 
-                                    key="file_uploader_data", 
-                                    on_change=process_files)
+        # 2. Image Selector
+        st.file_uploader("Upload one or more images", type=["png", 'jpg', 'jpeg', 'webp'],
+                                        accept_multiple_files=True, 
+                                        key="file_uploader_data", 
+                                        #on_change=process_files)
+                                        on_change=buffer_files)
+    if 1:
+
+        uploaded_files = st.session_state.file_uploader_data
+    
+        for ix, file in enumerate(uploaded_files):
+            print(f"[DD] rechecking file {file.name}. {file.file_id} {file.type} {file.size}")
+            pass
+                                        
+                                    
+                                    
     
 
         
@@ -239,6 +393,11 @@ def setup_input(
     '''
     _setup_oneoff_inputs()
     # amazingly we just have to add the uploader and its callback, and the rest is dynamic.
+    # or not... the situation is more complex :( 
+    
+    # setup dynamic UI input elements, based on the data that is buffered in session_state
+    _setup_dynamic_inputs()
+    
     
 
 def setup_input_monolithic(
