@@ -90,84 +90,6 @@ def check_inputs_are_set(empty_ok:bool=False, debug:bool=False) -> bool:
     return all([v is not None for v in vals])
 
 
-def process_one_file(file:UploadedFile, ix:int=0) -> Tuple[np.ndarray, str, str, InputObservation]:
-    # do all the non-UI calcs
-    # add the UI elements
-    # and in-line, do processing/validation of the inputs
-    # - how to deal with the gathered data? a) push into session state, b) return all the elements needed?
-    
-    #viewcontainer = st.sidebarif st.session_state.container_per_file_input_elems is None:
-    if st.session_state.container_metadata_inputs is not None:
-        viewcontainer = st.session_state.container_metadata_inputs
-    else:
-        viewcontainer = st.sidebar
-        msg = f"[W] `container_metadata_inputs` is None, using sidebar"
-        m_logger.warning(msg) ; print(msg)
-        
-
-    # do all the non-UI calcs first
-    ## get the bytes first, then convert into 1) image, 2) md5
-    _bytes = file.read()
-    image_hash = hashlib.md5(_bytes).hexdigest()
-    #file_bytes = np.asarray(bytearray(_bytes), dtype=np.uint8)
-    image: np.ndarray = cv2.imdecode(np.asarray(bytearray(_bytes), dtype=np.uint8), 1)
-    filename:str = file.name 
-    image_datetime = get_image_datetime(file)
-    m_logger.debug(f"image date extracted as {image_datetime} (from {file})")
-
-    author_email = st.session_state["input_author_email"]
-    
-
-    # add the UI elements
-    viewcontainer.title(f"Metadata for {filename}")
-    ukey = image_hash
-
-    # 3. Latitude Entry Box
-    latitude = viewcontainer.text_input(
-        "Latitude for " + filename, 
-        spoof_metadata.get('latitude', 0) + ix,
-        key=f"input_latitude_{ukey}")
-    if latitude and not is_valid_number(latitude):
-        viewcontainer.error("Please enter a valid latitude (numerical only).")
-        m_logger.error(f"Invalid latitude entered: {latitude}.")
-    # 4. Longitude Entry Box
-    longitude = viewcontainer.text_input(
-        "Longitude for " + filename, 
-        spoof_metadata.get('longitude', ""),
-        key=f"input_longitude_{ukey}")
-    if longitude and not is_valid_number(longitude):
-        viewcontainer.error("Please enter a valid longitude (numerical only).")
-        m_logger.error(f"Invalid latitude entered: {latitude}.")
-
-    # 5. Date/time
-    ## first from image metadata
-    if image_datetime is not None:
-        time_value = datetime.datetime.strptime(image_datetime, '%Y:%m:%d %H:%M:%S').time()
-        date_value = datetime.datetime.strptime(image_datetime, '%Y:%m:%d %H:%M:%S').date()
-    else:
-        time_value = datetime.datetime.now().time()  # Default to current time
-        date_value = datetime.datetime.now().date()
-
-    ## if not, give user the option to enter manually
-    date_option = viewcontainer.date_input("Date for "+filename, value=date_value, key=f"input_date_{ukey}")
-    time_option = viewcontainer.time_input("Time for "+filename, time_value, key=f"input_time_{ukey}")
-
-    observation = InputObservation(image=file, latitude=latitude, longitude=longitude,
-                                author_email=author_email, date=image_datetime, time=None,
-                                date_option=date_option, time_option=time_option,
-                                uploaded_file=file,
-                                )
-
-    #the_data = [] \
-    #    + [image, file, image_hash, filename, ] \
-    #    + [latitude, longitude, date_option, time_option]
-    # TODO: pass in the hash to InputObservation, so it is done once only. (need to refactor the class a bit)
-    
-    the_data = (image, image_hash, filename, observation)
-    
-    return the_data
-
-
 def buffer_files():
     # buffer info from the file_uploader that doesn't require further user input
     # - the image, the hash, the filename
@@ -213,40 +135,6 @@ def load_file_and_hash(file:UploadedFile) -> Tuple[np.ndarray, str]:
     return (image, image_hash)
 
     
-
-def process_files():
-    # this is triggered whenever the uploaded files are changed.
-    
-    # process one file: add UI elements, and process the inputs
-    # generate an observation from the return info
-    # finally, put all the relevant stuff into the session state
-    # - note: here we overwrite the session state, we aren't extending it. 
-
-    # get files from state
-    uploaded_files = st.session_state.file_uploader_data
-    
-    observations = {}
-    images = {}
-    image_hashes = []
-    filenames = []
-    
-    for ix, file in enumerate(uploaded_files):
-        print(f"[D] processing file {file.name}. {file.file_id} {file.type} {file.size}")
-        (image, image_hash, filename, observation) = process_one_file(file, ix)
-        # big old debug because of pain.
-        
-        filenames.append(filename)
-        image_hashes.append(image_hash)
-
-        observations[image_hash] = observation
-        images[image_hash] = image
-        
-    st.session_state.images = images
-    st.session_state.files = uploaded_files
-    st.session_state.observations = observations
-    st.session_state.image_hashes = image_hashes
-    st.session_state.image_filenames = filenames
-
         
 def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) -> InputObservation:
     # dbg_ix is a hack to have different data in each input group, checking persistence
@@ -334,11 +222,14 @@ def _setup_dynamic_inputs() -> None:
         old_obs = st.session_state.observations.get(hash, None)
         if old_obs is not None:
             if old_obs == observation:
+                m_logger.debug(f"[D] {ix}th observation is the same as before. retaining")
                 observations[hash] = old_obs
             else:
+                m_logger.debug(f"[D] {ix}th observation is different from before. updating")
                 observations[hash] = observation
                 observation.show_diff(old_obs)
         else:
+            m_logger.debug(f"[D] {ix}th observation is new (image_hash not seen before). Storing")
             observations[hash] = observation
         
     st.session_state.observations = observations
@@ -378,7 +269,6 @@ def _setup_oneoff_inputs() -> None:
         st.file_uploader("Upload one or more images", type=["png", 'jpg', 'jpeg', 'webp'],
                                         accept_multiple_files=True, 
                                         key="file_uploader_data", 
-                                        #on_change=process_files)
                                         on_change=buffer_files)
     if 1:
 
@@ -393,118 +283,23 @@ def _setup_oneoff_inputs() -> None:
     
 
         
-def setup_input(
-    viewcontainer: DeltaGenerator=None,
-    _allowed_image_types: list=None, ) -> None:
+def setup_input() -> None:
     '''
-    Set up the input handling for the whale observation guidance tool
+    Set up the user input handling (files and metadata) 
+
+    It provides input fields for an image upload, and author email.
+    Then for each uploaded image, 
+    - it provides input fields for lat/lon, date-time.
+    - In the ideal case, the image metadata will be used to populate location and datetime.
+
+    Data is stored in the Streamlit session state for downstream processing,
+    nothing is returned
     
     '''
+    # configure the author email and file_uploader (with callback to buffer files)
     _setup_oneoff_inputs()
-    # amazingly we just have to add the uploader and its callback, and the rest is dynamic.
-    # or not... the situation is more complex :( 
     
     # setup dynamic UI input elements, based on the data that is buffered in session_state
     _setup_dynamic_inputs()
     
     
-
-def setup_input_monolithic(
-    viewcontainer: DeltaGenerator=None,
-    _allowed_image_types: list=None, ) -> InputObservation:
-    """
-    Sets up the input interface for uploading an image and entering metadata.
-
-    It provides input fields for an image upload, lat/lon, author email, and date-time. 
-    In the ideal case, the image metadata will be used to populate location and datetime.
-
-    Parameters:
-        viewcontainer (DeltaGenerator, optional): The Streamlit container to use for the input interface. Defaults to st.sidebar.
-        _allowed_image_types (list, optional): List of allowed image file types for upload. Defaults to allowed_image_types.
-
-    Returns:
-        InputObservation: An object containing the uploaded image and entered metadata.
-
-    """
-                
-    if viewcontainer is None:
-        viewcontainer = st.sidebar
-        
-    if _allowed_image_types is None:
-        _allowed_image_types = allowed_image_types
-    
-
-    viewcontainer.title("Input image and data")
-
-    # 1. Input the author email 
-    author_email = viewcontainer.text_input("Author Email", spoof_metadata.get('author_email', ""))
-    if author_email and not is_valid_email(author_email):   
-        viewcontainer.error("Please enter a valid email address.")
-
-    # 2. Image Selector
-    uploaded_files = viewcontainer.file_uploader("Upload an image", type=allowed_image_types, accept_multiple_files=True)
-    observations = {}
-    images = {}
-    image_hashes = []
-    filenames = []
-    if uploaded_files is not None:
-        for file in uploaded_files:
-
-            viewcontainer.title(f"Metadata for {file.name}")
-
-            # Display the uploaded image
-            # load image using cv2 format, so it is compatible with the ML models
-            file_bytes = np.asarray(bytearray(file.read()), dtype=np.uint8)
-            filename = file.name
-            filenames.append(filename) 
-            image = cv2.imdecode(file_bytes, 1)
-            # Extract and display image date-time
-            image_datetime = None  # For storing date-time from image
-            image_datetime = get_image_datetime(file)
-            m_logger.debug(f"image date extracted as {image_datetime} (from {uploaded_files})")
-        
-
-            # 3. Latitude Entry Box
-            latitude = viewcontainer.text_input(
-                "Latitude for "+filename, 
-                spoof_metadata.get('latitude', ""),
-                key=f"input_latitude_{filename}")
-            if latitude and not is_valid_number(latitude):
-                viewcontainer.error("Please enter a valid latitude (numerical only).")
-                m_logger.error(f"Invalid latitude entered: {latitude}.")
-            # 4. Longitude Entry Box
-            longitude = viewcontainer.text_input(
-                "Longitude for "+filename, 
-                spoof_metadata.get('longitude', ""),
-                key=f"input_longitude_{filename}")
-            if longitude and not is_valid_number(longitude):
-                viewcontainer.error("Please enter a valid longitude (numerical only).")
-                m_logger.error(f"Invalid latitude entered: {latitude}.")
-            # 5. Date/time
-            ## first from image metadata
-            if image_datetime is not None:
-                time_value = datetime.datetime.strptime(image_datetime, '%Y:%m:%d %H:%M:%S').time()
-                date_value = datetime.datetime.strptime(image_datetime, '%Y:%m:%d %H:%M:%S').date()
-            else:
-                time_value = datetime.datetime.now().time()  # Default to current time
-                date_value = datetime.datetime.now().date()
-
-            ## if not, give user the option to enter manually
-            date_option = st.sidebar.date_input("Date for "+filename, value=date_value)
-            time_option = st.sidebar.time_input("Time for "+filename, time_value)
-
-            observation = InputObservation(image=file, latitude=latitude, longitude=longitude, 
-                                        author_email=author_email, date=image_datetime, time=None, 
-                                        date_option=date_option, time_option=time_option)
-            image_hash = observation.to_dict()["image_md5"]
-            observations[image_hash] = observation
-            images[image_hash] = image
-            image_hashes.append(image_hash)
-    
-    st.session_state.images = images
-    st.session_state.files = uploaded_files
-    st.session_state.observations = observations
-    st.session_state.image_hashes = image_hashes
-    st.session_state.image_filenames = filenames
-
-

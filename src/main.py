@@ -113,8 +113,9 @@ def dbg_show_obs_hashes():
     for hash in st.session_state.observations.keys():
         obs = st.session_state.observations[hash]
         s += f"- [D] observation {hash} ({obs._inst_id}) has {len(obs.top_predictions)} predictions\n"
+        #s += f"   - {repr(obs)}\n" # check the str / repr method
         
-        #st.markdown(f"- [D] observation {hash} has {len(st.session_state.observations[hash].top_predictions)} predictions")
+        #print(obs)
     
     st.markdown(s)
 
@@ -166,7 +167,7 @@ def main() -> None:
         container_metadata_inputs.write("Metadata Inputs... wait for file upload ")
         st.session_state.container_metadata_inputs = container_metadata_inputs
 
-        setup_input(viewcontainer=st.sidebar)
+        setup_input()
 
         
     if 0:## WIP
