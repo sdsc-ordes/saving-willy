@@ -1,14 +1,82 @@
-from streamlit.delta_generator import DeltaGenerator
-import streamlit as st
-from huggingface_hub import HfApi
+import os 
 import json
 import tempfile
 import logging
+
+from streamlit.delta_generator import DeltaGenerator
+import streamlit as st
+from huggingface_hub import HfApi, CommitInfo
+
 
 # get a global var for logger accessor in this module
 LOG_LEVEL = logging.DEBUG
 g_logger = logging.getLogger(__name__)
 g_logger.setLevel(LOG_LEVEL)
+
+def push_observation(image_hash:str, api:HfApi) -> CommitInfo:
+    '''
+    push one observation to the Hugging Face dataset
+    
+    '''
+    # get the observation
+    observation = st.session_state.public_observations.get(image_hash)
+    if observation is None:
+        msg = f"Could not find observation with hash {image_hash}"
+        g_logger.error(msg)
+        st.error(msg)
+        return None
+    
+    # convert to json
+    metadata_str = json.dumps(observation) # doesn't work yet, TODO
+    
+    st.toast(f"Uploading observation: {metadata_str}", icon="🦭")
+    tab_log = st.session_state.tab_log
+    if tab_log is not None:
+        tab_log.info(f"Uploading observation: {metadata_str}")
+        
+    # write to temp file so we can send it (why is this not using context mgr?)
+    f = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False)
+    f.write(metadata_str)
+    f.close()
+    st.info(f"temp file: {f.name} with metadata written...")
+
+    # observation['author_email']
+    # observation['image_md5']
+    path_in_repo = f"metadata/{observation['author_email']}/{observation['image_md5']}.json"
+    
+    msg = f"fname: {f.name} | path: {path_in_repo}"
+    print(msg)
+    st.warning(msg)
+    rv = None # temp don't send anything
+    # rv = api.upload_file(
+    #     path_or_fileobj=f.name,
+    #     path_in_repo=path_in_repo,
+    #     repo_id="Saving-Willy/temp_dataset",
+    #     repo_type="dataset",
+    # )
+    # print(rv)
+    # msg = f"observation attempted tx to repo happy walrus: {rv}"
+    g_logger.info(msg)
+    st.info(msg)
+
+    return rv
+
+    
+
+def push_all_observations():
+    '''
+    open an API connection to Hugging Face, and push all observation one by one
+    '''
+    
+    # get huggingface api
+    token = os.environ.get("HF_TOKEN", None)
+    api = HfApi(token=token)
+
+    # iterate over the list of observations
+    for hash in st.session_state.public_observations.keys():
+        rv = push_observation(hash, api)
+
+    
 
 def push_observations(tab_log:DeltaGenerator=None):
     """
@@ -30,7 +98,6 @@ def push_observations(tab_log:DeltaGenerator=None):
         tab_log.info(f"Uploading observations: {metadata_str}")
         
     # get huggingface api
-    import os 
     token = os.environ.get("HF_TOKEN", None)
     api = HfApi(token=token)
 
