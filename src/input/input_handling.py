@@ -11,7 +11,7 @@ import cv2
 import numpy as np
 
 from input.input_observation import InputObservation
-from input.input_validator import get_image_datetime, is_valid_email, is_valid_number
+from input.input_validator import get_image_datetime, is_valid_email, is_valid_number, get_image_latlon
 
 m_logger = logging.getLogger(__name__)
 m_logger.setLevel(logging.INFO)
@@ -185,6 +185,16 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     author_email = st.session_state["input_author_email"]
     filename = file.name
     image_datetime = get_image_datetime(file)
+    latitude0, longitude0 = get_image_latlon(file)
+    msg = f"[D] {filename}: lat, lon from image metadata: {latitude0}, {longitude0}"
+    m_logger.debug(msg)
+    
+    if latitude0 is None:
+        # get it from the default dict
+        latitude0 = spoof_metadata.get('latitude', 0) + dbg_ix
+    if longitude0 is None:
+        longitude0 = spoof_metadata.get('longitude', 0) - dbg_ix
+        
     image = st.session_state.images.get(image_hash, None)
     # add the UI elements
     #viewcontainer.title(f"Metadata for {filename}")
@@ -199,7 +209,7 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     # 3. Latitude Entry Box
     latitude = viewcontainer.text_input(
         "Latitude for " + filename, 
-        spoof_metadata.get('latitude', 0) + dbg_ix,
+        latitude0,
         key=f"input_latitude_{image_hash}")
     if latitude and not is_valid_number(latitude):
         viewcontainer.error("Please enter a valid latitude (numerical only).")
@@ -207,7 +217,7 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     # 4. Longitude Entry Box
     longitude = viewcontainer.text_input(
         "Longitude for " + filename, 
-        spoof_metadata.get('longitude', ""),
+        longitude0,
         key=f"input_longitude_{image_hash}")
     if longitude and not is_valid_number(longitude):
         viewcontainer.error("Please enter a valid longitude (numerical only).")
