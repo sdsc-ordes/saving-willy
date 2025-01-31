@@ -92,13 +92,7 @@ class InputObservation:
         raise DeprecationWarning("This method is deprecated. hash is a required constructor argument.")
         if not self.image_md5:
             self.image_md5 = hashlib.md5(self.uploaded_file.read()).hexdigest() if self.uploaded_file else generate_random_md5()
-
-			# new comment / hybj hunk
-            self._cprint(f"[D] Assigned image md5: {self.image_md5} for {self.uploaded_file}")
-
-    def _cprint(self, msg:str, color:str=OKGREEN):
-        """Print colored message"""
-        print(f"{color}{msg}{ENDC}")
+            m_logger.debug(f"[D] Assigned image md5: {self.image_md5} for {self.uploaded_file}")
 
     def __str__(self):
         _im_str = "None" if self.image is None else f"image dims: {self.image.shape}"

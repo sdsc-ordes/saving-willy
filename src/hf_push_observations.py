@@ -13,7 +13,7 @@ LOG_LEVEL = logging.DEBUG
 g_logger = logging.getLogger(__name__)
 g_logger.setLevel(LOG_LEVEL)
 
-def push_observation(image_hash:str, api:HfApi) -> CommitInfo:
+def push_observation(image_hash:str, api:HfApi, enable_push:False) -> CommitInfo:
     '''
     push one observation to the Hugging Face dataset
     
@@ -38,32 +38,33 @@ def push_observation(image_hash:str, api:HfApi) -> CommitInfo:
     f = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False)
     f.write(metadata_str)
     f.close()
-    st.info(f"temp file: {f.name} with metadata written...")
+    #st.info(f"temp file: {f.name} with metadata written...")
 
-    # observation['author_email']
-    # observation['image_md5']
     path_in_repo = f"metadata/{observation['author_email']}/{observation['image_md5']}.json"
     
     msg = f"fname: {f.name} | path: {path_in_repo}"
     print(msg)
     st.warning(msg)
-    rv = None # temp don't send anything
-    # rv = api.upload_file(
-    #     path_or_fileobj=f.name,
-    #     path_in_repo=path_in_repo,
-    #     repo_id="Saving-Willy/temp_dataset",
-    #     repo_type="dataset",
-    # )
-    # print(rv)
-    # msg = f"observation attempted tx to repo happy walrus: {rv}"
-    g_logger.info(msg)
-    st.info(msg)
+
+    if enable_push:
+        rv = api.upload_file(
+            path_or_fileobj=f.name,
+            path_in_repo=path_in_repo,
+            repo_id="Saving-Willy/temp_dataset",
+            repo_type="dataset",
+        )
+        print(rv)
+        msg = f"observation attempted tx to repo happy walrus: {rv}"
+        g_logger.info(msg)
+        st.info(msg)
+    else:
+        rv = None # temp don't send anything
 
     return rv
 
     
 
-def push_all_observations():
+def push_all_observations(enable_push:bool=False):
     '''
     open an API connection to Hugging Face, and push all observation one by one
     '''
@@ -74,7 +75,7 @@ def push_all_observations():
 
     # iterate over the list of observations
     for hash in st.session_state.public_observations.keys():
-        rv = push_observation(hash, api)
+        rv = push_observation(hash, api, enable_push=enable_push)
 
     
 

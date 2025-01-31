@@ -39,9 +39,10 @@ def cetacean_just_classify(cetacean_classifier):
         msg = f"[D]2 classify_whale_done for {hash}: {st.session_state.classify_whale_done[hash]}, whale_prediction1: {st.session_state.whale_prediction1[hash]}"
         g_logger.info(msg)
 
-        # TODO: what is the difference between public and regular; and why is this not array-ready?
+        # store the elements of the observation that will be transmitted (not image)
         st.session_state.public_observations[hash] = observation
-        st.write(f"*[D] Observation {hash} classified as {st.session_state.whale_prediction1[hash]}*")
+        if st.session_state.MODE_DEV_STATEFUL:
+            st.write(f"*[D] Observation {hash} classified as {st.session_state.whale_prediction1[hash]}*")
        
         
 # func to show results and allow review
@@ -70,7 +71,7 @@ def cetacean_show_results_and_review():
             else:
                 pred1 = st.session_state.whale_prediction1[hash]
                 # get index of pred1 from WHALE_CLASSES, none if not present
-                print(f"[D] pred1: {pred1}")
+                print(f"[D] {o:3} pred1: {pred1:30} | {hash}")
                 ix = viewer.WHALE_CLASSES.index(pred1) if pred1 in viewer.WHALE_CLASSES else None
                 selected_class = st.selectbox(f"Species for observation {str(o)}", viewer.WHALE_CLASSES, index=ix)
             
@@ -79,7 +80,7 @@ def cetacean_show_results_and_review():
                 observation['class_overriden'] = selected_class # TODO: this should be boolean!
             
             st.session_state.public_observations[hash] = observation
-            st.button(f"Upload observation {str(o)} to THE INTERNET!", on_click=push_observations)
+            #st.button(f"Upload observation {str(o)} to THE INTERNET!", on_click=push_observations)
             # TODO: the metadata only fills properly if `validate` was clicked.
             st.markdown(metadata2md(hash))
 
@@ -91,7 +92,7 @@ def cetacean_show_results_and_review():
             whale_classes = observations[hash].top_predictions
             # render images for the top 3 (that is what the model api returns)
             n = len(whale_classes)
-            st.markdown(f"Top {n} Predictions for observation {str(o)}")
+            st.markdown(f"**Top {n} Predictions for observation {str(o)}**")
             for i in range(n):
                 viewer.display_whale(whale_classes, i)
         o += 1
@@ -134,9 +135,14 @@ def cetacean_show_results():
             #     observation['class_overriden'] = selected_class # TODO: this should be boolean!
             
             # st.session_state.public_observation = observation
-            st.button(f"Upload observation {str(o)} to THE INTERNET!", on_click=push_observations)
-            # TODO: the metadata only fills properly if `validate` was clicked.
+            
+            #st.button(f"Upload observation {str(o)} to THE INTERNET!", on_click=push_observations)
+            # 
             st.markdown(metadata2md(hash))
+            # TODO: FIXME: this is the data taht will get pushed -- it DOESN'T reflect any adjustments
+            # # made via the dropdown on the last step!!!!
+            #st.markdown(f"- **selected species**: {observation['predicted_class']}")
+            st.markdown(f"- **selected species**: {st.session_state.whale_prediction1[hash]}")
             st.markdown(f"- **hash**: {hash}")
 
             msg = f"[D] full observation after inference: {observation}"
@@ -147,7 +153,7 @@ def cetacean_show_results():
             whale_classes = observations[hash].top_predictions
             # render images for the top 3 (that is what the model api returns)
             n = len(whale_classes)
-            st.markdown(f"Top {n} Predictions for observation {str(o)}")
+            st.markdown(f"**Top {n} Predictions for observation {str(o)}**")
             for i in range(n):
                 viewer.display_whale(whale_classes, i)
         o += 1
