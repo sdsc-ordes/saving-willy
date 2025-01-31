@@ -40,7 +40,7 @@ def cetacean_just_classify(cetacean_classifier):
         g_logger.info(msg)
 
         # TODO: what is the difference between public and regular; and why is this not array-ready?
-        st.session_state.public_observation = observation
+        st.session_state.public_observations[hash] = observation
         st.write(f"*[D] Observation {hash} classified as {st.session_state.whale_prediction1[hash]}*")
        
         
@@ -78,10 +78,10 @@ def cetacean_show_results_and_review():
             if selected_class != st.session_state.whale_prediction1[hash]:
                 observation['class_overriden'] = selected_class # TODO: this should be boolean!
             
-            st.session_state.public_observation = observation
+            st.session_state.public_observations[hash] = observation
             st.button(f"Upload observation {str(o)} to THE INTERNET!", on_click=push_observations)
             # TODO: the metadata only fills properly if `validate` was clicked.
-            st.markdown(metadata2md())
+            st.markdown(metadata2md(hash))
 
             msg = f"[D] full observation after inference: {observation}"
             g_logger.debug(msg)
@@ -136,7 +136,7 @@ def cetacean_show_results():
             # st.session_state.public_observation = observation
             st.button(f"Upload observation {str(o)} to THE INTERNET!", on_click=push_observations)
             # TODO: the metadata only fills properly if `validate` was clicked.
-            st.markdown(metadata2md())
+            st.markdown(metadata2md(hash))
             st.markdown(f"- **hash**: {hash}")
 
             msg = f"[D] full observation after inference: {observation}"
@@ -163,6 +163,7 @@ def cetacean_classify_show_and_review(cetacean_classifier):
     Args:
         cetacean_classifier ([type]):  saving-willy model from Saving Willy Hugging Face space
     """
+    raise DeprecationWarning("This function is deprecated. Use individual steps instead")
     images = st.session_state.images
     observations = st.session_state.observations
     hashes = st.session_state.image_hashes
