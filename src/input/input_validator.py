@@ -45,7 +45,7 @@ def is_valid_email(email:str) -> bool:
     return re.match(pattern, email) is not None
 
 # Function to extract date and time from image metadata
-def get_image_datetime(image_file): 
+def get_image_datetime(image_file:UploadedFile) -> str | None: 
     """
     Extracts the original date and time from the EXIF metadata of an uploaded image file.
 
@@ -124,3 +124,5 @@ def get_image_latlon(image_file: UploadedFile) :
             
     except Exception as e: # FIXME: what types of exception?
          st.warning(f"Could not extract latitude and longitude from image metadata. (file: {str(image_file)}")
+    
+    return None, None
