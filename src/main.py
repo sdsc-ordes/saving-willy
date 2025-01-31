@@ -44,6 +44,11 @@ data_files = "data/train-00000-of-00001.parquet"
 USE_BASIC_MAP = False
 DEV_SIDEBAR_LIB = True
 
+# one toggle for all the extra debug text
+if "MODE_DEV_STATEFUL" not in st.session_state:
+    st.session_state.MODE_DEV_STATEFUL = False
+    
+
 # get a global var for logger accessor in this module
 LOG_LEVEL = logging.DEBUG
 g_logger = logging.getLogger(__name__)
@@ -249,7 +254,8 @@ def main() -> None:
     # 
     with tab_inference:
         
-        dbg_show_obs_hashes()
+        if st.session_state.MODE_DEV_STATEFUL:
+            dbg_show_obs_hashes()
 
         add_classifier_header()
         # if we are before data_entry_validated, show the button, disabled.
@@ -277,17 +283,16 @@ def main() -> None:
         
         elif st.session_state.workflow_fsm.is_in_state('ml_classification_completed'):
             # show the results, and allow manual validation
-            s = ""
-            for k, v in st.session_state.whale_prediction1.items():
-                s += f"* Image {k}: {v}\n"
-                
-            st.markdown("""
-                        ### Inference Results and manual validation/adjustment
-                        :construction: for now we just show the num images processed.
-                        """)
-            st.markdown(s)
+            st.markdown("""### Inference results and manual validation/adjustment """)
+            if st.session_state.MODE_DEV_STATEFUL:
+                s = ""
+                for k, v in st.session_state.whale_prediction1.items():
+                    s += f"* Image {k}: {v}\n"
+                    
+                st.markdown(s)
+
             # add a button to advance the state
-            if st.button("mock: manual validation done."):
+            if st.button("Confirm species predictions", help="Confirm that all species are selected correctly"):
                 st.session_state.workflow_fsm.complete_current_state()
                 # -> manual_inspection_completed
                 st.rerun()
@@ -296,27 +301,25 @@ def main() -> None:
 
         elif st.session_state.workflow_fsm.is_in_state('manual_inspection_completed'):
             # show the ML results, and allow the user to upload the observation
-            st.markdown("""
-                        ### Inference Results (after manual validation)
-                        :construction: for now we just show the button.
-                        """)
+            st.markdown("""### Inference Results (after manual validation) """)
             
             
-            if st.button("(nooop) Upload observation to THE INTERNET!"):
+            if st.button("Upload all observations to THE INTERNET!"):
                 # let this go through to the push_all func, since it just reports to log for now.
-                push_all_observations()
+                push_all_observations(enable_push=False)
                 st.session_state.workflow_fsm.complete_current_state()
                 # -> data_uploaded
+                st.rerun()
 
             cetacean_show_results()
         
         elif st.session_state.workflow_fsm.is_in_state('data_uploaded'):
             # the data has been sent. Lets show the observations again
             # but no buttons to upload (or greyed out ok)
-            st.markdown("""
-                        ### Observation(s) uploaded
-                        :construction: for now we just show the observations.
-                        """)
+            st.markdown("""### Observation(s) uploaded - thank you!""")
+            cetacean_show_results()
+
+            st.divider()
             df = pd.DataFrame(st.session_state.observations, index=[0])
             st.table(df)
 
