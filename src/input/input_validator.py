@@ -41,7 +41,9 @@ def is_valid_email(email:str) -> bool:
     Returns:
         bool: True if the email address is valid, False otherwise.
     """
-    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    #pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    # do not allow starting with a +
+    pattern = r'^[a-zA-Z0-9_]+[a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return re.match(pattern, email) is not None
 
 # Function to extract date and time from image metadata
