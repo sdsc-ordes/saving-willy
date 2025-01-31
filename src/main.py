@@ -53,8 +53,8 @@ if "handler" not in st.session_state:
     st.session_state['handler'] = setup_logging()
 
 
-if "public_observation" not in st.session_state:
-    st.session_state.public_observation = {}
+if "public_observations" not in st.session_state:
+    st.session_state.public_observations = {}
 
 if "classify_whale_done" not in st.session_state:
     st.session_state.classify_whale_done = {}
