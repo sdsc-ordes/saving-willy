@@ -184,16 +184,15 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
 
     author_email = st.session_state["input_author_email"]
     filename = file.name
-    image_datetime = get_image_datetime(file)
+    image_datetime_raw = get_image_datetime(file)
     latitude0, longitude0 = get_image_latlon(file)
     msg = f"[D] {filename}: lat, lon from image metadata: {latitude0}, {longitude0}"
     m_logger.debug(msg)
     
-    if latitude0 is None:
-        # get it from the default dict
-        latitude0 = spoof_metadata.get('latitude', 0) + dbg_ix
+    if latitude0 is None: # get some default values if not found in exifdata
+        latitude0:float = spoof_metadata.get('latitude', 0) + dbg_ix
     if longitude0 is None:
-        longitude0 = spoof_metadata.get('longitude', 0) - dbg_ix
+        longitude0:float = spoof_metadata.get('longitude', 0) - dbg_ix
         
     image = st.session_state.images.get(image_hash, None)
     # add the UI elements
@@ -225,9 +224,9 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
 
     # 5. Date/time
     ## first from image metadata
-    if image_datetime is not None:
-        time_value = datetime.datetime.strptime(image_datetime, '%Y:%m:%d %H:%M:%S').time()
-        date_value = datetime.datetime.strptime(image_datetime, '%Y:%m:%d %H:%M:%S').date()
+    if image_datetime_raw is not None:
+        time_value = datetime.datetime.strptime(image_datetime_raw, '%Y:%m:%d %H:%M:%S').time()
+        date_value = datetime.datetime.strptime(image_datetime_raw, '%Y:%m:%d %H:%M:%S').date()
     else:
         time_value = datetime.datetime.now().time()  # Default to current time
         date_value = datetime.datetime.now().date()
@@ -237,7 +236,7 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     time_option = viewcontainer.time_input("Time for "+filename, time_value, key=f"input_time_{image_hash}")
 
     observation = InputObservation(image=image, latitude=latitude, longitude=longitude,
-                                author_email=author_email, date=image_datetime, time=None,
+                                author_email=author_email, image_datetime_raw=image_datetime_raw, 
                                 date_option=date_option, time_option=time_option,
                                 uploaded_file=file, image_md5=image_hash
                                 )
