@@ -10,6 +10,7 @@ import whale_viewer as viewer
 from hf_push_observations import push_observations
 from utils.grid_maker import gridder
 from utils.metadata_handler import metadata2md
+from input.input_observation import InputObservation
 
 def add_header_text() -> None:
     """
@@ -24,12 +25,11 @@ def add_header_text() -> None:
 def cetacean_just_classify(cetacean_classifier):
 
     images = st.session_state.images
-    observations = st.session_state.observations
+    #observations = st.session_state.observations
     hashes = st.session_state.image_hashes
     
     for hash in hashes: 
         image = images[hash]
-        observation = observations[hash].to_dict()
         # run classifier model on `image`, and persistently store the output
         out = cetacean_classifier(image) # get top 3 matches
         st.session_state.whale_prediction1[hash] = out['predictions'][0]
@@ -39,8 +39,6 @@ def cetacean_just_classify(cetacean_classifier):
         msg = f"[D]2 classify_whale_done for {hash}: {st.session_state.classify_whale_done[hash]}, whale_prediction1: {st.session_state.whale_prediction1[hash]}"
         g_logger.info(msg)
 
-        # store the elements of the observation that will be transmitted (not image)
-        st.session_state.public_observations[hash] = observation
         if st.session_state.MODE_DEV_STATEFUL:
             st.write(f"*[D] Observation {hash} classified as {st.session_state.whale_prediction1[hash]}*")
        
@@ -58,7 +56,8 @@ def cetacean_show_results_and_review():
 
     for hash in hashes:
         image = images[hash]
-        observation = observations[hash].to_dict()
+        #observation = observations[hash].to_dict()
+        _observation:InputObservation = observations[hash]
     
         with grid[col]:
             st.image(image, use_column_width=True)
@@ -75,14 +74,19 @@ def cetacean_show_results_and_review():
                 ix = viewer.WHALE_CLASSES.index(pred1) if pred1 in viewer.WHALE_CLASSES else None
                 selected_class = st.selectbox(f"Species for observation {str(o)}", viewer.WHALE_CLASSES, index=ix)
             
-            observation['predicted_class'] = selected_class
-            if selected_class != st.session_state.whale_prediction1[hash]:
-                observation['class_overriden'] = selected_class # TODO: this should be boolean!
+            _observation.set_selected_class(selected_class)
+            #observation['predicted_class'] = selected_class
+            # this logic is now in the InputObservation class automatially
+            #if selected_class != st.session_state.whale_prediction1[hash]:
+            #    observation['class_overriden'] = selected_class # TODO: this should be boolean!
             
+            # store the elements of the observation that will be transmitted (not image)
+            observation = _observation.to_dict()
             st.session_state.public_observations[hash] = observation
+            
             #st.button(f"Upload observation {str(o)} to THE INTERNET!", on_click=push_observations)
             # TODO: the metadata only fills properly if `validate` was clicked.
-            st.markdown(metadata2md(hash))
+            st.markdown(metadata2md(hash, debug=True))
 
             msg = f"[D] full observation after inference: {observation}"
             g_logger.debug(msg)
@@ -138,12 +142,7 @@ def cetacean_show_results():
             
             #st.button(f"Upload observation {str(o)} to THE INTERNET!", on_click=push_observations)
             # 
-            st.markdown(metadata2md(hash))
-            # TODO: FIXME: this is the data taht will get pushed -- it DOESN'T reflect any adjustments
-            # # made via the dropdown on the last step!!!!
-            #st.markdown(f"- **selected species**: {observation['predicted_class']}")
-            st.markdown(f"- **selected species**: {st.session_state.whale_prediction1[hash]}")
-            st.markdown(f"- **hash**: {hash}")
+            st.markdown(metadata2md(hash, debug=True))
 
             msg = f"[D] full observation after inference: {observation}"
             g_logger.debug(msg)
