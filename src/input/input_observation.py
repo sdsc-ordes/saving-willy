@@ -22,10 +22,10 @@ class InputObservation:
             The email of the author of the observation.
         image_datetime_raw (str):  
             The datetime extracted from the observation file 
-        date_option (datetime.date): 
-            Additional date option for the observation.
-        time_option (datetime.time): 
-            Additional time option for the observation.
+        date (datetime.date): 
+            Date of the observation
+        time (datetime.time): 
+            Time of the observation
         uploaded_file (UploadedFile): 
             The uploaded file associated with the observation.
         image_md5 (str):
@@ -55,9 +55,8 @@ class InputObservation:
     def __init__(
         self, image:ndarray=None, latitude:float=None, longitude:float=None, 
         author_email:str=None, image_datetime_raw:str=None, 
-        #time=None, 
-        date_option:datetime.date=None, 
-        time_option:datetime.time=None, 
+        date:datetime.date=None, 
+        time:datetime.time=None, 
         uploaded_file:UploadedFile=None, image_md5:str=None):
 
         self.image = image
@@ -65,9 +64,8 @@ class InputObservation:
         self.longitude = longitude
         self.author_email = author_email
         self.image_datetime_raw = image_datetime_raw
-        #self.time = time
-        self.date_option = date_option
-        self.time_option = time_option
+        self.date = date
+        self.time = time
         self.uploaded_file = uploaded_file
         self.image_md5 = image_md5
         self._top_predictions = []
@@ -106,8 +104,8 @@ class InputObservation:
         _im_str = "None" if self.image is None else f"image dims: {self.image.shape}"
         return (
             f"Observation: {_im_str}, {self.latitude}, {self.longitude}, "
-            f"{self.author_email}, {self.image_datetime_raw}, {self.date_option}, " 
-            f"{self.time_option}, {self.uploaded_file}, {self.image_md5}"
+            f"{self.author_email}, {self.image_datetime_raw}, {self.date}, " 
+            f"{self.time}, {self.uploaded_file}, {self.image_md5}"
         )
 
     def __repr__(self):
@@ -119,9 +117,8 @@ class InputObservation:
             f"Longitude: {self.longitude}, "
             f"Author Email: {self.author_email}, "
             f"raw timestamp: {self.image_datetime_raw}, "
-            #f"Time: {self.time}, "
-            f"Date Option: {self.date_option}, "
-            f"Time Option: {self.time_option}, "
+            f"Date: {self.date}, "
+            f"Time: {self.time}, "
             f"Uploaded Filename: {self.uploaded_file}"
             f"Image MD5 hash: {self.image_md5}"
         )
@@ -142,10 +139,9 @@ class InputObservation:
             self.longitude == other.longitude and 
             self.author_email == other.author_email and
             self.image_datetime_raw == other.image_datetime_raw and
+            self.date == other.date and
+            # temporarily skip time, it is followed by the clock and that is always differnt 
             #self.time == other.time and 
-            self.date_option == other.date_option and
-            # temporarily skip time_option, it is followed by the clock and that is always differnt 
-            #self.time_option == other.time_option and 
             self.uploaded_file == other.uploaded_file and 
             self.image_md5 == other.image_md5
             )
@@ -173,10 +169,10 @@ class InputObservation:
             differences.append(f"   Author email is different. (self: {self.author_email}, other: {other.author_email})")
         if self.image_datetime_raw != other.image_datetime_raw:
             differences.append(f"   Date is different. (self: {self.image_datetime_raw}, other: {other.image_datetime_raw})")
-        if self.date_option != other.date_option:
-            differences.append(f"   Date option is different. (self: {self.date_option}, other: {other.date_option})")
-        if self.time_option != other.time_option:
-            differences.append(f"   Time option is different. (self: {self.time_option}, other: {other.time_option})")
+        if self.date != other.date:
+            differences.append(f"   Date is different. (self: {self.date}, other: {other.date})")
+        if self.time != other.time:
+            differences.append(f"   Time is different. (self: {self.time}, other: {other.time})")
         if self.uploaded_file != other.uploaded_file:
             differences.append("   Uploaded filename is different.")
         if self.image_md5 != other.image_md5:
@@ -202,9 +198,9 @@ class InputObservation:
             "longitude": self.longitude,
             "author_email": self.author_email,
             "image_datetime_raw": self.image_datetime_raw,
-            "date_option": str(self.date_option),
-            "time_option": str(self.time_option),
-            #"uploaded_file": self.uploaded_file # can't serialize this in json, not needed anyway.
+            "date": str(self.date),
+            "time": str(self.time),
+            #"uploaded_file": self.uploaded_file # can't serialize this in json, not sent to dataset anyway.
         }
 
     @classmethod
@@ -215,8 +211,8 @@ class InputObservation:
             longitude=data.get("longitude"),
             author_email=data.get("author_email"),
             image_datetime_raw=data.get("image_datetime_raw"),
-            date_option=data.get("date_option"),
-            time_option=data.get("time_option"),
+            date=data.get("date"),
+            time=data.get("time"),
             uploaded_file=data.get("uploaded_file"),
             image_hash=data.get("image_md5")
         )
@@ -229,8 +225,8 @@ class InputObservation:
             longitude=input.longitude,
             author_email=input.author_email,
             image_datetime_raw=input.image_datetime_raw,
-            date_option=input.date_option,
-            time_option=input.time_option,
+            date=input.date,
+            time=input.time,
             uploaded_file=input.uploaded_file,
             image_hash=input.image_hash
         )
