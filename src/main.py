@@ -237,7 +237,8 @@ def main() -> None:
         if st.sidebar.button(":white_check_mark:[**Validate**]"):
             # create a dictionary with the submitted observation
             tab_log.info(f"{st.session_state.observations}")
-            df = pd.DataFrame(st.session_state.observations, index=[0])
+            df = pd.DataFrame([obs.to_dict() for obs in st.session_state.observations.values()])
+            #df = pd.DataFrame(st.session_state.observations, index=[0])
             with tab_coords:
                 st.table(df)
             # there doesn't seem to be any actual validation here?? TODO: find validator function (each element is validated by the input box, but is there something at the whole image level?)
@@ -320,7 +321,8 @@ def main() -> None:
             cetacean_show_results()
 
             st.divider()
-            df = pd.DataFrame(st.session_state.observations, index=[0])
+            #df = pd.DataFrame(st.session_state.observations, index=[0])
+            df = pd.DataFrame([obs.to_dict() for obs in st.session_state.observations.values()])
             st.table(df)
 
             # didn't decide what the next state is here - I think we are in the terminal state.

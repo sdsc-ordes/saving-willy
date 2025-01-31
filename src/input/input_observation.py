@@ -68,7 +68,10 @@ class InputObservation:
         self.time = time
         self.uploaded_file = uploaded_file
         self.image_md5 = image_md5
+        # attributes that get set after predictions/processing
         self._top_predictions = []
+        self._selected_class = None
+        self._class_overriden = False
 
         InputObservation._inst_count += 1
         self._inst_id = InputObservation._inst_count
@@ -81,11 +84,30 @@ class InputObservation:
 
     def set_top_predictions(self, top_predictions:list):
         self._top_predictions = top_predictions
+        if len(top_predictions) > 0:
+            self.set_selected_class(top_predictions[0])
     
-    # add a method to get the top predictions (property?)
+    def set_selected_class(self, selected_class:str):
+        self._selected_class = selected_class
+        if selected_class != self._top_predictions[0]:
+            self.set_class_overriden(True)
+        
+    def set_class_overriden(self, class_overriden:bool):
+        self._class_overriden = class_overriden
+        
+    # add getters for the top_predictions, selected_class and class_overriden
     @property
     def top_predictions(self):
         return self._top_predictions
+
+    @property
+    def selected_class(self):
+        return self._selected_class
+    
+    @property
+    def class_overriden(self):
+        return self._class_overriden
+    
     
     # add a method to assign the image_md5 only once
     def assign_image_md5(self):
@@ -194,6 +216,10 @@ class InputObservation:
             "image_datetime_raw": self.image_datetime_raw,
             "date": str(self.date),
             "time": str(self.time),
+            "selected_class": self._selected_class,
+            "top_prediction": self._top_predictions[0] if len(self._top_predictions) else None,
+            "class_overriden": self._class_overriden,
+            
             #"uploaded_file": self.uploaded_file # can't serialize this in json, not sent to dataset anyway.
         }
 
