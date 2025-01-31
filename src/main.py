@@ -24,6 +24,9 @@ from maps.obs_map import present_obs_map
 from utils.st_logs import setup_logging, parse_log_buffer
 from utils.workflow_state import WorkflowFSM, FSM_STATES
 from utils.workflow_ui import refresh_progress, init_workflow_viz
+from hf_push_observations import push_all_observations
+
+
 #from classifier.classifier_image import cetacean_classify
 from classifier.classifier_image import cetacean_just_classify, cetacean_show_results_and_review, cetacean_show_results
 
@@ -287,6 +290,7 @@ def main() -> None:
             if st.button("mock: manual validation done."):
                 st.session_state.workflow_fsm.complete_current_state()
                 # -> manual_inspection_completed
+                st.rerun()
             
             cetacean_show_results_and_review()
 
@@ -299,6 +303,8 @@ def main() -> None:
             
             
             if st.button("(nooop) Upload observation to THE INTERNET!"):
+                # let this go through to the push_all func, since it just reports to log for now.
+                push_all_observations()
                 st.session_state.workflow_fsm.complete_current_state()
                 # -> data_uploaded
 
