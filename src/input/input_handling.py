@@ -231,13 +231,13 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
         time_value = datetime.datetime.now().time()  # Default to current time
         date_value = datetime.datetime.now().date()
 
-    ## if not, give user the option to enter manually
-    date_option = viewcontainer.date_input("Date for "+filename, value=date_value, key=f"input_date_{image_hash}")
-    time_option = viewcontainer.time_input("Time for "+filename, time_value, key=f"input_time_{image_hash}")
+    ## either way, give user the option to enter manually (or correct, e.g. if camera has no rtc clock)
+    date = viewcontainer.date_input("Date for "+filename, value=date_value, key=f"input_date_{image_hash}")
+    time = viewcontainer.time_input("Time for "+filename, time_value, key=f"input_time_{image_hash}")
 
     observation = InputObservation(image=image, latitude=latitude, longitude=longitude,
                                 author_email=author_email, image_datetime_raw=image_datetime_raw, 
-                                date_option=date_option, time_option=time_option,
+                                date=date, time=time,
                                 uploaded_file=file, image_md5=image_hash
                                 )
 
