@@ -10,12 +10,23 @@ from PIL import ExifTags
 
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
-def generate_random_md5():
+def generate_random_md5(length:int=16) -> str:
+    """
+    Generate a random MD5 hash.
+
+    Args:
+        length (int): The length of the random string to generate. Default is 16.
+
+    Returns:
+        str: The MD5 hash of the generated random string.
+    """
+
     # Generate a random string
-    random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+    random_string = ''.join(random.choices(string.ascii_letters + string.digits, length=16))
     # Encode the string and compute its MD5 hash
     md5_hash = hashlib.md5(random_string.encode()).hexdigest()
     return md5_hash
+
 
 def is_valid_number(number:str) -> bool:
     """
@@ -29,6 +40,7 @@ def is_valid_number(number:str) -> bool:
     """
     pattern = r'^[-+]?[0-9]*\.?[0-9]+$'
     return re.match(pattern, number) is not None
+
 
 # Function to validate email address
 def is_valid_email(email:str) -> bool:
@@ -45,6 +57,7 @@ def is_valid_email(email:str) -> bool:
     # do not allow starting with a +
     pattern = r'^[a-zA-Z0-9_]+[a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return re.match(pattern, email) is not None
+
 
 # Function to extract date and time from image metadata
 def get_image_datetime(image_file:UploadedFile) -> str | None: 
@@ -70,6 +83,7 @@ def get_image_datetime(image_file:UploadedFile) -> str | None:
          st.warning(f"Could not extract date from image metadata. (file: {image_file.name})")
          # TODO: add to logger
     return None
+
 
 def decimal_coords(coords:tuple, ref:str) -> Fraction:
     """
