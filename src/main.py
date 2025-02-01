@@ -18,6 +18,7 @@ import whale_gallery as gallery
 import whale_viewer as viewer
 from input.input_handling import setup_input, check_inputs_are_set
 from input.input_handling import init_input_container_states, add_input_UI_elements, init_input_data_session_states
+from input.input_handling import dbg_show_observation_hashes
 
 from maps.alps_map import present_alps_map
 from maps.obs_map import present_obs_map
@@ -26,10 +27,7 @@ from utils.workflow_state import WorkflowFSM, FSM_STATES
 from utils.workflow_ui import refresh_progress, init_workflow_viz
 from hf_push_observations import push_all_observations
 
-
-#from classifier.classifier_image import cetacean_classify
 from classifier.classifier_image import cetacean_just_classify, cetacean_show_results_and_review, cetacean_show_results
-
 from classifier.classifier_hotdog import hotdog_classify
 
 
@@ -82,19 +80,8 @@ init_input_container_states()
 init_workflow_viz()
 
     
-        
-def dbg_show_obs_hashes():
-    # a debug: we seem to be losing the whale classes?
-    st.write(f"[D] num observations: {len(st.session_state.observations)}")
-    s = ""
-    for hash in st.session_state.observations.keys():
-        obs = st.session_state.observations[hash]
-        s += f"- [D] observation {hash} ({obs._inst_id}) has {len(obs.top_predictions)} predictions\n"
-        #s += f"   - {repr(obs)}\n" # check the str / repr method
-        
-        #print(obs)
     
-    st.markdown(s)
+        
 
 
 def main() -> None:
@@ -256,7 +243,7 @@ def main() -> None:
     with tab_inference:
         
         if st.session_state.MODE_DEV_STATEFUL:
-            dbg_show_obs_hashes()
+            dbg_show_observation_hashes()
 
         add_classifier_header()
         # if we are before data_entry_validated, show the button, disabled.
