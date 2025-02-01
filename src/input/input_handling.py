@@ -370,6 +370,10 @@ def init_input_data_session_states() -> None:
     if "files" not in st.session_state:
         st.session_state.files = {}
 
+    if "public_observations" not in st.session_state:
+        st.session_state.public_observations = {}
+
+
     
 def add_input_UI_elements() -> None:
     '''

@@ -22,12 +22,11 @@ from input.input_handling import dbg_show_observation_hashes
 
 from maps.alps_map import present_alps_map
 from maps.obs_map import present_obs_map
-from utils.st_logs import setup_logging, parse_log_buffer
-from utils.workflow_state import WorkflowFSM, FSM_STATES
-from utils.workflow_ui import refresh_progress_display, init_workflow_viz
+from utils.st_logs import parse_log_buffer, init_logging_session_states
+from utils.workflow_ui import refresh_progress_display, init_workflow_viz, init_workflow_session_states
 from hf_push_observations import push_all_observations
 
-from classifier.classifier_image import cetacean_just_classify, cetacean_show_results_and_review, cetacean_show_results
+from classifier.classifier_image import cetacean_just_classify, cetacean_show_results_and_review, cetacean_show_results, init_classifier_session_states
 from classifier.classifier_hotdog import hotdog_classify
 
 
@@ -55,29 +54,17 @@ g_logger.setLevel(LOG_LEVEL)
 st.set_page_config(layout="wide")
 
 # initialise various session state variables
-if "handler" not in st.session_state:
-    st.session_state['handler'] = setup_logging()
+init_logging_session_states() # logging should be early 
+init_workflow_session_states() 
 
-
-if "public_observations" not in st.session_state:
-    st.session_state.public_observations = {}
-
-if "classify_whale_done" not in st.session_state:
-    st.session_state.classify_whale_done = {}
-
-if "whale_prediction1" not in st.session_state:
-    st.session_state.whale_prediction1 = {}
-
+# TODO: this is obselete, now we have the st_logs functionality.
 if "tab_log" not in st.session_state:
     st.session_state.tab_log = None
-    
-if "workflow_fsm" not in st.session_state:
-    # create and init the state machine
-    st.session_state.workflow_fsm = WorkflowFSM(FSM_STATES)
     
 init_input_data_session_states()
 init_input_container_states()
 init_workflow_viz()
+init_classifier_session_states()
 
     
     
