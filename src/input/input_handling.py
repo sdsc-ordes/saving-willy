@@ -391,3 +391,25 @@ def add_input_UI_elements() -> None:
     container_metadata_inputs = st.container(border=True, key="container_metadata_inputs_id")
     container_metadata_inputs.write("Metadata Inputs... wait for file upload ")
     st.session_state.container_metadata_inputs = container_metadata_inputs
+
+
+def dbg_show_observation_hashes():
+    """
+    Displays information about each observation including the hash 
+    
+    - debug usage, keeping track of the hashes and persistence of the InputObservations.
+    - it renders text to the current container, not intended for final app.
+    
+    """
+
+    # a debug: we seem to be losing the whale classes?
+    st.write(f"[D] num observations: {len(st.session_state.observations)}")
+    s = ""
+    for hash in st.session_state.observations.keys():
+        obs = st.session_state.observations[hash]
+        s += f"- [D] observation {hash} ({obs._inst_id}) has {len(obs.top_predictions)} predictions\n"
+        #s += f"   - {repr(obs)}\n" # check the str / repr method
+        
+        #print(obs)
+    
+    st.markdown(s)
