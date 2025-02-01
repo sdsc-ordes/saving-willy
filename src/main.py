@@ -54,21 +54,12 @@ g_logger.setLevel(LOG_LEVEL)
 st.set_page_config(layout="wide")
 
 # initialise various session state variables
-init_logging_session_states() # logging should be early 
+init_logging_session_states() # logging init should be early 
 init_workflow_session_states() 
-
-# TODO: this is obselete, now we have the st_logs functionality.
-if "tab_log" not in st.session_state:
-    st.session_state.tab_log = None
-    
 init_input_data_session_states()
 init_input_container_states()
 init_workflow_viz()
 init_classifier_session_states()
-
-    
-    
-        
 
 
 def main() -> None:
@@ -101,7 +92,6 @@ def main() -> None:
     # Streamlit app
     tab_inference, tab_hotdogs, tab_map, tab_coords, tab_log, tab_gallery = \
         st.tabs(["Cetecean classifier", "Hotdog classifier", "Map", "*:gray[Dev:coordinates]*", "Log", "Beautiful cetaceans"])
-    st.session_state.tab_log = tab_log
 
     # put this early so the progress indicator is at the top (also refreshed at end)
     refresh_progress_display()    

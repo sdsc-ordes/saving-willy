@@ -30,9 +30,7 @@ def push_observation(image_hash:str, api:HfApi, enable_push:False) -> CommitInfo
     metadata_str = json.dumps(observation) # doesn't work yet, TODO
     
     st.toast(f"Uploading observation: {metadata_str}", icon="🦭")
-    tab_log = st.session_state.tab_log
-    if tab_log is not None:
-        tab_log.info(f"Uploading observation: {metadata_str}")
+    g_logger.info(f"Uploading observation: {metadata_str}")
         
     # write to temp file so we can send it (why is this not using context mgr?)
     f = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False)
@@ -89,14 +87,14 @@ def push_observations(tab_log:DeltaGenerator=None):
             push any observation since generating the logger)
     
     """
+    raise DeprecationWarning("This function is deprecated. Use push_all_observations instead.")
+
     # we get the observation from session state: 1 is the dict 2 is the image.
     # first, lets do an info display (popup)
     metadata_str = json.dumps(st.session_state.public_observation)
     
     st.toast(f"Uploading observations: {metadata_str}", icon="🦭")
-    tab_log = st.session_state.tab_log
-    if tab_log is not None:
-        tab_log.info(f"Uploading observations: {metadata_str}")
+    g_logger.info(f"Uploading observations: {metadata_str}")
         
     # get huggingface api
     token = os.environ.get("HF_TOKEN", None)
