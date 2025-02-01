@@ -9,8 +9,8 @@ from streamlit_folium import st_folium
 from transformers import pipeline
 from transformers import AutoModelForImageClassification
 
-from maps.obs_map import add_header_text as add_obs_map_header
-from classifier.classifier_image import add_header_text as add_classifier_header
+from maps.obs_map import add_obs_map_header 
+from classifier.classifier_image import add_classifier_header 
 from datasets import disable_caching
 disable_caching()
 
