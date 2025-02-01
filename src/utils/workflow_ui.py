@@ -1,4 +1,14 @@
 import streamlit as st
+from utils.workflow_state import WorkflowFSM, FSM_STATES
+
+def init_workflow_session_states():
+    """
+    Initialise the session state variables for the workflow state machine
+    """
+    
+    if "workflow_fsm" not in st.session_state:
+        # create and init the state machine
+        st.session_state.workflow_fsm = WorkflowFSM(FSM_STATES)
 
 def refresh_progress_display() -> None:
     """

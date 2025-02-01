@@ -12,6 +12,17 @@ from utils.grid_maker import gridder
 from utils.metadata_handler import metadata2md
 from input.input_observation import InputObservation
 
+def init_classifier_session_states() -> None:
+    '''
+    Initialise the session state variables used in classification
+    '''
+    if "classify_whale_done" not in st.session_state:
+        st.session_state.classify_whale_done = {}
+
+    if "whale_prediction1" not in st.session_state:
+        st.session_state.whale_prediction1 = {}
+
+
 def add_classifier_header() -> None:
     """
     Add brief explainer text about cetacean classification to the tab 
