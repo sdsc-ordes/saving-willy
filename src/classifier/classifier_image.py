@@ -12,7 +12,7 @@ from utils.grid_maker import gridder
 from utils.metadata_handler import metadata2md
 from input.input_observation import InputObservation
 
-def add_header_text() -> None:
+def add_classifier_header() -> None:
     """
     Add brief explainer text about cetacean classification to the tab 
     """
