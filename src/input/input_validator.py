@@ -1,13 +1,13 @@
+from typing import Tuple, Union
 import random
 import string
 import hashlib
 import re
-import streamlit as st
 from fractions import Fraction
-
 from PIL import Image
 from PIL import ExifTags
 
+import streamlit as st
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
 def generate_random_md5(length:int=16) -> str:
@@ -60,7 +60,7 @@ def is_valid_email(email:str) -> bool:
 
 
 # Function to extract date and time from image metadata
-def get_image_datetime(image_file:UploadedFile) -> str | None: 
+def get_image_datetime(image_file:UploadedFile) -> Union[str, None]: 
     """
     Extracts the original date and time from the EXIF metadata of an uploaded image file.
 
@@ -112,8 +112,9 @@ def decimal_coords(coords:tuple, ref:str) -> Fraction:
     return decimal_degrees
 
 
-#def get_image_latlon(image_file: UploadedFile) -> tuple[float, float] | None:
-def get_image_latlon(image_file: UploadedFile) :
+#def get_image_latlon(image_file: UploadedFile) : # if it is still not working
+#def get_image_latlon(image_file: UploadedFile) -> Tuple[float, float] | None: # Python >=3.10
+def get_image_latlon(image_file: UploadedFile) -> Union[Tuple[float, float], None]: # 3.6 <= Python < 3.10
     """
     Extracts the latitude and longitude from the EXIF metadata of an uploaded image file.
 
