@@ -24,7 +24,7 @@ from maps.alps_map import present_alps_map
 from maps.obs_map import present_obs_map
 from utils.st_logs import setup_logging, parse_log_buffer
 from utils.workflow_state import WorkflowFSM, FSM_STATES
-from utils.workflow_ui import refresh_progress, init_workflow_viz
+from utils.workflow_ui import refresh_progress_display, init_workflow_viz
 from hf_push_observations import push_all_observations
 
 from classifier.classifier_image import cetacean_just_classify, cetacean_show_results_and_review, cetacean_show_results
@@ -117,7 +117,7 @@ def main() -> None:
     st.session_state.tab_log = tab_log
 
     # put this early so the progress indicator is at the top (also refreshed at end)
-    refresh_progress()    
+    refresh_progress_display()    
 
     # create a sidebar, and parse all the input (returned as `observations` object)
     with st.sidebar:
@@ -265,7 +265,7 @@ def main() -> None:
                 # trigger a refresh too (refreshhing the prog indicator means the script reruns and 
                 # we can enter the next state - visualising the results / review)
                 # ok it doesn't if done programmatically. maybe interacting with teh button? check docs.
-                refresh_progress()
+                refresh_progress_display()
                 #TODO: validate this doesn't harm performance adversely.
                 st.rerun()
         
@@ -373,7 +373,7 @@ def main() -> None:
             
             
     # after all other processing, we can show the stage/state
-    refresh_progress()
+    refresh_progress_display()
 
 
 if __name__ == "__main__":

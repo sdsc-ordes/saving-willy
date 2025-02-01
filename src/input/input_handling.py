@@ -393,7 +393,7 @@ def add_input_UI_elements() -> None:
     st.session_state.container_metadata_inputs = container_metadata_inputs
 
 
-def dbg_show_observation_hashes():
+def dbg_show_observation_hashes() -> None:
     """
     Displays information about each observation including the hash 
     
