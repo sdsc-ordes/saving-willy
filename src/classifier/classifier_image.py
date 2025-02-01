@@ -21,8 +21,20 @@ def add_classifier_header() -> None:
                 Once inference is complete, the top three predictions are shown.
                 You can override the prediction by selecting a species from the dropdown.*""")
 
+
 # func to just run classification, store results.
 def cetacean_just_classify(cetacean_classifier):
+    """
+    Infer cetacean species for all observations in the session state.
+    
+    - this function runs the classifier, and stores results in the session state. 
+    - the top 3 predictions are stored in the observation object, which is retained
+      in st.session_state.observations
+    - to display results use cetacean_show_results() or cetacean_show_results_and_review()
+    
+    Args:
+        cetacean_classifier ([type]):  saving-willy model from Saving Willy Hugging Face space
+    """
 
     images = st.session_state.images
     #observations = st.session_state.observations
@@ -44,7 +56,18 @@ def cetacean_just_classify(cetacean_classifier):
        
         
 # func to show results and allow review
-def cetacean_show_results_and_review():
+def cetacean_show_results_and_review() -> None:
+    """
+    Present classification results and allow user to review and override the prediction.
+    
+    - for each observation in the session state, displays the image, summarised 
+      metadata, and the top 3 predictions. 
+    - allows user to override the prediction by selecting a species from the dropdown.
+    - the selected species is stored in the observation object, which is retained in
+      st.session_state.observations
+
+    """
+
     images = st.session_state.images
     observations = st.session_state.observations
     hashes = st.session_state.image_hashes
@@ -105,6 +128,14 @@ def cetacean_show_results_and_review():
 
 # func to just present results
 def cetacean_show_results():
+    """
+    Present classification results that may be pushed to the online dataset.
+    
+    - for each observation in the session state, displays the image, summarised 
+      metadata, the top 3 predictions, and the selected species (which may have 
+      been manually selected, or the top prediction accepted). 
+
+    """
     images = st.session_state.images
     observations = st.session_state.observations
     hashes = st.session_state.image_hashes
