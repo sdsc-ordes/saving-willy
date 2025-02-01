@@ -8,10 +8,7 @@ def refresh_progress_display() -> None:
         num_states = st.session_state.workflow_fsm.num_states - 1
         current_state_index = st.session_state.workflow_fsm.current_state_index
         current_state_name = st.session_state.workflow_fsm.current_state
-        colour = 'primary' 
-        if current_state_index == num_states: # highlight that we finished
-            colour = 'green'
-        status = f":{colour}[*Progress: {current_state_index}/{num_states}. Current: {current_state_name}.*]"
+        status = f"*Progress: {current_state_index}/{num_states}. Current: {current_state_name}.*"
         
         st.session_state.disp_progress[0].markdown(status)
         st.session_state.disp_progress[1].progress(current_state_index/num_states)
