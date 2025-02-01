@@ -104,18 +104,6 @@ def main() -> None:
         setup_input()
 
         
-    if 0:## WIP
-        # goal of this code is to allow the user to override the ML prediction, before transmitting an observations
-        predicted_class = st.sidebar.selectbox("Predicted Class", viewer.WHALE_CLASSES)
-        override_prediction = st.sidebar.checkbox("Override Prediction")
-
-        if override_prediction:
-            overridden_class = st.sidebar.selectbox("Override Class", viewer.WHALE_CLASSES)
-            st.session_state.observations['class_overriden'] = overridden_class
-        else:
-            st.session_state.observations['class_overriden'] = None
-
-
     with tab_map:
         # visual structure: a couple of toggles at the top, then the map inlcuding a
         # dropdown for tileset selection.
@@ -218,6 +206,13 @@ def main() -> None:
     # 6. manual validation done -> enable the upload buttons
     # 
     with tab_inference:
+        # inside the inference tab, on button press we call the model (on huggingface hub)
+        # which will be run locally. 
+        # - the model predicts the top 3 most likely species from the input image
+        # - these species are shown
+        # - the user can override the species prediction using the dropdown 
+        # - an observation is uploaded if the user chooses.
+
         
         if st.session_state.MODE_DEV_STATEFUL:
             dbg_show_observation_hashes()
@@ -292,40 +287,6 @@ def main() -> None:
             # didn't decide what the next state is here - I think we are in the terminal state.
             #st.session_state.workflow_fsm.complete_current_state()
             
-            
-            
-    
-            
-            
-
-        
-    # inside the inference tab, on button press we call the model (on huggingface hub)
-    # which will be run locally. 
-    # - the model predicts the top 3 most likely species from the input image
-    # - these species are shown
-    # - the user can override the species prediction using the dropdown 
-    # - an observation is uploaded if the user chooses.
-
-    # with tab_inference:
-    #     add_classifier_header()
-        
-
-        
-    # if tab_inference.button("Identify with cetacean classifier"):
-    #     #pipe = pipeline("image-classification", model="Saving-Willy/cetacean-classifier", trust_remote_code=True)
-    #     cetacean_classifier = AutoModelForImageClassification.from_pretrained("Saving-Willy/cetacean-classifier", 
-    #                                                                         revision=classifier_revision,
-    #                                                                         trust_remote_code=True)
-
-        
-    #     if st.session_state.images is None:
-    #         # TODO: cleaner design to disable the button until data input done?
-    #         st.info("Please upload an image first.")
-    #     else:
-    #         cetacean_classify(cetacean_classifier)
-                
-        
-
         
     # inside the hotdog tab, on button press we call a 2nd model (totally unrelated at present, just for demo
     # purposes, an hotdog image classifier) which will be run locally.
