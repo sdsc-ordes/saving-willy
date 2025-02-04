@@ -51,9 +51,6 @@ def test_is_valid_email_invalid():
     assert not is_valid_email("a@b.cc.")
     assert not is_valid_email("a@b@c.d")
 
-# not sure how xfails come through the CI pipeline yet.
-# maybe better to just comment out this stuff until pipeline is setup, then can check /extend
-@pytest.mark.xfail(reason="Bug identified, but while setting up CI having failing tests causes more headache")
 def test_is_valid_email_invalid_plus():
     assert not is_valid_email("+@test.com")
     assert not is_valid_email("+oneuse@test.com")
@@ -143,7 +140,7 @@ def test_get_image_latlon():
     
     # missing GPS loc
     f2 = test_data_pth / 'cakes_no_exif_gps.jpg'
-    assert get_image_latlon(f2) == None
+    assert get_image_latlon(f2) == (None, None)
     
     # missng datetime -> expect gps not affected
     f3 = test_data_pth / 'cakes_no_exif_datetime.jpg'
@@ -151,7 +148,7 @@ def test_get_image_latlon():
 
 # tests for get_image_latlon with empty file
 def test_get_image_latlon_empty():
-    assert get_image_latlon("") == None
+    assert get_image_latlon("") == (None, None)
     
 # tests for decimal_coords
 # - without input, py raises TypeError 

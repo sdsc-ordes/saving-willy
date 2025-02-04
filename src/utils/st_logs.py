@@ -100,6 +100,16 @@ class StreamlitLogHandler(logging.Handler):
         self.log_area.empty()  # Clear previous logs
         self.buffer.clear()
 
+
+def init_logging_session_states():
+    """
+    Initialise the session state variables for logging.
+    """
+    
+    if "handler" not in st.session_state:
+        st.session_state['handler'] = setup_logging()
+
+
 # Set up logging to capture all info level logs from the root logger
 @st.cache_resource
 def setup_logging(level:int=logging.INFO, buffer_len:int=15) -> StreamlitLogHandler:
@@ -125,6 +135,7 @@ def setup_logging(level:int=logging.INFO, buffer_len:int=15) -> StreamlitLogHand
     #if 'handler' not in st.session_state:
     #    st.session_state['handler'] = handler
     return handler
+
 
 def parse_log_buffer(log_contents: deque) -> List[dict]:
     """

@@ -40,8 +40,6 @@ def test_format_whale_name_empty():
     assert format_whale_name("") == ""
     
 # testing with the wrong datatype
-# we should get a TypeError - currently it fails with a AttributeError
-@pytest.mark.xfail
 def test_format_whale_name_none():
     with pytest.raises(TypeError):
         format_whale_name(None)
