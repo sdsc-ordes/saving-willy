@@ -115,6 +115,9 @@ def format_whale_name(whale_class:str) -> str:
     Returns:
         str: The formatted whale name with spaces instead of underscores and each word capitalized.
     """
+    if not isinstance(whale_class, str):
+        raise TypeError("whale_class should be a string.")
+    
     whale_name = whale_class.replace("_", " ").title()
     return whale_name
 

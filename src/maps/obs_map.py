@@ -192,7 +192,7 @@ def present_obs_map(dataset_id:str = "Saving-Willy/Happywhale-kaggle",
     return st_data
 
     
-def add_header_text() -> None:
+def add_obs_map_header() -> None:
     """
     Add brief explainer text to the tab 
     """
