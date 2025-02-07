@@ -38,6 +38,7 @@ class MockUploadedFile(BytesIO):
         
         self._file_urls = [None,]
 
+
 @pytest.fixture
 def mock_uploadedFile():
     class MockGUIClass(MagicMock):
@@ -198,6 +199,7 @@ def test_input_observation_invalid(key, error_type, mock_uploadedFile):
     inputs[key] = None
     with pytest.raises(error_type):
         obs = InputObservation(**inputs)
+    
 
 # we can take a similar approach to test equality. 
 # here, construct two dicts, each with valid inputs but all elements different.
@@ -263,3 +265,158 @@ def test_input_observation_equality(key, expect_equality, mock_uploadedFile):
         assert obs1 != obs2
     
 
+# now let's test the setter methods (set_top_predictions, set_selected_class, set_class_overriden)
+# ideally we get a fixture that produces a good / valid InputObservation object
+# and from there, just test the setters + their expected changes / side effects
+
+@pytest.fixture
+def good_datadict_for_input_observation(mock_uploadedFile) -> dict:
+    # set up the good and bad inputs
+    _date="2023-10-10"
+    _time="10:10:10"
+    image_datetime_raw = _date + " " + _time
+    fname = "test_image.jpg"
+    image = np.random.randint(0, 255, (100, 100, 3), dtype=np.uint8)
+    
+    dt_ok = datetime.datetime.strptime(image_datetime_raw, "%Y-%m-%d %H:%M:%S")
+    valid_inputs = {
+        "author_email": "test@example.com",
+        "uploaded_file": mock_uploadedFile(name=fname).get_data(),
+        "date": dt_ok.date(),
+        "time": dt_ok.time(),
+        "image": image,
+        "image_md5": 'd1d2515e6f6ac4c5ca6dd739d5143cd4', # 32 hex chars.
+        "image_datetime_raw": image_datetime_raw,
+        "latitude": 12.34, 
+        "longitude": 56.78,
+    
+    }
+    return valid_inputs
+    
+
+@pytest.fixture
+def good_input_observation(good_datadict_for_input_observation) -> InputObservation:
+    observation = InputObservation(**good_datadict_for_input_observation)
+
+    return observation
+    
+
+# 
+def test_input_observation__set_top_predictions_populated(good_input_observation):
+    obs = good_input_observation
+    
+    # before setting, expect empty list
+    assert obs.top_predictions == []
+    assert obs.selected_class == None
+    
+    # set >0, 
+    # - expect to find the same list in the property/attribute
+    # - expect to find the first element in the selected_class
+    top_predictions = ["beluga", "blue_whale", "common_dolphin"]
+    obs.set_top_predictions(top_predictions)
+
+    assert len(obs.top_predictions) == 3
+    assert obs.top_predictions == top_predictions
+    assert obs.selected_class == "beluga"
+    
+def test_input_observation__set_top_predictions_unpopulated(good_input_observation):
+    obs = good_input_observation
+    
+    # before setting, expect empty list
+    assert obs.top_predictions == []
+    assert obs.selected_class == None
+    
+    # set to empty list,
+    # - expect to find the same list in the property/attribute
+    # - expect to find selected_class to be None
+    top_predictions = []
+    obs.set_top_predictions(top_predictions)
+
+    assert len(obs.top_predictions) == 0
+    assert obs.top_predictions == []
+    assert obs.selected_class == None
+    
+def test_input_observation__set_selected_class_default(good_input_observation):
+    obs = good_input_observation
+    
+    # before setting, expect empty list
+    assert obs.top_predictions == []
+    assert obs.selected_class == None
+    assert obs.class_overriden == False
+    
+    # set >0, and then set_selected_class to the first element 
+    # - expect to find the same list in the property/attribute
+    # - expect to find the first element in the selected_class
+    # - expect class_overriden to be False
+    top_predictions = ["beluga", "blue_whale", "common_dolphin"]
+    obs.set_top_predictions(top_predictions)
+    obs.set_selected_class(top_predictions[0])
+
+    assert len(obs.top_predictions) == 3
+    assert obs.top_predictions == top_predictions
+    assert obs.selected_class == "beluga" 
+   
+def test_input_observation__set_selected_class_override(good_input_observation):
+    obs = good_input_observation
+    
+    # before setting, expect empty list
+    assert obs.top_predictions == []
+    assert obs.selected_class == None
+    assert obs.class_overriden == False
+    
+    # set >0, and then set_selected_class to something out of list
+    # - expect to find the same list in the property/attribute
+    # - expect to find the first element in the selected_class
+    # - expect class_overriden to be False
+    top_predictions = ["beluga", "blue_whale", "common_dolphin"]
+    obs.set_top_predictions(top_predictions)
+    obs.set_selected_class("brydes_whale")
+
+    assert len(obs.top_predictions) == 3
+    assert obs.top_predictions == top_predictions
+    assert obs.selected_class == "brydes_whale"
+    assert obs.class_overriden == True
+    
+   
+# now we want to test to_dict, make sure it is compliant with the data to be
+# transmitted to the dataset/server 
+
+def test_input_observation_to_dict(good_datadict_for_input_observation):
+    obs = InputObservation(**good_datadict_for_input_observation)
+    
+    # set >0, and then set_selected_class to something out of list
+    # - expect to find the same list in the property/attribute
+    # - expect to find the first element in the selected_class
+    # - expect class_overriden to be False
+    top_predictions = ["beluga", "blue_whale", "common_dolphin"]
+    selected = "brydes_whale"
+    obs.set_top_predictions(top_predictions)
+    obs.set_selected_class(selected)
+    
+    # as a first point, we expect the dict to be like the input dict...
+    expected_output = good_datadict_for_input_observation.copy()
+    # ... with a few changes
+    # - date and time get converted to str(date) str(time)
+    expected_output["date"] = str(expected_output["date"])
+    expected_output["time"] = str(expected_output["time"])
+    # - image_filename comes from uploaded_file.name
+    expected_output["image_filename"] = expected_output["uploaded_file"].name
+    # - uploaded_file and image are not in the transmitted data
+    del expected_output["uploaded_file"]
+    del expected_output["image"]
+    # - the classification results should be as set above
+    expected_output["top_prediction"] = top_predictions[0]
+    expected_output["selected_class"] = selected
+    expected_output["class_overriden"] = True
+    
+    print(obs.to_dict())
+    assert obs.to_dict() == expected_output
+    
+    # expected = {
+    #     'image_filename': 'test_image.jpg', 'image_md5':
+    #     'd1d2515e6f6ac4c5ca6dd739d5143cd4', 'latitude': 12.34, 'longitude':
+    #     56.78, 'author_email': 'test@example.com', 'image_datetime_raw':
+    #     '2023-10-10 10:10:10', 'date': '2023-10-10', 'time': '10:10:10',
+    #     'selected_class': 'brydes_whale', 'top_prediction': 'beluga',
+    #     'class_overriden': True
+    #     }
