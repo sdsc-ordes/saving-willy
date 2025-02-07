@@ -198,3 +198,68 @@ def test_input_observation_invalid(key, error_type, mock_uploadedFile):
     inputs[key] = None
     with pytest.raises(error_type):
         obs = InputObservation(**inputs)
+
+# we can take a similar approach to test equality. 
+# here, construct two dicts, each with valid inputs but all elements different.
+# loop over the keys, and construct two InputObservations that differ on that key only.
+# asser the expected output message.
+# ah, it is the diff func that prints a message. Here we just assert boolean.
+
+# we currently expect differences on time to be ignored. 
+inequality_keys = [
+    ("author_email", False),
+    ("uploaded_file", False),
+    ("date", False),
+    #("time", True),
+    pytest.param("time", False, marks=pytest.mark.xfail(reason="Time is currently ignored in __eq__")),
+    ("image", False),
+    ("image_md5", False),
+]
+@pytest.mark.parametrize("key, expect_equality", inequality_keys)
+def test_input_observation_equality(key, expect_equality, mock_uploadedFile):
+
+    # set up the two sets of good inputs
+    _date1 = "2023-10-10"
+    _time1 = "10:10:10"
+    image_datetime_raw1 = _date1 + " " + _time1
+    fname1 = "test_image.jpg"
+    image1 = np.random.randint(0, 255, (100, 100, 3), dtype=np.uint8)
+    dt1 = datetime.datetime.strptime(image_datetime_raw1, "%Y-%m-%d %H:%M:%S")
+
+    _date2 = "2023-10-11"
+    _time2 = "12:13:14"
+    image_datetime_raw2 = _date2 + " " + _time2
+    fname2 = "test_image.jpg"
+    image2 = np.random.randint(0, 255, (100, 100, 3), dtype=np.uint8)
+    dt2 = datetime.datetime.strptime(image_datetime_raw2, "%Y-%m-%d %H:%M:%S")
+    valid_inputs1 = {
+        "author_email": "test@example.com",
+        #"image_name": "test_image.jpg",
+        "uploaded_file": mock_uploadedFile(name=fname1).get_data(),
+        "date": dt1.date(),
+        "time": dt1.time(),
+        "image": image1,
+        "image_md5": 'd1d2515e6f6ac4c5ca6dd739d5143cd4', # 32 hex chars.
+    }
+
+    valid_inputs2 = {
+        "author_email": "example@whales.org",
+        #"image_name": "another.jpg",
+        "uploaded_file": mock_uploadedFile(name=fname2).get_data(),
+        "date": dt2.date(),
+        "time": dt2.time(),
+        "image": image2,
+        "image_md5": 'cdb235587bdee5915d6ccfa52ca9f3ac', # 32 hex chars.
+    }
+
+    nearly_same_inputs = valid_inputs1.copy()
+    nearly_same_inputs[key] = valid_inputs2[key]
+    obs1 = InputObservation(**valid_inputs1)
+    obs2 = InputObservation(**nearly_same_inputs)
+
+    if expect_equality is True:
+        assert obs1 == obs2
+    else:
+        assert obs1 != obs2
+    
+
