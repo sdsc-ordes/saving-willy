@@ -45,6 +45,7 @@ class MockUploadedFile(BytesIO):
         self.name = name  # Simulate a filename
         self.size = size  # Simulate file size
         self.type = type  # Simulate MIME type
+        self.file_id = None 
 
 
 @pytest.fixture

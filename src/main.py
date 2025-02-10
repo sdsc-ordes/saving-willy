@@ -140,7 +140,7 @@ def main() -> None:
         # the goal of this tab is to allow selection of the new obsvation's location by map click/adjust.
         st.markdown("Coming later! :construction:")
         st.markdown(
-            f"""*The goal is to allow interactive definition for the coordinates of a new
+            """*The goal is to allow interactive definition for the coordinates of a new
             observation, by click/drag points on the map.*""")
         
 
