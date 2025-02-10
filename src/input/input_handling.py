@@ -178,7 +178,7 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
         _viewcontainer = st.session_state.container_metadata_inputs
     else:
         _viewcontainer = st.sidebar
-        m_logger.warning(f"[W] `container_metadata_inputs` is None, using sidebar")
+        m_logger.warning("[W] `container_metadata_inputs` is None, using sidebar")
         
 
 
