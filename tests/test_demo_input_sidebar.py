@@ -58,7 +58,6 @@ def _cprint(msg:str, color:str=OKCYAN):
 
 TIMEOUT = 10
 #SCRIPT_UNDER_TEST = "src/main.py"
-#SCRIPT_UNDER_TEST = "src/apptest/demo_input_phase.py"
 SCRIPT_UNDER_TEST = "src/apptest/demo_input_sidebar.py"
 
 def verify_initial_session_state(at:AppTest):
@@ -68,12 +67,12 @@ def verify_initial_session_state(at:AppTest):
     # - observations {}
     # - image_hashes []
     # - images {}
-    # - files {}
+    # - files []
     # - public_observations {}
     assert at.session_state.observations == {}
     assert at.session_state.image_hashes == []
     assert at.session_state.images == {}
-    assert at.session_state.files == {}
+    assert at.session_state.files == []
     assert at.session_state.public_observations == {}
     assert "container_file_uploader" in at.session_state
     assert "container_metadata_inputs" in at.session_state
@@ -87,27 +86,8 @@ def test_no_input_no_interaction():
     #   -> not much on the main tab.
 
     at = AppTest.from_file(SCRIPT_UNDER_TEST, default_timeout=10).run()
-    if 1:
-        verify_initial_session_state(at)
-    else:
-        # the initialised states we expect 
-        # - container_file_uploader exists
-        # - container_metadata_inputs exists
-        # - observations {}
-        # - image_hashes []
-        # - image_filenames []
-        # - images {}
-        # - files {}
-        # - public_observations {}
-        assert at.session_state.observations == {}
-        assert at.session_state.image_filenames == []
-        assert at.session_state.image_hashes == []
-        assert at.session_state.images == {}
-        assert at.session_state.files == {}
-        assert at.session_state.public_observations == {}
-        assert "container_file_uploader" in at.session_state
-        assert "container_metadata_inputs" in at.session_state
-    
+    verify_initial_session_state(at)
+
     assert at.session_state.input_author_email == spoof_metadata.get("author_email")
 
     # print (f"[I] whole tree: {at._tree}")
@@ -120,6 +100,8 @@ def test_no_input_no_interaction():
     # in the sidebar, we have the progress indicator, then the fileuploader and metadata inputs
     # - annoyingly we can't use keys for markdown. 
     # - so we are sensitive to the order. 
+    # - we could grab all the text, and just be content with presence of the target strings 
+    #   anywhere in the sidebar? that would be more robust at least.
     assert "Progress: 0/5" in at.sidebar.markdown[0].value
     assert "st-key-container_file_uploader_id" in at.sidebar.markdown[1].value
     assert "st-key-container_metadata_inputs_id" in at.sidebar.markdown[2].value
@@ -157,7 +139,6 @@ def test_two_input_files_realdata(mock_file_rv: MagicMock, mock_uploadedFile_Lis
     
     # Set the return value of the mocked file_uploader to the list of mock files
     mock_file_rv.return_value = mock_files
-    #mock_file_rv.side_effect = wrapped_buffer_uploaded_files # not yet!... 
 
     # Run the Streamlit app
     at = AppTest.from_file(SCRIPT_UNDER_TEST, default_timeout=TIMEOUT).run()
@@ -180,7 +161,7 @@ def test_two_input_files_realdata(mock_file_rv: MagicMock, mock_uploadedFile_Lis
         # - observations 2 elements, keys -> some hashes. values: InputObservation objects
         # - image_hashes 2 elements, hashes (str) | 
         # - images {} 2 elements, keys -> hashes, values -> np.ndarray. 
-        # - files {} now a LIST! check how it is read. Anyway, a list of MockUploadedFile objects
+        # - files [] a list of 2 MockUploadedFile objects
         # x public_observations {}
     # I think just verify the sizes and types, we could do a data integrity 
     # check on the hashes matching everywhere, but that is far from visual.
