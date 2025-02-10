@@ -1,5 +1,5 @@
 # a minimal snippet for validating the upload sequence, for testing purposes (with AppTest)
-
+from typing import List
 import streamlit as st
 
 # to run streamlit from this subdir, we need the the src dir on the path
@@ -26,7 +26,7 @@ from input.input_handling import (
 
 def buffer_uploaded_files():
     st.write("buffering files! ")
-    uploaded_files = st.session_state.file_uploader_data
+    uploaded_files:List = st.session_state.file_uploader_data
     for ix, file in enumerate(uploaded_files):
         image_datetime_raw = get_image_datetime(file)
         latitude0, longitude0 = get_image_latlon(file)

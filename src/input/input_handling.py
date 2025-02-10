@@ -116,7 +116,7 @@ def buffer_uploaded_files():
     
 
     # get files from state 
-    uploaded_files = st.session_state.file_uploader_data
+    uploaded_files:List = st.session_state.file_uploader_data
     
     filenames = []
     images = {}
@@ -261,7 +261,7 @@ def _setup_dynamic_inputs() -> None:
     # - and these go into session state
     
     # load the files from the session state
-    uploaded_files = st.session_state.files
+    uploaded_files:List = st.session_state.files
     hashes = st.session_state.image_hashes
     #images = st.session_state.images
     observations = {}
@@ -368,7 +368,7 @@ def init_input_data_session_states() -> None:
         st.session_state.images = {}
 
     if "files" not in st.session_state:
-        st.session_state.files = {}
+        st.session_state.files = []
 
     if "public_observations" not in st.session_state:
         st.session_state.public_observations = {}
