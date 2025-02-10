@@ -77,6 +77,65 @@ def verify_initial_session_state(at:AppTest):
     assert "container_file_uploader" in at.session_state
     assert "container_metadata_inputs" in at.session_state
 
+def verify_session_state_after_processing_files(at:AppTest, num_files:int):
+    # this is after buffering & metadata extraction, but *BEFORE* the ML is run. 
+
+    # now we've processed the files and got metadata, we expect some
+    # changes in the elements in the session_state (x=same)
+        # x container_file_uploader exists
+        # x container_metadata_inputs exists
+        # - observations 2 elements, keys -> some hashes. values: InputObservation objects
+        # - image_hashes 2 elements, hashes (str) | 
+        # - images {} 2 elements, keys -> hashes, values -> np.ndarray. 
+        # - files [] a list of 2 MockUploadedFile objects
+        # x public_observations {}
+    # I think just verify the sizes and types, we could do a data integrity 
+    # check on the hashes matching everywhere, but that is far from visual.
+     
+    assert len(at.session_state.observations) == num_files
+    for obs in at.session_state.observations.values():
+        assert isinstance(obs, InputObservation)
+    assert len(at.session_state.image_hashes) == num_files
+    for hash in at.session_state.image_hashes:
+        assert isinstance(hash, str)
+    assert len(at.session_state.images) == num_files
+    for img in at.session_state.images.values():
+        assert isinstance(img, np.ndarray)
+    assert len(at.session_state.image_hashes) == num_files
+    for hash in at.session_state.image_hashes:
+        assert isinstance(hash, str)
+    assert len(at.session_state.files) == num_files
+    for file in at.session_state.files:
+        assert isinstance(file, MockUploadedFile)
+        assert isinstance(file, BytesIO) # cool it looks like the FileUploader.
+        #assert isinstance(file, UploadedFile) no... it isn't  but bytesIO is the parent class
+
+    assert at.session_state.public_observations == {}
+
+def verify_metadata_in_demo_display(at:AppTest, num_files:int):
+    # we can check the metadata display in the main area
+    # - this presentation is not part of the normal app, but is a test-only feature
+
+    if 'src/main.py' in SCRIPT_UNDER_TEST:
+        raise ValueError("This test is not valid for the main app, only for unit/component test snippets")
+
+    # finally we can check the main area, where the metadata is displayed
+    # since we uplaoded num_files files, hopefully we get num_files text areas 
+    assert len(at.text_area) == num_files
+    # expecting 
+    exp0 = "index: 0, name: cakes.jpg, datetime: 2024:10:24 15:59:45, lat: 46.51860277777778, lon:6.562075"
+    exp1 = "index: 1, name: cakes_no_exif_datetime.jpg, datetime: None, lat: 46.51860277777778, lon:6.562075"
+    exp2 = "index: 2, name: cakes_no_exif_gps.jpg, datetime: 2024:10:24 15:59:45, lat: None, lon:None"
+
+    assert at.text_area[0].value == exp0
+    assert at.text_area[1].value == exp1
+    if num_files >= 1:
+        assert at.text_area(key='metadata_0').value == exp0
+    if num_files >= 2:
+        assert at.text_area(key='metadata_1').value == exp1
+    if num_files >= 3:
+        assert at.text_area(key='metadata_2').value == exp2
+
 def test_no_input_no_interaction():
     
     # zero test: no inputs 
@@ -154,37 +213,7 @@ def test_two_input_files_realdata(mock_file_rv: MagicMock, mock_uploadedFile_Lis
     print(f"[I] session state: {at.session_state}")
     print(f"full tree: {at._tree}")
 
-    # now we've processed the files and got metadata, we expect some
-    # changes in the elements in the session_state (x=same)
-        # x container_file_uploader exists
-        # x container_metadata_inputs exists
-        # - observations 2 elements, keys -> some hashes. values: InputObservation objects
-        # - image_hashes 2 elements, hashes (str) | 
-        # - images {} 2 elements, keys -> hashes, values -> np.ndarray. 
-        # - files [] a list of 2 MockUploadedFile objects
-        # x public_observations {}
-    # I think just verify the sizes and types, we could do a data integrity 
-    # check on the hashes matching everywhere, but that is far from visual.
-     
-    assert len(at.session_state.observations) == num_files
-    for obs in at.session_state.observations.values():
-        assert isinstance(obs, InputObservation)
-    assert len(at.session_state.image_hashes) == num_files
-    for hash in at.session_state.image_hashes:
-        assert isinstance(hash, str)
-    assert len(at.session_state.images) == num_files
-    for img in at.session_state.images.values():
-        assert isinstance(img, np.ndarray)
-    assert len(at.session_state.image_hashes) == num_files
-    for hash in at.session_state.image_hashes:
-        assert isinstance(hash, str)
-    assert len(at.session_state.files) == num_files
-    for file in at.session_state.files:
-        assert isinstance(file, MockUploadedFile)
-        assert isinstance(file, BytesIO) # cool it looks like the FileUploader.
-        #assert isinstance(file, UploadedFile) no... it isn't  but bytesIO is the parent class
-
-    assert at.session_state.public_observations == {}
+    verify_session_state_after_processing_files(at, num_files)
 
     # and then there are plenty of visual elements, based on the image hashes.
     for hash in at.session_state.image_hashes:
@@ -198,19 +227,5 @@ def test_two_input_files_realdata(mock_file_rv: MagicMock, mock_uploadedFile_Lis
         #print(f"found element: {elem}")
         #assert f"input_latitude_{hash}" in at.text_input.values()
 
-    # finally we can check the main area, where the metadata is displayed
-    # since we uplaoded num_files files, hopefully we get num_files text areas 
-    assert len(at.text_area) == num_files
-    # expecting 
-    exp0 = "index: 0, name: cakes.jpg, datetime: 2024:10:24 15:59:45, lat: 46.51860277777778, lon:6.562075"
-    exp1 = "index: 1, name: cakes_no_exif_datetime.jpg, datetime: None, lat: 46.51860277777778, lon:6.562075"
-    exp2 = "index: 2, name: cakes_no_exif_gps.jpg, datetime: 2024:10:24 15:59:45, lat: None, lon:None"
-
-    assert at.text_area[0].value == exp0
-    assert at.text_area[1].value == exp1
-    if num_files >= 1:
-        assert at.text_area(key='metadata_0').value == exp0
-    if num_files >= 2:
-        assert at.text_area(key='metadata_1').value == exp1
-    if num_files >= 3:
-        assert at.text_area(key='metadata_2').value == exp2
+    if 'demo_input_sidebar' in SCRIPT_UNDER_TEST:
+        verify_metadata_in_demo_display(at, num_files)
