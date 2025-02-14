@@ -163,7 +163,7 @@ def test_click_validate_after_data_entry(mock_file_rv: MagicMock, mock_uploadedF
     debug_check_images(at, "before clicking infer. ")
     _cprint(f"[I] buffering called {wrapped_buffer_uploaded_files_allowed_once.called} times", OKGREEN)
     TEST_ML = True
-    SKIP_CHECK_OVERRIDE = True
+    SKIP_CHECK_OVERRIDE = False
     # 4. launch ML inference by clicking the button
     if TEST_ML:
         # infer_button = at.tabs[0].button[0]
@@ -206,14 +206,14 @@ def test_click_validate_after_data_entry(mock_file_rv: MagicMock, mock_uploadedF
         
         
         # 5. manually override the class of one of the observations
-        idx_to_override = 1
-        infer_tab.selectbox[idx_to_override].select_index(20).run()  # FRAGILE!
+        idx_to_override = 1  # don't forget, we also have the page selector first.
+        infer_tab.selectbox[idx_to_override + 1].select_index(20).run()  # FRAGILE!
             
         # 5-TEST. 
         # - expect that all class_overriden are False, except for the one we just set
         # - also expect there still to be num_files*4 images (2+6 per file) etc
         for i, obs in enumerate(at.session_state.observations.values()):
-            print(f"obs {i}: {obs.class_overriden} {obs.to_dict()}")
+            _cprint(f"obs {i}: {obs.class_overriden} {obs.to_dict()}", OKBLUE)
             assert isinstance(obs, InputObservation)
             if not SKIP_CHECK_OVERRIDE:
                 if i == idx_to_override:
@@ -237,7 +237,7 @@ def test_click_validate_after_data_entry(mock_file_rv: MagicMock, mock_uploadedF
         
         assert at.session_state.workflow_fsm.current_state == 'manual_inspection_completed'
         for i, obs in enumerate(at.session_state.observations.values()):
-            print(f"obs {i}: {obs.class_overriden} {obs.to_dict()}")
+            _cprint(f"obs {i}: {obs.class_overriden} {obs.to_dict()}", OKBLUE)
             assert isinstance(obs, InputObservation)
             if not SKIP_CHECK_OVERRIDE:
                 if i == idx_to_override:
@@ -245,8 +245,13 @@ def test_click_validate_after_data_entry(mock_file_rv: MagicMock, mock_uploadedF
                 else:
                     assert obs.class_overriden == False
         
-        # we have to trigger a manual refresh?
-        at.run()
+        # we have to trigger a manual refresh? no, it seems that sometimes the tests fail, maybe 
+        #   because the script is slow? it is not unique to here, various points that usually pass
+        #   occasionally fail because elements haven't yet been drawn. I suppose the timing aspect 
+        #   internally by AppTest is not perfect (selenium has moved from explicit to implicit waits,
+        #   though I didn't look too deeply whether apptest also has an explicit wait mechanism)
+        # # time.sleep(1)
+        # #at.run()
         infer_tab = at.tabs[0]
         upload_button = infer_tab.button[0]
         assert upload_button.disabled == False
@@ -271,17 +276,14 @@ def test_click_validate_after_data_entry(mock_file_rv: MagicMock, mock_uploadedF
         # - no more button on the main area
         
         assert at.session_state.workflow_fsm.current_state == 'data_uploaded'
-        
-        print(at.toast)
+        #print(at.toast)
         assert len(at.toast) == num_files
+        infer_tab = at.tabs[0]
         
         img_elems = infer_tab.get("imgs")
         assert len(img_elems) == num_files*4
-        
         assert len(infer_tab.selectbox) == 1 
-        
-        print(at.button)
-        print(infer_tab.button)
+        assert len(infer_tab.button) == 0   
         
         
         
