@@ -1,3 +1,6 @@
+# Data files 
+tests/data_model_test/
+
 # OS Related
 .DS_Store
 
