@@ -127,6 +127,7 @@ def buffer_uploaded_files():
         print(f"[D] processing {ix}th file {filename}. {file.file_id} {file.type} {file.size}")
         # image to np and hash both require reading the file so do together
         image, image_hash = load_file_and_hash(file)
+        print(f"   [D] {ix}th file {filename} hash: {image_hash}")
         
         filenames.append(filename)
         image_hashes.append(image_hash)
