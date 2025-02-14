@@ -21,17 +21,52 @@ from test_demo_multifile_upload import (
     MockUploadedFile, )
 
 
+# decorator that counts the number of times a function is called
+def count_calls(func):
+    def wrapper(*args, **kwargs):
+        wrapper.called += 1
+        return func(*args, **kwargs)
+    wrapper.called = 0
+    return wrapper
 
+
+@count_calls
 def wrapped_buffer_uploaded_files(*args, **kwargs):
     import streamlit as st
-    #import time
-    _cprint(f"[I] buffering files in my side-effect! cool")
-    #time.sleep(1)
     uploaded_files = st.session_state.file_uploader_data
     _cprint(f"[I] buffering files in my side-effect! cool | {len(uploaded_files)}")
+    for i, (key, img) in enumerate(st.session_state.images.items()):
+        _cprint(f"    - image {i}: {type(img)} [{key}]")
+
     buffer_uploaded_files() # nowcall the real prod func
     _cprint(f"[I] finished the real buffering ! cool | {len(uploaded_files)}")
-# - tests for apptest/demo_input_phase
+
+    
+@count_calls
+def wrapped_buffer_uploaded_files_allowed_once(*args, **kwargs):
+    # this is a wrapper that only allows the real function to be called once
+    # - this is to prevent the side-effect from being called multiple times
+    # - the callback is only invoked when the input data is changed for the 
+    #   real file_uploader object; but due to the 're-run script on interaction' 
+    #   model, the side-effect is called each time.
+    import streamlit as st
+    uploaded_files = st.session_state.file_uploader_data
+    if len(st.session_state.images) != 0:
+        _cprint(f"[I] buffering already called before, side-effect! not rerun inner func | {len(uploaded_files)} | {len(st.session_state.images)}")
+        for i, (key, img) in enumerate(st.session_state.images.items()):
+            _cprint(f"    - image {i}: {type(img)} [{key}]")
+        return
+    
+    _cprint(f"[I] buffering files in my side-effect! cool | {len(uploaded_files)}")
+    for i, (key, img) in enumerate(st.session_state.images.items()):
+        _cprint(f"    - image {i}: {type(img)} [{key}]")
+
+    buffer_uploaded_files() # nowcall the real prod func
+    _cprint(f"[I] finished the real buffering ! cool | {len(uploaded_files)}")
+    
+    
+
+# - tests for apptest/demo_input_sidebar 
 
 # zero test: no inputs 
 #   -> empty session state
@@ -222,10 +257,6 @@ def test_two_input_files_realdata(mock_file_rv: MagicMock, mock_uploadedFile_Lis
         assert at.sidebar.text_input(key=f"input_longitude_{hash}") is not None
         assert at.sidebar.date_input(key=f"input_date_{hash}") is not None
         assert at.sidebar.time_input(key=f"input_time_{hash}") is not None
-        
-        #elem = at.get('text_input',key=f"input_latitude_{hash}")
-        #print(f"found element: {elem}")
-        #assert f"input_latitude_{hash}" in at.text_input.values()
 
     if 'demo_input_sidebar' in SCRIPT_UNDER_TEST:
         verify_metadata_in_demo_display(at, num_files)
