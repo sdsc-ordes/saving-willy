@@ -19,7 +19,7 @@ from test_demo_input_sidebar import (
     verify_initial_session_state, verify_session_state_after_processing_files, 
     wrapped_buffer_uploaded_files_allowed_once)
 
-from test_demo_input_sidebar import _cprint, OKBLUE, OKGREEN, OKCYAN, FAIL, ENDC
+from test_demo_input_sidebar import _cprint, OKBLUE, OKGREEN, OKCYAN, FAIL, PURPLE
 
 TIMEOUT = 15
 SCRIPT_UNDER_TEST = "src/main.py"
@@ -54,7 +54,7 @@ def test_click_validate_after_data_entry(mock_file_rv: MagicMock, mock_uploadedF
     t0 = time.time()
     at = AppTest.from_file(SCRIPT_UNDER_TEST, default_timeout=TIMEOUT).run()
     t1 = time.time()
-    _cprint(f"[T] time to load: {t1-t0}", OKCYAN)
+    _cprint(f"[T] time to load: {t1-t0:.2f}s", PURPLE)
     verify_initial_session_state(at)
 
     # 1-Test: at this initial state, we expect:
@@ -85,7 +85,7 @@ def test_click_validate_after_data_entry(mock_file_rv: MagicMock, mock_uploadedF
     t2 = time.time()
     at.run()
     t3 = time.time()    
-    _cprint(f"[T] time to run with file processing: {t3-t2}", OKCYAN)
+    _cprint(f"[T] time to run with file processing: {t3-t2:.2f}s", PURPLE)
     
     # 2-Test: after uploading the files, we should have:
     # - the workflow state moved on to 'data_entry_complete'
@@ -108,7 +108,7 @@ def test_click_validate_after_data_entry(mock_file_rv: MagicMock, mock_uploadedF
     # 3. data entry complete, click the validate button
     at.sidebar.button[1].click().run()
     t4 = time.time()
-    _cprint(f"[T] time to run step 3: {t4-t3}", OKCYAN)
+    _cprint(f"[T] time to run step 3: {t4-t3:.2f}s", PURPLE)
 
     # 3-Test: after validating the data, we should have:
     # - the state (backend) should move to data_entry_validated
@@ -171,7 +171,7 @@ def test_click_validate_after_data_entry(mock_file_rv: MagicMock, mock_uploadedF
         # now test the ML step
         infer_button.click().run()
         t5 = time.time()
-        _cprint(f"[T] time to run with step 4: {t5-t4}", OKCYAN)
+        _cprint(f"[T] time to run step 4: {t5-t4:.2f}s", PURPLE)
 
         # 4-Test: after clicking the infer button, we should have:
         # - workflow should have moved on to 'ml_classification_completed'
@@ -226,7 +226,7 @@ def test_click_validate_after_data_entry(mock_file_rv: MagicMock, mock_uploadedF
         confirm_button = infer_tab.button[0]
         confirm_button.click().run()
         t6 = time.time()
-        _cprint(f"[T] time to run with step 6: {t6-t5}", OKCYAN)
+        _cprint(f"[T] time to run step 5: {t6-t5:.2f}s", PURPLE)
         
         # 6-TEST. Now we expect to see: 
         # - the workflow state should be 'manual_inspection_completed'
@@ -265,7 +265,7 @@ def test_click_validate_after_data_entry(mock_file_rv: MagicMock, mock_uploadedF
         # 7. upload the observations
         upload_button.click().run()
         t7 = time.time()
-        _cprint(f"[T] time to run with step 7: {t7-t6}", OKCYAN)
+        _cprint(f"[T] time to run step 6: {t7-t6:.2f}s", PURPLE)
 
         # 7-TEST. Now we expect to see:
         # - workflow state should be 'data_uploaded'
