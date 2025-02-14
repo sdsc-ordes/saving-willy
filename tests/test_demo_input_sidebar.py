@@ -172,6 +172,7 @@ def verify_metadata_in_demo_display(at:AppTest, num_files:int):
     if num_files >= 3:
         assert at.text_area(key='metadata_2').value == exp2
 
+@pytest.mark.component
 def test_no_input_no_interaction():
     
     # zero test: no inputs 
@@ -218,7 +219,7 @@ def test_no_input_no_interaction():
     #   assert "container_file_uploader_id" in at.session_state
     #   assert "container_metadata_inputs_id" in at.session_state
     
-
+@pytest.mark.component
 @patch("streamlit.file_uploader")
 def test_two_input_files_realdata(mock_file_rv: MagicMock, mock_uploadedFile_List_ImageData):
     # many test: list of 2 inputs
