@@ -27,7 +27,7 @@ jobs:
       # note this will run all non-visual tests, including the slow end2end ones
       # - this action is only on PR; the slow ones are skipped on push.
       run: |
-        pytest -m "not visual" --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=src tests/ | tee pytest-coverage.txt
+        pytest -m "not visual" --ignore=tests/visual_selenium --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=src tests/ | tee pytest-coverage.txt
         echo "working dir:" && pwd
         echo "files in cwd:" && ls -ltr
 
