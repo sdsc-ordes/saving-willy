@@ -5,7 +5,7 @@ name: Execute tests with pytest
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "dev" , "feat/stateful-workflow"]
   pull_request:
     branches: [ "dev", "main" ]
 permissions:
@@ -33,4 +33,4 @@ jobs:
     #    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run quick tests with pytest
       run: |
-        pytest -m "not end2end_slow"
+        pytest -m "not slow and not visual" --strict-markers
