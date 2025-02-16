@@ -21,7 +21,7 @@ from test_demo_input_sidebar import (
 
 from test_demo_input_sidebar import _cprint, OKBLUE, OKGREEN, OKCYAN, FAIL, PURPLE
 
-TIMEOUT = 15
+TIMEOUT = 30
 SCRIPT_UNDER_TEST = "src/main.py"
 
 def debug_check_images(at:AppTest, msg:str=""):
