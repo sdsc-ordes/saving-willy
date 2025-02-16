@@ -39,7 +39,8 @@ def nooop():
     raise RuntimeError
     pass
 
-@pytest.mark.end2end_slow
+@pytest.mark.end2end
+@pytest.mark.slow
 @patch("streamlit.file_uploader")
 def test_click_validate_after_data_entry(mock_file_rv: MagicMock, mock_uploadedFile_List_ImageData):
     # this test goes through several stages of the workflow
