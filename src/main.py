@@ -226,7 +226,8 @@ def main() -> None:
         
         if st.session_state.workflow_fsm.is_in_state('data_entry_validated'):
             # show the button, enabled. If pressed, we start the ML model (And advance state)
-            if tab_inference.button("Identify with cetacean classifier"):
+            if tab_inference.button("Identify with cetacean classifier", 
+                                    key="button_infer_ceteans"):
                 cetacean_classifier = AutoModelForImageClassification.from_pretrained(
                     "Saving-Willy/cetacean-classifier", 
                     revision=classifier_revision, 
