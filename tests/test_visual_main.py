@@ -160,7 +160,8 @@ def switch_tab(self, tab_number):
 
 class RecorderTest(BaseCase):
 
-    @pytest.mark.visual_slow
+    @pytest.mark.slow
+    @pytest.mark.visual
     def test_species_presentation(self):
         # this test goes through several steps of the workflow, primarily to get to the point
         # that species columns are displayed.
