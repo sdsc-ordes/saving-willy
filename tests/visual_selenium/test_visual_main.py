@@ -9,7 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 BaseCase.main(__name__, __file__)
 
 # Set the paths to the images and csv file
-repo_path = Path(__file__).resolve().parents[1]
+repo_path = Path(__file__).resolve().parents[2]
 imgpath = repo_path / "tests/data/rand_images"
 img_f1 = imgpath / "img_001.jpg"
 img_f2 = imgpath / "img_002.jpg"
