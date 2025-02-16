@@ -33,4 +33,4 @@ jobs:
     #    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run quick tests with pytest
       run: |
-        pytest -m "not slow and not visual" --strict-markers
+        pytest -m "not slow and not visual" --strict-markers --ignore=tests/visual_selenium
