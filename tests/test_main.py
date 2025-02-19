@@ -34,7 +34,7 @@ def debug_check_images(at:AppTest, msg:str=""):
         else:
             print(f"image {i}: {type(img)} [{key}]")    
 
-def nooop():
+def nooop(*args, **kwargs):
     _cprint("skipping the buffering -- shoul only happen once", FAIL)
     raise RuntimeError
     pass
