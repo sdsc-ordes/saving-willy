@@ -1,10 +1,13 @@
 from pathlib import Path
 import time
+from contextlib import contextmanager
+
 import pytest
 from seleniumbase import BaseCase
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
 
 BaseCase.main(__name__, __file__)
 
@@ -23,6 +26,43 @@ mk_visible = """
             input.style.opacity = '1';
             input.style.visibility = 'visible';
             """
+
+PORT = "8501" 
+
+# - _before_module and run_streamlit taken from 
+#   https://github.com/randyzwitch/streamlit-folium/blob/master/tests/test_frontend.py 
+#   example given via streamlit blog
+# - note: to use pytest fixtures x unittest we have to use autouse=True. 
+@pytest.fixture(scope="module", autouse=True)
+def _before_module():
+    # Run the streamlit app before each module
+    with run_streamlit():
+        yield
+
+@contextmanager
+def run_streamlit():
+    """Run the streamlit app at src/main.py on port PORT"""
+
+    import subprocess
+
+    p = subprocess.Popen(
+        [
+            "streamlit",
+            "run",
+            "src/main.py",
+            "--server.port",
+            PORT,
+            "--server.headless",
+            "true",
+        ]
+    )
+
+    time.sleep(5)
+
+    try:
+        yield 1
+    finally:
+        p.kill()
 
 def wait_for_element(self, by, selector, timeout=10):
     # example usage:
@@ -215,8 +255,11 @@ class RecorderTest(BaseCase):
         self.click(".st-key-button_infer_ceteans button")
         
         # check the state has advanced
+        # NOTE: FOR REMOTE RUN, IT IS STARTING FROM ZERO, SO IT HAS TO DOWNLOAD
+        # ALL MODEL FILES -> 60s timeout for this one step
         self.assert_exact_text("Progress: 3/5. Current: ml_classification_completed.", 
-                               'div[data-testid="stMarkdownContainer"] p em')
+                               'div[data-testid="stMarkdownContainer"] p em',
+                               timeout=60)
 
         # on the inference tab, check the columns and images are rendered correctly
         # - normally it is selected by default, but we can switch to it to be sure
