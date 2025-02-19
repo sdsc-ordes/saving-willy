@@ -2,8 +2,8 @@ name: Visual tests of the app
 
 on:
   workflow_dispatch: 
-  #push:
-  #  branches: [ "dev"  ]
+  push:
+    branches: [ "feat/stateful-workflow"  ]
   #pull_request:
   #  branches: [ "dev", "main" ]
 
