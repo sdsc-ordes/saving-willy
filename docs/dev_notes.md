@@ -44,6 +44,25 @@ mkdocs build -c
 
 # Testing
 
+## use of markers
+
+The CI runs with `--strict-markers` so any new marker must be registered in
+`pytest.ini`. 
+
+- the basic CI action runs the fast tests only, skipping all tests marked
+  `visual` and `slow`
+- the CI action on PR runs the `slow` tests, but stil excluding `visual`. 
+- TODO: a new action for the visual tests is to be developed.
+
+Check all tests are marked ok, and that they are filtered correctly by the 
+groupings used in CI:
+```bash
+pytest --collect-only -m "not slow and not visual" --strict-markers --ignore=tests/visual_selenium
+pytest --collect-only -m "not visual" --strict-markers --ignore=tests/visual_selenium
+```
+
+
+
 ## local testing
 To run the tests locally, we have the standard dependencies of the project, plus the test runner dependencies. 
 
@@ -73,6 +92,39 @@ To generate reports on pass rate and coverage, to files:
 pytest --junit-xml=test-results.xml
 pytest --cov-report=lcov --cov=src
 ```
+
+## local testing for visual tests 
+
+We use seleniumbase to test the visual appearance of the app, including the
+presence of elements that appear through the workflow.  This testing takes quite
+a long time to execute and is not yet configured with CI. 
+
+```bash
+# install packages for app and for visual testing
+pip install ./requirements.txt
+pip install -r tests/visual_selenium/requirements_visual.txt
+```
+
+**Running tests**
+The execution of these tests requires that the site/app is running already.
+
+In one tab:
+```bash
+streamlit run src/main.py
+```
+
+In another tab: 
+```bash
+# run just the visual tests
+pytest -m "visual" --strict-markers
+# run in demo mode, using firefox (default is chrome)
+pytest -m "visual" --strict-markers -s browser=firefox --demo
+
+# the inverse set:
+pytest -m "not slow and not visual" --strict-markers --ignore=tests/visual_selenium
+
+```
+
 
 
 ## CI testing

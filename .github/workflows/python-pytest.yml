@@ -5,7 +5,7 @@ name: Execute tests with pytest
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "dev"  ]
   pull_request:
     branches: [ "dev", "main" ]
 permissions:
@@ -31,6 +31,6 @@ jobs:
     #    flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
     #    # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
     #    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
+    - name: Run quick tests with pytest
       run: |
-        pytest
+        pytest -m "not slow and not visual" --strict-markers --ignore=tests/visual_selenium

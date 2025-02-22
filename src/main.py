@@ -140,7 +140,7 @@ def main() -> None:
         # the goal of this tab is to allow selection of the new obsvation's location by map click/adjust.
         st.markdown("Coming later! :construction:")
         st.markdown(
-            f"""*The goal is to allow interactive definition for the coordinates of a new
+            """*The goal is to allow interactive definition for the coordinates of a new
             observation, by click/drag points on the map.*""")
         
 
@@ -226,7 +226,8 @@ def main() -> None:
         
         if st.session_state.workflow_fsm.is_in_state('data_entry_validated'):
             # show the button, enabled. If pressed, we start the ML model (And advance state)
-            if tab_inference.button("Identify with cetacean classifier"):
+            if tab_inference.button("Identify with cetacean classifier", 
+                                    key="button_infer_ceteans"):
                 cetacean_classifier = AutoModelForImageClassification.from_pretrained(
                     "Saving-Willy/cetacean-classifier", 
                     revision=classifier_revision, 

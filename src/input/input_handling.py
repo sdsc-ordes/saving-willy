@@ -116,7 +116,7 @@ def buffer_uploaded_files():
     
 
     # get files from state 
-    uploaded_files = st.session_state.file_uploader_data
+    uploaded_files:List = st.session_state.file_uploader_data
     
     filenames = []
     images = {}
@@ -127,6 +127,7 @@ def buffer_uploaded_files():
         print(f"[D] processing {ix}th file {filename}. {file.file_id} {file.type} {file.size}")
         # image to np and hash both require reading the file so do together
         image, image_hash = load_file_and_hash(file)
+        print(f"   [D] {ix}th file {filename} hash: {image_hash}")
         
         filenames.append(filename)
         image_hashes.append(image_hash)
@@ -178,7 +179,7 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
         _viewcontainer = st.session_state.container_metadata_inputs
     else:
         _viewcontainer = st.sidebar
-        m_logger.warning(f"[W] `container_metadata_inputs` is None, using sidebar")
+        m_logger.warning("[W] `container_metadata_inputs` is None, using sidebar")
         
 
 
@@ -261,7 +262,7 @@ def _setup_dynamic_inputs() -> None:
     # - and these go into session state
     
     # load the files from the session state
-    uploaded_files = st.session_state.files
+    uploaded_files:List = st.session_state.files
     hashes = st.session_state.image_hashes
     #images = st.session_state.images
     observations = {}
@@ -368,7 +369,7 @@ def init_input_data_session_states() -> None:
         st.session_state.images = {}
 
     if "files" not in st.session_state:
-        st.session_state.files = {}
+        st.session_state.files = []
 
     if "public_observations" not in st.session_state:
         st.session_state.public_observations = {}
