@@ -22,7 +22,7 @@ def generate_random_md5(length:int=16) -> str:
     """
 
     # Generate a random string
-    random_string = ''.join(random.choices(string.ascii_letters + string.digits, length=16))
+    random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=length))
     # Encode the string and compute its MD5 hash
     md5_hash = hashlib.md5(random_string.encode()).hexdigest()
     return md5_hash

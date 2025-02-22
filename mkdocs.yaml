@@ -33,7 +33,7 @@ nav:
         - Data extraction and validation: input_validator.md
         - Data Object Class: input_observation.md
       - Classifiers: 
-        - Cetacean Fluke & Fin Recognition: classifier_cetacean.md
+        - Cetacean Fluke & Fin Recognition: classifier_image.md
         - (temporary) Hotdog Classifier: hotdog.md
       - Hugging Face Integration: 
         - Push Observations to Dataset: hf_push_observations.md
