@@ -31,33 +31,16 @@ def test_try_download_dataset_success(mock_logger, mock_st, mock_load_dataset):
 @patch('maps.obs_map.load_dataset', side_effect=ValueError("Download failed"))
 @patch('maps.obs_map.st')
 @patch('maps.obs_map.m_logger')
-def test_try_download_dataset_failure_with_mockdata(mock_logger, mock_st, mock_load_dataset):
+def test_try_download_dataset_failure(mock_logger, mock_st, mock_load_dataset):
     dataset_id = "test_dataset"
     data_files = "test_file"
-    result = try_download_dataset(dataset_id, data_files, mockdata_on_failure=True)
+    result = try_download_dataset(dataset_id, data_files)
 
     # Assertions
     mock_logger.info.assert_any_call(f"Starting to download dataset {dataset_id} from Hugging Face")
     mock_load_dataset.assert_called_once_with(dataset_id, data_files=data_files)
-    mock_logger.error.assert_called_with("Error downloading dataset: Download failed.  (after 0.00s) Using mock data to continue")
-    mock_st.error.assert_called_with("Error downloading dataset: Download failed.  (after 0.00s) Using mock data to continue")
-    assert result == {'train': {'latitude': [0], 'longitude': [0], 'predicted_class': ['rough_toothed_dolphin']}}
-    mock_logger.info.assert_called_with("Downloaded dataset: (after 0.00s). ")
-    mock_st.write.assert_called_with("Downloaded dataset: (after 0.00s). ")
-
-@patch('maps.obs_map.load_dataset', side_effect=ValueError("Download failed"))
-@patch('maps.obs_map.st')
-@patch('maps.obs_map.m_logger')
-def test_try_download_dataset_failure_without_mockdata(mock_logger, mock_st, mock_load_dataset):
-    dataset_id = "test_dataset"
-    data_files = "test_file"
-    result = try_download_dataset(dataset_id, data_files, mockdata_on_failure=False)
-
-    # Assertions
-    mock_logger.info.assert_any_call(f"Starting to download dataset {dataset_id} from Hugging Face")
-    mock_load_dataset.assert_called_once_with(dataset_id, data_files=data_files)
-    mock_logger.error.assert_called_with("Error downloading dataset: Download failed.  (after 0.00s) Using mock data to continue")
-    mock_st.error.assert_called_with("Error downloading dataset: Download failed.  (after 0.00s) Using mock data to continue")
+    mock_logger.error.assert_called_with("Error downloading dataset: Download failed.  (after 0.00s).")
+    mock_st.error.assert_called_with("Error downloading dataset: Download failed.  (after 0.00s).")
     assert result == {}
     mock_logger.info.assert_called_with("Downloaded dataset: (after 0.00s). ")
     mock_st.write.assert_called_with("Downloaded dataset: (after 0.00s). ")
