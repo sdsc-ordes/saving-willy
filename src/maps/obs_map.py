@@ -117,28 +117,20 @@ def create_map(tile_name:str, location:Tuple[float], zoom_start: int = 7) -> fol
     #folium.LayerControl().add_to(m)
     return m
 
-def try_download_dataset(dataset_id:str, data_files:str, mockdata_on_failure:bool=False) -> dict:
+def try_download_dataset(dataset_id:str, data_files:str) -> dict:
     # the `mockdata_on_failure` generates a minimal compliant dataset if the download fails
     # (one step at a time)
+    m_logger.info(f"Starting to download dataset {dataset_id} from Hugging Face")
     t1 = time.time()
     try:
-        m_logger.info(f"Starting to download dataset {dataset_id} from Hugging Face")
         metadata:DatasetDict = load_dataset(dataset_id, data_files=data_files)
         t2 = time.time(); elap = t2 - t1
     except Exception as e:
         t2 = time.time(); elap = t2 - t1
-        msg = f"Error downloading dataset: {e}.  (after {elap:.2f}s) Using mock data to continue"
+        msg = f"Error downloading dataset: {e}.  (after {elap:.2f}s)."
         st.error(msg)
         m_logger.error(msg)
-        if mockdata_on_failure:
-            metadata = {'train':
-                         {'latitude': [0],
-                          'longitude': [0],
-                          'predicted_class': ['rough_toothed_dolphin']}
-                       }
-
-        else:
-            metadata = {}
+        metadata = {}
 
     msg = f"Downloaded dataset: (after {elap:.2f}s). "
     m_logger.info(msg)
@@ -169,15 +161,34 @@ def present_obs_map(dataset_id:str = "Saving-Willy/Happywhale-kaggle",
 
     """
 
+    metadata_schema = {
+        'train': {
+            'latitude': 'list',
+            'longitude': 'list',
+            'predicted_class': 'list',
+        }
+    }
+    presentation_data_schema = {
+        'lat': 'float',
+        'lon': 'float',
+        'species': 'str',
+    }
+
     # load/download data from huggingface dataset
-    metadata = try_download_dataset(dataset_id, data_files, mockdata_on_failure=True)   
+    metadata = try_download_dataset(dataset_id, data_files)
     
-    # make a pandas df that is compliant with folium/streamlit maps
-    _df = pd.DataFrame({
-        'lat': metadata["train"]["latitude"],
-        'lon': metadata["train"]["longitude"],
-        'species': metadata["train"]["predicted_class"],}
-    )
+    if not metadata:
+        # create an empty, but compliant dataframe
+        df0 = pd.DataFrame(columns=presentation_data_schema).astype(presentation_data_schema)
+        _df = df0
+    else:
+        # make a pandas df that is compliant with folium/streamlit maps
+        _df = pd.DataFrame({
+            'lat': metadata["train"]["latitude"],
+            'lon': metadata["train"]["longitude"],
+            'species': metadata["train"]["predicted_class"],}
+        )
+
     if dbg_show_extra:
         # add a few samples to visualise colours 
         _df.loc[len(_df)] = {'lat': 0, 'lon': 0, 'species': 'rough_toothed_dolphin'}
