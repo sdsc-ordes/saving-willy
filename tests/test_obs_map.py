@@ -31,7 +31,8 @@ def test_try_download_dataset_success(mock_logger, mock_st, mock_load_dataset):
 @patch('maps.obs_map.load_dataset', side_effect=ValueError("Download failed"))
 @patch('maps.obs_map.st')
 @patch('maps.obs_map.m_logger')
-def test_try_download_dataset_failure(mock_logger, mock_st, mock_load_dataset):
+def test_try_download_dataset_failure_known(mock_logger, mock_st, mock_load_dataset):
+    # testing the case where we've found (can reproduce by removing network connection)
     dataset_id = "test_dataset"
     data_files = "test_file"
     result = try_download_dataset(dataset_id, data_files)
@@ -41,6 +42,24 @@ def test_try_download_dataset_failure(mock_logger, mock_st, mock_load_dataset):
     mock_load_dataset.assert_called_once_with(dataset_id, data_files=data_files)
     mock_logger.error.assert_called_with("Error downloading dataset: Download failed.  (after 0.00s).")
     mock_st.error.assert_called_with("Error downloading dataset: Download failed.  (after 0.00s).")
+    assert result == {}
+    mock_logger.info.assert_called_with("Downloaded dataset: (after 0.00s). ")
+    mock_st.write.assert_called_with("Downloaded dataset: (after 0.00s). ")
+
+@patch('maps.obs_map.load_dataset', side_effect=Exception("Download engine corrupt"))
+@patch('maps.obs_map.st')
+@patch('maps.obs_map.m_logger')
+def test_try_download_dataset_failure_unknown(mock_logger, mock_st, mock_load_dataset):
+    # the cases we haven't found, but should still be handled (maybe network error, etc)
+    dataset_id = "test_dataset"
+    data_files = "test_file"
+    result = try_download_dataset(dataset_id, data_files)
+
+    # Assertions
+    mock_logger.info.assert_any_call(f"Starting to download dataset {dataset_id} from Hugging Face")
+    mock_load_dataset.assert_called_once_with(dataset_id, data_files=data_files)
+    mock_logger.error.assert_called_with("!!Unknown Error!! downloading dataset: Download engine corrupt.  (after 0.00s).")
+    mock_st.error.assert_called_with("!!Unknown Error!! downloading dataset: Download engine corrupt.  (after 0.00s).")
     assert result == {}
     mock_logger.info.assert_called_with("Downloaded dataset: (after 0.00s). ")
     mock_st.write.assert_called_with("Downloaded dataset: (after 0.00s). ")
