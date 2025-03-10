@@ -3,6 +3,7 @@ from pathlib import Path
 from io import BytesIO
 from PIL import Image
 import numpy as np
+import os
 
 import pytest
 from unittest.mock import MagicMock, patch
@@ -12,7 +13,7 @@ import time
 
 from input.input_handling import spoof_metadata
 from input.input_observation import InputObservation
-from input.input_handling import buffer_uploaded_files
+from input.input_handling import buffer_uploaded_files, load_debug_autopopulate
 
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
@@ -184,7 +185,13 @@ def test_no_input_no_interaction():
     at = AppTest.from_file(SCRIPT_UNDER_TEST, default_timeout=10).run()
     verify_initial_session_state(at)
 
-    assert at.session_state.input_author_email == spoof_metadata.get("author_email")
+    dbg = load_debug_autopopulate()
+    #var = at.session_state.input_author_email
+    #_cprint(f"[I] input email is '{var}' type: {type(var)} | is None? {var is None} | {dbg}", PURPLE)
+    if dbg: # autopopulated
+        assert at.session_state.input_author_email == spoof_metadata.get("author_email")
+    else: # should be empty, the user has to fill it in
+        assert at.session_state.input_author_email == ""
 
     # print (f"[I] whole tree: {at._tree}")
     # for elem in at.sidebar.markdown:

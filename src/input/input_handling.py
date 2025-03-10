@@ -28,9 +28,15 @@ def _is_str_true(v:str) -> bool:
     ''' convert a string to boolean: if contains True or 1 (or yes), return True '''
     # https://stackoverflow.com/questions/715417/converting-from-a-string-to-boolean-in-python
     return v.lower() in ("yes", "true", "t", "1")
+
+def load_debug_autopopulate() -> bool:
+    return _is_str_true( os.getenv("DEBUG_AUTOPOPULATE_METADATA", "False"))
+    
+    
 # an arbitrary set of defaults so testing is less painful...
 # ideally we add in some randomization to the defaults
-dbg_populate_metadata = _is_str_true( os.getenv("DEBUG_AUTOPOPULATE_METADATA", "False"))
+dbg_populate_metadata = load_debug_autopopulate()
+
 # the other main option would be argparse, where we can run `streamlit run src/main.py -- --debug` or similar
 # - I think env vars are simple and clean enough, it isn't really a CLI that we want to offer debug options, it is for dev.
 if dbg_populate_metadata:
