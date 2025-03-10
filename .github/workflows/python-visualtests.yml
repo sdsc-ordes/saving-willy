@@ -50,6 +50,6 @@ jobs:
       # we use --demo to make it slow enough (selenium doesn't wait long enough
       # otherwise, not one step it consistently fails at.)
       run: |
-            DEBUG_AUTOPOPULATE_METADATA=True pytest -m "visual" --strict-markers tests/visual_selenium/ -s --demo
+            pytest -m "visual" --strict-markers tests/visual_selenium/ -s --demo
 
       # DEBUG_AUTOPOPULATE_METADATA=True streamlit run src/main.py
