@@ -208,6 +208,7 @@ class RecorderTest(BaseCase):
         # - setup steps: 
         #    - open the app
         #    - upload two images
+        #    - enter author email
         #    - validate the data entry
         #    - click the infer button, wait for ML
         # - the real test steps: 
@@ -228,6 +229,8 @@ class RecorderTest(BaseCase):
             'input[data-testid="stFileUploaderDropzoneInput"]', 
             "\n".join([str(img_f1), str(img_f2)]),
         )
+        # enter author email
+        self.type('input[aria-label="Author Email"]', "happy@whalespotter.org\n")
         
         # advance to the next step, by clicking the validate button (wait for it first)
         wait_for_element(self, By.XPATH, "//button//strong[contains(text(), 'Validate')]")
