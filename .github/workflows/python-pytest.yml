@@ -33,7 +33,5 @@ jobs:
     #    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run quick tests with pytest
       run: |
-        DEBUG_AUTOPOPULATE_METADATA=True pytest -m "not slow and not visual" --strict-markers --ignore=tests/visual_selenium
+        pytest -m "not slow and not visual" --strict-markers --ignore=tests/visual_selenium
       
-    # first pass: the visual tests that are looking for metadata to be populated already pass with this debug flag.
-    # todo: expand tests to enter the metadata, which will allow progress through the phases. 
