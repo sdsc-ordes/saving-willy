@@ -67,12 +67,15 @@ def check_inputs_are_set(empty_ok:bool=False, debug:bool=False) -> bool:
         return empty_ok
     
     exp_input_key_stubs = ["input_latitude", "input_longitude", "input_date", "input_time"]
-    #exp_input_key_stubs = ["input_latitude", "input_longitude", "input_author_email", "input_date", "input_time", 
 
     vals = []
     # the author_email is global/one-off - no hash extension.
     if "input_author_email" in st.session_state:
         val = st.session_state["input_author_email"]
+        # if val is a string and empty, set to None
+        if isinstance(val, str) and not val:
+            val = None
+
         vals.append(val)
         if debug:
             msg = f"{'input_author_email':15}, {(val is not None):8}, {val}"
