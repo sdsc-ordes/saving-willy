@@ -2,6 +2,7 @@ from typing import List, Tuple
 import datetime
 import logging
 import hashlib
+import os
 
 import streamlit as st
 from streamlit.delta_generator import DeltaGenerator
@@ -23,15 +24,25 @@ both the UI elements (setup_input_UI) and the validation functions.
 '''
 allowed_image_types = ['jpg', 'jpeg', 'png', 'webp']
 
+def _is_str_true(v:str) -> bool:
+    ''' convert a string to boolean: if contains True or 1 (or yes), return True '''
+    # https://stackoverflow.com/questions/715417/converting-from-a-string-to-boolean-in-python
+    return v.lower() in ("yes", "true", "t", "1")
 # an arbitrary set of defaults so testing is less painful...
 # ideally we add in some randomization to the defaults
-spoof_metadata = {
-    "latitude": 0.5,
-    "longitude": 44,
-    "author_email": "super@whale.org",
-    "date": None,
-    "time": None,
-}
+dbg_populate_metadata = _is_str_true( os.getenv("DEBUG_AUTOPOPULATE_METADATA", "False"))
+# the other main option would be argparse, where we can run `streamlit run src/main.py -- --debug` or similar
+# - I think env vars are simple and clean enough, it isn't really a CLI that we want to offer debug options, it is for dev.
+if dbg_populate_metadata:
+    spoof_metadata = {
+        "latitude": 0.5,
+        "longitude": 44,
+        "author_email": "super@whale.org",
+        "date": None,
+        "time": None,
+    }
+else:
+    spoof_metadata = {}
 
 def check_inputs_are_set(empty_ok:bool=False, debug:bool=False) -> bool:
     """
@@ -190,10 +201,11 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     msg = f"[D] {filename}: lat, lon from image metadata: {latitude0}, {longitude0}"
     m_logger.debug(msg)
     
-    if latitude0 is None: # get some default values if not found in exifdata
-        latitude0:float = spoof_metadata.get('latitude', 0) + dbg_ix
-    if longitude0 is None:
-        longitude0:float = spoof_metadata.get('longitude', 0) - dbg_ix
+    if spoof_metadata:
+        if latitude0 is None: # get some default values if not found in exifdata
+            latitude0:float = spoof_metadata.get('latitude', 0) + dbg_ix
+        if longitude0 is None:
+            longitude0:float = spoof_metadata.get('longitude', 0) - dbg_ix
         
     image = st.session_state.images.get(image_hash, None)
     # add the UI elements
