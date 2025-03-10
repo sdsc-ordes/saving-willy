@@ -26,7 +26,7 @@ from streamlit.testing.v1 import AppTest
 
 
 # for expectations
-from input.input_handling import spoof_metadata
+from input.input_handling import spoof_metadata, load_debug_autopopulate
 from input.input_validator import get_image_datetime, get_image_latlon
 
 
@@ -137,7 +137,11 @@ def test_no_input_no_interaction():
 
     at = AppTest.from_file("src/apptest/demo_multifile_upload.py").run()
     assert at.session_state.observations == {}
-    assert at.session_state.input_author_email == spoof_metadata.get("author_email")
+    dbg = load_debug_autopopulate()
+    if dbg: # autopopulated
+        assert at.session_state.input_author_email == spoof_metadata.get("author_email")
+    else: # should be empty, the user has to fill it in
+        assert at.session_state.input_author_email == ""
 
 def test_bad_email():
     with patch.dict(spoof_metadata, {"author_email": "notanemail"}):
