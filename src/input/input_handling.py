@@ -257,7 +257,7 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
 
     observation = InputObservation(image=image, latitude=latitude, longitude=longitude,
                                 author_email=author_email, image_datetime_raw=image_datetime_raw, 
-                                date=date, time=time,
+                                date=date, time=time, timezone=tz_str,
                                 uploaded_file=file, image_md5=image_hash
                                 )
 
