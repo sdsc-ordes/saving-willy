@@ -236,7 +236,6 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
         dt = datetime.datetime.strptime(image_datetime_raw, time_fmt)
         date_value = dt.date()
         time_value = dt.time()
-        tz_value = dt.tzinfo # could be None...
         
         #time_value = datetime.datetime.strptime(image_datetime_raw, '%Y:%m:%d %H:%M:%S').time()
         #date_value = datetime.datetime.strptime(image_datetime_raw, '%Y:%m:%d %H:%M:%S').date()
@@ -245,7 +244,6 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
         dt = datetime.datetime.now().astimezone().replace(microsecond=0)
         time_value = dt.time() 
         date_value = dt.date()
-        tz_value = dt.tzinfo
         
         #time_value = datetime.datetime.now().time()  # Default to current time
         #date_value = datetime.datetime.now().date()
@@ -254,6 +252,8 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     ## either way, give user the option to enter manually (or correct, e.g. if camera has no rtc clock)
     date = viewcontainer.date_input("Date for "+filename, value=date_value, key=f"input_date_{image_hash}")
     time = viewcontainer.time_input("Time for "+filename, time_value, key=f"input_time_{image_hash}")
+
+    tz_str = dt.strftime('%z') # this is numeric, otherwise the info isn't consistent. 
 
     observation = InputObservation(image=image, latitude=latitude, longitude=longitude,
                                 author_email=author_email, image_datetime_raw=image_datetime_raw, 
