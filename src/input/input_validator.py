@@ -84,6 +84,28 @@ def get_image_datetime(image_file:UploadedFile) -> Union[str, None]:
          # TODO: add to logger
     return None
 
+# function to extract the timezone from image metadata
+def get_image_timezone(image_file:UploadedFile) -> Union[str, None]:
+    """
+    Extracts the timezone from the EXIF metadata of an uploaded image file.
+
+    Args:
+        image_file (UploadedFile): The uploaded image file from which to extract the timezone.
+
+    Returns:
+        str: The timezone as a string if available, otherwise None.
+
+    Raises:
+        Warning: If the timezone could not be extracted from the image metadata.
+    """
+    try:
+        image = Image.open(image_file)
+        exif_data = image._getexif()
+        if exif_data is not None:
+            if ExifTags.Base.OffsetTimeOriginal in exif_data:
+                return exif_data.get(ExifTags.Base.OffsetTimeOriginal)
+    except Exception as e: # FIXME: what types of exception?
+         st.warning(f"Could not extract timezone from image metadata. (file: {image_file.name})")
 
 def decimal_coords(coords:tuple, ref:str) -> Fraction:
     """
