@@ -26,6 +26,8 @@ class InputObservation:
             Date of the observation
         time (datetime.time): 
             Time of the observation
+        timezone (str):
+            Timezone of the observation (e.g. +0300)
         uploaded_file (UploadedFile): 
             The uploaded file associated with the observation.
         image_md5 (str):
@@ -57,6 +59,7 @@ class InputObservation:
         author_email:str=None, image_datetime_raw:str=None, 
         date:datetime.date=None, 
         time:datetime.time=None, 
+        timezone:str=None,
         uploaded_file:UploadedFile=None, image_md5:str=None):
 
         self.image = image
@@ -66,6 +69,7 @@ class InputObservation:
         self.image_datetime_raw = image_datetime_raw
         self.date = date
         self.time = time
+        self.timezone = timezone
         self.uploaded_file = uploaded_file
         self.image_md5 = image_md5
         # attributes that get set after predictions/processing
@@ -121,7 +125,7 @@ class InputObservation:
         return (
             f"Observation: {_im_str}, {self.latitude}, {self.longitude}, "
             f"{self.author_email}, {self.image_datetime_raw}, {self.date}, " 
-            f"{self.time}, {self.uploaded_file}, {self.image_md5}"
+            f"{self.time}, {self.timezone}, {self.uploaded_file}, {self.image_md5}"
         )
 
     def __repr__(self):
@@ -135,6 +139,7 @@ class InputObservation:
             f"raw timestamp: {self.image_datetime_raw}, "
             f"Date: {self.date}, "
             f"Time: {self.time}, "
+            f"Timezone: {self.timezone}, "
             f"Uploaded Filename: {self.uploaded_file}"
             f"Image MD5 hash: {self.image_md5}"
         )
@@ -158,6 +163,7 @@ class InputObservation:
             self.date == other.date and
             # temporarily skip time, it is followed by the clock and that is always differnt 
             #self.time == other.time and 
+            self.timezone == other.timezone and
             self.uploaded_file == other.uploaded_file and 
             self.image_md5 == other.image_md5
             )
@@ -167,7 +173,7 @@ class InputObservation:
     # only highlight the differences, if element is the same don't show it
     # have a summary at the top that shows if the observations are the same or not
 
-    def show_diff(self, other):
+    def show_diff(self, other: 'InputObservation'):
         """Show the differences between two observations"""
         differences = []
         if self.image is None or other.image is None:
@@ -189,6 +195,8 @@ class InputObservation:
             differences.append(f"   Date is different. (self: {self.date}, other: {other.date})")
         if self.time != other.time:
             differences.append(f"   Time is different. (self: {self.time}, other: {other.time})")
+        if self.timezone != other.timezone:
+            differences.append(f"   Timezone is different. (self: {self.timezone}, other: {other.timezone})")
         if self.uploaded_file != other.uploaded_file:
             differences.append("   Uploaded filename is different.")
         if self.image_md5 != other.image_md5:
@@ -216,6 +224,7 @@ class InputObservation:
             "image_datetime_raw": self.image_datetime_raw,
             "date": str(self.date),
             "time": str(self.time),
+            "timezone": str(self.timezone),
             "selected_class": self._selected_class,
             "top_prediction": self._top_predictions[0] if len(self._top_predictions) else None,
             "class_overriden": self._class_overriden,
@@ -233,12 +242,13 @@ class InputObservation:
             image_datetime_raw=data.get("image_datetime_raw"),
             date=data.get("date"),
             time=data.get("time"),
+            timezone=data.get("timezone"),
             uploaded_file=data.get("uploaded_file"),
             image_hash=data.get("image_md5")
         )
 
     @classmethod
-    def from_input(cls, input):
+    def from_input(cls, input: 'InputObservation'):
         return cls(
             image=input.image,
             latitude=input.latitude,
@@ -247,8 +257,9 @@ class InputObservation:
             image_datetime_raw=input.image_datetime_raw,
             date=input.date,
             time=input.time,
+            timezone=input.timezone,
             uploaded_file=input.uploaded_file,
-            image_hash=input.image_hash
+            image_md5=input.image_md5
         )
 
 
