@@ -11,7 +11,7 @@ import cv2
 import numpy as np
 
 from input.input_observation import InputObservation
-from input.input_validator import get_image_datetime, is_valid_email, is_valid_number, get_image_latlon
+from input.input_validator import get_image_datetime, is_valid_email, is_valid_number, get_image_latlon, get_image_timezone
 
 m_logger = logging.getLogger(__name__)
 m_logger.setLevel(logging.INFO)
@@ -186,6 +186,7 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     author_email = st.session_state["input_author_email"]
     filename = file.name
     image_datetime_raw = get_image_datetime(file)
+    image_timezone_raw = get_image_timezone(file)
     latitude0, longitude0 = get_image_latlon(file)
     msg = f"[D] {filename}: lat, lon from image metadata: {latitude0}, {longitude0}"
     m_logger.debug(msg)
@@ -226,11 +227,29 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     # 5. Date/time
     ## first from image metadata
     if image_datetime_raw is not None:
-        time_value = datetime.datetime.strptime(image_datetime_raw, '%Y:%m:%d %H:%M:%S').time()
-        date_value = datetime.datetime.strptime(image_datetime_raw, '%Y:%m:%d %H:%M:%S').date()
+        # if we have a timezone let's use it (but only if we also have datetime)
+        time_fmt = '%Y:%m:%d %H:%M:%S'
+        if image_timezone_raw is not None:
+            image_datetime_raw += f" {image_timezone_raw}"
+            time_fmt += ' %z'
+        # 
+        dt = datetime.datetime.strptime(image_datetime_raw, time_fmt)
+        date_value = dt.date()
+        time_value = dt.time()
+        tz_value = dt.tzinfo # could be None...
+        
+        #time_value = datetime.datetime.strptime(image_datetime_raw, '%Y:%m:%d %H:%M:%S').time()
+        #date_value = datetime.datetime.strptime(image_datetime_raw, '%Y:%m:%d %H:%M:%S').date()
     else:
-        time_value = datetime.datetime.now().time()  # Default to current time
-        date_value = datetime.datetime.now().date()
+        # get current time, with user timezone (or is it server timezone?! TODO: test with different zones)
+        dt = datetime.datetime.now().astimezone().replace(microsecond=0)
+        time_value = dt.time() 
+        date_value = dt.date()
+        tz_value = dt.tzinfo
+        
+        #time_value = datetime.datetime.now().time()  # Default to current time
+        #date_value = datetime.datetime.now().date()
+    
 
     ## either way, give user the option to enter manually (or correct, e.g. if camera has no rtc clock)
     date = viewcontainer.date_input("Date for "+filename, value=date_value, key=f"input_date_{image_hash}")
