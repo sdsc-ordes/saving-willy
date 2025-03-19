@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 from streamlit.testing.v1 import AppTest
 import time
 
-from input.input_handling import spoof_metadata
+from input.input_handling import spoof_metadata, load_debug_autopopulate
 from input.input_observation import InputObservation
 from input.input_handling import buffer_uploaded_files
 
@@ -72,7 +72,10 @@ def test_click_validate_after_data_entry(mock_file_rv: MagicMock, mock_uploadedF
     assert infer_button.disabled == True 
 
 
-    # 2. upload files, and trigger the callback
+    # 2. upload files, enter email, and trigger the callback
+    if not load_debug_autopopulate():
+        # fill the text box with a dummy email
+        at.session_state.input_author_email = "person@organisation.org"
 
     # put the mocked file_upload into session state, as if it were the result of a file upload, with the key 'file_uploader_data'
     at.session_state["file_uploader_data"] = mock_files
