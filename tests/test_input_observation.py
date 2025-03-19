@@ -89,11 +89,12 @@ def test_input_observation_valid(mock_uploadedFile):
     
     _date="2023-10-10"
     _time="10:10:10"
-    image_datetime_raw = _date + " " + _time
-    dt = datetime.datetime.strptime(image_datetime_raw, "%Y-%m-%d %H:%M:%S")
+    _timezone = "+04:00"
+    image_datetime_raw = _date + " " + _time + " " + _timezone
+    dt = datetime.datetime.strptime(image_datetime_raw, "%Y-%m-%d %H:%M:%S %z")
     date = dt.date()    
     time = dt.time()
-
+    tz_str = dt.strftime('%z')
     ## make a random image with dtype uint8 using np.random.randint
     image = np.random.randint(0, 255, (100, 100, 3), dtype=np.uint8)
     image_md5 = 'd1d2515e6f6ac4c5ca6dd739d5143cd4' # 32 hex chars.
@@ -101,7 +102,7 @@ def test_input_observation_valid(mock_uploadedFile):
     obs = InputObservation(
         image=image, 
         latitude=12.34, longitude=56.78, author_email=author_email,
-        time=time, date=date,
+        time=time, date=date, timezone=tz_str,
         uploaded_file=mock_file,
         image_md5=image_md5,
         )
@@ -116,6 +117,7 @@ def test_input_observation_valid(mock_uploadedFile):
     assert isinstance(obs.time, datetime.time)
     assert str(obs.date) == "2023-10-10"
     assert str(obs.time) == "10:10:10"
+    assert obs.timezone == tz_str
 
     assert obs.uploaded_file.name == image_name
     assert obs.uploaded_file.size == 123456
@@ -274,16 +276,20 @@ def good_datadict_for_input_observation(mock_uploadedFile) -> dict:
     # set up the good and bad inputs
     _date="2023-10-10"
     _time="10:10:10"
-    image_datetime_raw = _date + " " + _time
+    _timezone = "+04:00"
+    image_datetime_raw = _date + " " + _time + " " + _timezone
+    #dt = datetime.datetime.strptime(image_datetime_raw, "%Y-%m-%d %H:%M:%S %z")
     fname = "test_image.jpg"
     image = np.random.randint(0, 255, (100, 100, 3), dtype=np.uint8)
     
-    dt_ok = datetime.datetime.strptime(image_datetime_raw, "%Y-%m-%d %H:%M:%S")
+    dt_ok = datetime.datetime.strptime(image_datetime_raw, "%Y-%m-%d %H:%M:%S %z")
+    tz_str = dt_ok.strftime('%z')
     valid_inputs = {
         "author_email": "test@example.com",
         "uploaded_file": mock_uploadedFile(name=fname).get_data(),
         "date": dt_ok.date(),
         "time": dt_ok.time(),
+        "timezone": tz_str,
         "image": image,
         "image_md5": 'd1d2515e6f6ac4c5ca6dd739d5143cd4', # 32 hex chars.
         "image_datetime_raw": image_datetime_raw,
