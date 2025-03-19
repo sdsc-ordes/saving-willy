@@ -3,6 +3,10 @@ import logging
 
 import pandas as pd
 from datasets import load_dataset
+from datasets import DatasetDict, Dataset
+
+import time
+
 import streamlit as st
 import folium
 from streamlit_folium import st_folium
@@ -62,6 +66,13 @@ _colors = [
 
 whale2color = {k: v for k, v in zip(viewer.WHALE_CLASSES, _colors)}
 
+presentation_data_schema = {
+    'lat': 'float',
+    'lon': 'float',
+    'species': 'str',
+}
+
+
 def create_map(tile_name:str, location:Tuple[float], zoom_start: int = 7) -> folium.Map:
     """
     Create a folium map with the specified tile layer
@@ -113,6 +124,43 @@ def create_map(tile_name:str, location:Tuple[float], zoom_start: int = 7) -> fol
     #folium.LayerControl().add_to(m)
     return m
 
+def try_download_dataset(dataset_id:str, data_files:str) -> dict:
+    """
+    Attempts to download a dataset from Hugging Face, catching any errors that occur.
+    
+    Args:
+        dataset_id (str): The ID of the dataset to download.
+        data_files (str): The data files associated with the dataset.
+    Returns:
+        dict: A dictionary containing the dataset metadata if the download is successful, 
+              or an empty dictionary if an error occurs.
+
+    """
+
+    m_logger.info(f"Starting to download dataset {dataset_id} from Hugging Face")
+    t1 = time.time()
+    try:
+        metadata:DatasetDict = load_dataset(dataset_id, data_files=data_files)
+        t2 = time.time(); elap = t2 - t1
+    except ValueError as e:
+        t2 = time.time(); elap = t2 - t1
+        msg = f"Error downloading dataset: {e}.  (after {elap:.2f}s)."
+        st.error(msg)
+        m_logger.error(msg)
+        metadata = {}
+    except Exception as e:
+        # catch all (other) exceptions and log them, handle them once isolated 
+        t2 = time.time(); elap = t2 - t1
+        msg = f"!!Unknown Error!! downloading dataset: {e}.  (after {elap:.2f}s)."
+        st.error(msg)
+        m_logger.error(msg)
+        metadata = {}
+        
+
+    msg = f"Downloaded dataset: (after {elap:.2f}s). "
+    m_logger.info(msg)
+    st.write(msg)
+    return metadata
 
 
 def present_obs_map(dataset_id:str = "Saving-Willy/Happywhale-kaggle",
@@ -139,14 +187,19 @@ def present_obs_map(dataset_id:str = "Saving-Willy/Happywhale-kaggle",
     """
 
     # load/download data from huggingface dataset
-    metadata = load_dataset(dataset_id, data_files=data_files)
+    metadata = try_download_dataset(dataset_id, data_files)
     
-    # make a pandas df that is compliant with folium/streamlit maps
-    _df = pd.DataFrame({
-        'lat': metadata["train"]["latitude"],
-        'lon': metadata["train"]["longitude"],
-        'species': metadata["train"]["predicted_class"],}
-    )
+    if not metadata:
+        # create an empty, but compliant dataframe
+        _df = pd.DataFrame(columns=presentation_data_schema).astype(presentation_data_schema)
+    else:
+        # make a pandas df that is compliant with folium/streamlit maps
+        _df = pd.DataFrame({
+            'lat': metadata["train"]["latitude"],
+            'lon': metadata["train"]["longitude"],
+            'species': metadata["train"]["predicted_class"],}
+        )
+
     if dbg_show_extra:
         # add a few samples to visualise colours 
         _df.loc[len(_df)] = {'lat': 0, 'lon': 0, 'species': 'rough_toothed_dolphin'}
