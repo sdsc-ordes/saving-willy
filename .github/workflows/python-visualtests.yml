@@ -51,3 +51,5 @@ jobs:
       # otherwise, not one step it consistently fails at.)
       run: |
             pytest -m "visual" --strict-markers tests/visual_selenium/ -s --demo
+
+      # DEBUG_AUTOPOPULATE_METADATA=True streamlit run src/main.py

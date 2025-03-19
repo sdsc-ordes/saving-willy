@@ -34,3 +34,4 @@ jobs:
     - name: Run quick tests with pytest
       run: |
         pytest -m "not slow and not visual" --strict-markers --ignore=tests/visual_selenium
+      
