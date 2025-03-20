@@ -13,13 +13,25 @@ LOG_LEVEL = logging.DEBUG
 g_logger = logging.getLogger(__name__)
 g_logger.setLevel(LOG_LEVEL)
 
+def construct_path_in_repo(observation:dict) -> str:
+    '''
+    Construct the path in the Hugging Face dataset repo for the observation
+
+    Args:
+        observation (dict): The observation to push
+        
+    Returns:
+        str: The path in the repo
+    '''
+    return f"metadata/{observation['author_email']}/{observation['image_md5']}.json"
+    
 def push_observation(image_hash:str, api:HfApi, enable_push:False) -> CommitInfo:
     '''
     push one observation to the Hugging Face dataset
     
     '''
     # get the observation
-    observation = st.session_state.public_observations.get(image_hash)
+    observation:dict = st.session_state.public_observations.get(image_hash)
     if observation is None:
         msg = f"Could not find observation with hash {image_hash}"
         g_logger.error(msg)
@@ -27,9 +39,8 @@ def push_observation(image_hash:str, api:HfApi, enable_push:False) -> CommitInfo
         return None
     
     # convert to json
-    metadata_str = json.dumps(observation) # doesn't work yet, TODO
+    metadata_str:str = json.dumps(observation) # doesn't work yet, TODO
     
-    st.toast(f"Uploading observation: {metadata_str}", icon="🦭")
     g_logger.info(f"Uploading observation: {metadata_str}")
         
     # write to temp file so we can send it (why is this not using context mgr?)
@@ -37,12 +48,11 @@ def push_observation(image_hash:str, api:HfApi, enable_push:False) -> CommitInfo
     f.write(metadata_str)
     f.close()
     #st.info(f"temp file: {f.name} with metadata written...")
-
-    path_in_repo = f"metadata/{observation['author_email']}/{observation['image_md5']}.json"
+    path_in_repo = construct_path_in_repo(observation)
     
     msg = f"fname: {f.name} | path: {path_in_repo}"
     print(msg)
-    st.warning(msg)
+    st.info(msg)
 
     if enable_push:
         rv = api.upload_file(
