@@ -145,7 +145,9 @@ def present_obs_map(dataset_id:str = "Saving-Willy/Happywhale-kaggle",
     _df = pd.DataFrame({
         'lat': metadata["train"]["latitude"],
         'lon': metadata["train"]["longitude"],
-        'species': metadata["train"]["predicted_class"],}
+        'species': metadata["train"]["selected_class"], 
+        }
+        #'species': metadata["train"]["predicted_class"],}
     )
     if dbg_show_extra:
         # add a few samples to visualise colours 
@@ -188,6 +190,7 @@ def present_obs_map(dataset_id:str = "Saving-Willy/Happywhale-kaggle",
     )
     # this is just debug info -- 
     #st.info("[D]" + str(metadata.column_names))
+    st.table(_df)
 
     return st_data
 
