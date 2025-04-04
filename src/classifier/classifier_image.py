@@ -109,10 +109,6 @@ def cetacean_show_results_and_review() -> None:
                 selected_class = st.selectbox(f"Species for observation {str(o)}", viewer.WHALE_CLASSES, index=ix)
             
             _observation.set_selected_class(selected_class)
-            #observation['predicted_class'] = selected_class
-            # this logic is now in the InputObservation class automatially
-            #if selected_class != st.session_state.whale_prediction1[hash]:
-            #    observation['class_overriden'] = selected_class # TODO: this should be boolean!
             
             # store the elements of the observation that will be transmitted (not image)
             observation = _observation.to_dict()
@@ -163,27 +159,6 @@ def cetacean_show_results():
     
         with grid[col]:
             st.image(image, use_column_width=True)
-            
-            # # dropdown for selecting/overriding the species prediction
-            # if not st.session_state.classify_whale_done[hash]:
-            #     selected_class = st.sidebar.selectbox("Species", viewer.WHALE_CLASSES, 
-            #                                                     index=None, placeholder="Species not yet identified...", 
-            #                                                     disabled=True)
-            # else:
-            #     pred1 = st.session_state.whale_prediction1[hash]
-            #     # get index of pred1 from WHALE_CLASSES, none if not present
-            #     print(f"[D] pred1: {pred1}")
-            #     ix = viewer.WHALE_CLASSES.index(pred1) if pred1 in viewer.WHALE_CLASSES else None
-            #     selected_class = st.selectbox(f"Species for observation {str(o)}", viewer.WHALE_CLASSES, index=ix)
-            
-            # observation['predicted_class'] = selected_class
-            # if selected_class != st.session_state.whale_prediction1[hash]:
-            #     observation['class_overriden'] = selected_class # TODO: this should be boolean!
-            
-            # st.session_state.public_observation = observation
-            
-            #st.button(f"Upload observation {str(o)} to THE INTERNET!", on_click=push_observations)
-            # 
             st.markdown(metadata2md(hash, debug=True))
 
             msg = f"[D] full observation after inference: {observation}"
