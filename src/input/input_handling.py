@@ -424,7 +424,7 @@ def add_input_UI_elements() -> None:
     # which are not created in the same order.
     
     st.divider()
-    st.title("Input image and data")
+    st.title("Input your images")
     
     # create and style a container for the file uploader/other one-off inputs
     st.markdown('<style>.st-key-container_file_uploader_id { border: 1px solid skyblue; border-radius: 5px; }</style>', unsafe_allow_html=True)

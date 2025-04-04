@@ -197,7 +197,7 @@ def present_obs_map(dataset_id:str = "Saving-Willy/Happywhale-kaggle",
         _df = pd.DataFrame({
             'lat': metadata["train"]["latitude"],
             'lon': metadata["train"]["longitude"],
-            'species': metadata["train"]["predicted_class"],}
+            'species': metadata["train"]["selected_class"],}
         )
 
     if dbg_show_extra:
