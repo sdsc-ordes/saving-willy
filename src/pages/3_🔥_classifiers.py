@@ -35,8 +35,6 @@ dataset_id = "Saving-Willy/temp_dataset"
 data_files = "data/train-00000-of-00001.parquet"
 ############################################################
 
-st.sidebar.success("classifiers")
-
  # Streamlit app
 tab_inference, tab_hotdogs= \
     st.tabs(["Cetecean classifier", "Hotdog classifier"])
@@ -67,7 +65,7 @@ if st.session_state.workflow_fsm.is_in_state('data_entry_complete'):
     if st.sidebar.button(":white_check_mark:[**Validate**]"):
         # create a dictionary with the submitted observation
 
-        # TO-DO NEED TO ADAPT. 
+        # TODO NEED TO ADAPT to multipage
         #tab_log.info(f"{st.session_state.observations}")
 
         df = pd.DataFrame([obs.to_dict() for obs in st.session_state.observations.values()])
@@ -118,7 +116,9 @@ elif st.session_state.workflow_fsm.is_in_state('ml_classification_completed'):
         st.markdown(s)
 
     # add a button to advance the state
-    if st.button("Confirm species predictions", help="Confirm that all species are selected correctly"):
+    if st.button("I have looked over predictions and confirm correct species", icon= "👀",
+                 type="primary",
+                 help="Confirm that all species are selected correctly"):
         st.session_state.workflow_fsm.complete_current_state()
         # -> manual_inspection_completed
         st.rerun()
@@ -130,7 +130,8 @@ elif st.session_state.workflow_fsm.is_in_state('manual_inspection_completed'):
     st.markdown("""### Inference Results (after manual validation) """)
     
     
-    if st.button("Upload all observations to THE INTERNET!"):
+    if st.button("Upload all observations to THE INTERNET!", icon= "⬆️",
+                 type="primary",):
         # let this go through to the push_all func, since it just reports to log for now.
         push_all_observations(enable_push=False)
         st.session_state.workflow_fsm.complete_current_state()
@@ -146,7 +147,6 @@ elif st.session_state.workflow_fsm.is_in_state('data_uploaded'):
     cetacean_show_results()
 
     st.divider()
-    #df = pd.DataFrame(st.session_state.observations, index=[0])
     df = pd.DataFrame([obs.to_dict() for obs in st.session_state.observations.values()])
     st.table(df)
 
