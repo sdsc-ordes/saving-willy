@@ -28,8 +28,13 @@ pillow==10.4.0
 opencv-python-headless==4.5.5.64
 albumentations==1.1.0
 
+# for states
+transitions
+
 # documentation: mkdocs
 mkdocs~=1.6.0
 mkdocstrings[python]>=0.25.1
 mkdocs-material~=9.5.27
 mkdocs-homepage-copier~=1.0.0
+
+
