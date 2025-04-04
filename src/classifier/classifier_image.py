@@ -116,7 +116,8 @@ def cetacean_show_results_and_review() -> None:
             
             #st.button(f"Upload observation {str(o)} to THE INTERNET!", on_click=push_observations)
             # TODO: the metadata only fills properly if `validate` was clicked.
-            st.markdown(metadata2md(hash, debug=True))
+            # TODO put condition on the debug
+            st.markdown(metadata2md(hash, debug=False))
 
             msg = f"[D] full observation after inference: {observation}"
             g_logger.debug(msg)

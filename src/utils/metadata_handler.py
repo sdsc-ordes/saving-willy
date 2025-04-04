@@ -11,6 +11,7 @@ def metadata2md(image_hash:str, debug:bool=False) -> str:
         str: Markdown-formatted key-value list of metadata
         
     """
+    print(debug)
     markdown_str = "\n"
     keys_to_print = ["author_email", "latitude", "longitude", "date", "time"]
     if debug:
