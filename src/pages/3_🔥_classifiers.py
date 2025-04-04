@@ -39,6 +39,14 @@ data_files = "data/train-00000-of-00001.parquet"
 tab_inference, tab_hotdogs= \
     st.tabs(["Cetecean classifier", "Hotdog classifier"])
 
+# initialise various session state variables
+init_logging_session_states() # logging init should be early 
+init_workflow_session_states() 
+init_input_data_session_states()
+init_input_container_states()
+init_workflow_viz()
+init_classifier_session_states()
+
 # put this early so the progress indicator is at the top (also refreshed at end)
 refresh_progress_display()    
 
