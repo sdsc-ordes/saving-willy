@@ -7,7 +7,7 @@ st.set_page_config(
     page_icon="🔥",
 )
 
-from utils.st_logs import parse_log_buffer, init_logging_session_states
+from utils.st_logs import init_logging_session_states
 
 from transformers import pipeline
 from transformers import AutoModelForImageClassification
@@ -25,12 +25,14 @@ from classifier.classifier_hotdog import hotdog_classify
 
 # setup for the ML model on huggingface (our wrapper)
 os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
+# one toggle for all the extra debug text
+if "MODE_DEV_STATEFUL" not in st.session_state:
+    st.session_state.MODE_DEV_STATEFUL = False
 
 ############################################################
-# TO- DO: MAKE ENV FILE 
+classifier_name = "Saving-Willy/cetacean-classifier"
 #classifier_revision = '0f9c15e2db4d64e7f622ade518854b488d8d35e6'
 classifier_revision = 'main' # default/latest version
-# and the dataset of observations (hf dataset in our space)
 dataset_id = "Saving-Willy/temp_dataset"
 data_files = "data/train-00000-of-00001.parquet"
 ############################################################
@@ -100,7 +102,7 @@ if st.session_state.workflow_fsm.is_in_state('data_entry_validated'):
     if tab_inference.button("Identify with cetacean classifier", 
                             key="button_infer_ceteans"):
         cetacean_classifier = AutoModelForImageClassification.from_pretrained(
-            "Saving-Willy/cetacean-classifier", 
+            classifier_name, 
             revision=classifier_revision, 
             trust_remote_code=True)
 
@@ -161,7 +163,7 @@ elif st.session_state.workflow_fsm.is_in_state('data_uploaded'):
     # didn't decide what the next state is here - I think we are in the terminal state.
     #st.session_state.workflow_fsm.complete_current_state()
         
-    
+  
 # inside the hotdog tab, on button press we call a 2nd model (totally unrelated at present, just for demo
 # purposes, an hotdog image classifier) which will be run locally.
 # - this model predicts if the image is a hotdog or not, and returns probabilities
