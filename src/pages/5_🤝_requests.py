@@ -5,16 +5,15 @@ st.set_page_config(
     page_icon="🤝",
 )
 
-from utils.st_logs import parse_log_buffer, init_logging_session_states
-from dataset.requests import default_data_view, show_new_data_view
-from datasets import disable_caching
-disable_caching()
+from dataset.requests import data_prep, show_new_data_view
 
-st.title("Requests")
+st.title("Data Requests")
+st.write("This page is ensure findability of data across the community.")
+st.write("You can filter the metadata by longitude, latitude and date. You can select data from multiple actors, for multiple species and make a grouped request. " \
+"The request for the relevant data will be adressed individually to each owner. ")
 
 # Initialize the default data view
-df = default_data_view()
-print(df)
+df = data_prep()
 
 if 'checkbox_states' not in st.session_state:
     st.session_state.checkbox_states = {}
@@ -29,36 +28,42 @@ if 'date_range' not in st.session_state:
     st.session_state.date_range = (df['date'].min(), df['date'].max())
 
 # Request button at the bottom
-if st.button("Request (Bottom)"):
+if st.button("REQUEST DATA",
+             type="primary",
+             icon="🐚"):
     selected = [k for k, v in st.session_state.checkbox_states.items() if v]
     if selected:
-        st.success(f"Request submitted for: {', '.join(selected)}")
+        st.success(f"Request submitted for: the specie {', '.join(selected)}")
     else:
         st.warning("No selections made.")
 
 # Latitude range filter
 lat_min, lat_max = float(df['lat'].min()), float(df['lat'].max())
-lat_range = st.sidebar.slider("Latitude range", 
-                              min_value=lat_min, 
-                              max_value=lat_max, 
-                              value=(lat_min, lat_max),
-                              key='lat_range')
+lat_range = st.sidebar.slider(
+    "Latitude range",
+    min_value=float(df['lat'].min()),
+    max_value=float(df['lat'].max()),
+    value=st.session_state.get("lat_range", (df['lat'].min(), df['lat'].max()))
+)
+st.session_state.lat_range = lat_range
 
 # Longitude range filter
 lon_min, lon_max = float(df['lon'].min()), float(df['lon'].max())
-lon_range = st.sidebar.slider("Longitude range", 
-                              min_value=lon_min, 
-                              max_value=lon_max, 
-                              value=(lon_min, lon_max),
-                              key='lon_range')
-
+lon_range = st.sidebar.slider(
+    "Longitude range",
+    min_value=float(df['lon'].min()),
+    max_value=float(df['lon'].max()),
+    value=st.session_state.get("lon_range", (df['lon'].min(), df['lon'].max()))
+)
+st.session_state.lon_range = lon_range
 # Date range filter
-date_min, date_max = df['date'].min(), df['date'].max()
-date_range = st.sidebar.date_input("Date range", 
-                                   value=(date_min, date_max), 
-                                   min_value=date_min, 
-                                   max_value=date_max,
-                                   key='date_range')
+date_range = st.sidebar.date_input(
+    "Date range",
+    value=st.session_state.get("date_range", (df['date'].min(), df['date'].max())),
+    min_value=df['date'].min(),
+    max_value=df['date'].max()
+)
+st.session_state.date_range = date_range
 
 # Show authors per specie
 show_new_data_view(df)
