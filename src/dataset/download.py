@@ -59,7 +59,7 @@ def try_download_dataset(dataset_id:str, data_files:str) -> dict:
 
     msg = f"Downloaded dataset: (after {elap:.2f}s). "
     m_logger.info(msg)
-    st.write(msg)
+    #st.write(msg)
     return metadata
 
 def get_dataset():

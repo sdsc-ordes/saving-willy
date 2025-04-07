@@ -4,32 +4,27 @@ from dataset.cleaner import clean_lat_long, clean_date
 from dataset.download import get_dataset
 from dataset.fake_data import generate_fake_data
 
-def default_data_view(): 
+def data_prep(): 
+    "Doing data prep"
     df = get_dataset()
-    df = generate_fake_data(df, 100)
+    # df = generate_fake_data(df, 100)
     df = clean_lat_long(df)
     df = clean_date(df)
     return df
 
 def filter_data(df): 
-    if st.session_state.date_range: 
-        df_filtered = df[
-        (df['date'] >= pd.to_datetime(st.session_state.date_range[0])) & \
-            (df['date'] <= pd.to_datetime(st.session_state.date_range[1]))
-        ]
-    if st.session_state.lon_range:
-        df_filtered = df[
-        (df['lon'] >= st.session_state.lon_range[0]) & \
-            (df['lon'] <= st.session_state.lon_range[1])
-        ]
-    if st.session_state.lat_range:
-        df_filtered = df[
-        (df['lat'] >= st.session_state.lat_range[0]) & \
-            (df['lat'] <= st.session_state.lat_range[1])
-        ]
+    df_filtered = df[
+    (df['date'] >= pd.to_datetime(st.session_state.date_range[0])) & 
+        (df['date'] <= pd.to_datetime(st.session_state.date_range[1])) &
+    (df['lon'] >= st.session_state.lon_range[0]) & 
+        (df['lon'] <= st.session_state.lon_range[1]) &
+    (df['lat'] >= st.session_state.lat_range[0]) & 
+        (df['lat'] <= st.session_state.lat_range[1])
+    ]
     return df_filtered
 
 def show_specie_author(df): 
+    print(df)
     df = df.groupby(['species', 'author_email']).size().reset_index(name='counts')
     for specie in df["species"].unique(): 
         st.subheader(f"Species: {specie}")
