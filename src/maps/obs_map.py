@@ -135,7 +135,7 @@ def present_obs_map(dbg_show_extra:bool = False) -> dict:
     """
 
     _df = get_dataset()
-
+    print(_df)
     if dbg_show_extra:
         # add a few samples to visualise colours 
         _df.loc[len(_df)] = {'lat': 0, 'lon': 0, 'species': 'rough_toothed_dolphin'}
