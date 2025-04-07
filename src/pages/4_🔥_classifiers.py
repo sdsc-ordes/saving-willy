@@ -59,132 +59,134 @@ with st.sidebar:
     # input elements (file upload, text input, etc)
     setup_input()
 
-if st.session_state.workflow_fsm.is_in_state('doing_data_entry'):
-        # can we advance state? - only when all inputs are set for all uploaded files
-        all_inputs_set = check_inputs_are_set(debug=True, empty_ok=False)
-        if all_inputs_set:
+with tab_inference:
+    if st.session_state.workflow_fsm.is_in_state('doing_data_entry'):
+            # can we advance state? - only when all inputs are set for all uploaded files
+            all_inputs_set = check_inputs_are_set(debug=True, empty_ok=False)
+            if all_inputs_set:
+                st.session_state.workflow_fsm.complete_current_state()
+                # -> data_entry_complete
+            else: 
+                # button, disabled; no state change yet.
+                st.sidebar.button(":gray[*Validate*]", disabled=True, help="Please fill in all fields.")
+                
+        
+    if st.session_state.workflow_fsm.is_in_state('data_entry_complete'):
+        # can we advance state? - only when the validate button is pressed
+        if st.sidebar.button(":white_check_mark:[**Validate**]"):
+            # create a dictionary with the submitted observation
+
+            # TODO NEED TO ADAPT to multipage
+            #tab_log.info(f"{st.session_state.observations}")
+
+            df = pd.DataFrame([obs.to_dict() for obs in st.session_state.observations.values()])
+            #df = pd.DataFrame(st.session_state.observations, index=[0])
+            # with tab_coords:
+            #     st.table(df)
+            # there doesn't seem to be any actual validation here?? TODO: find validator function (each element is validated by the input box, but is there something at the whole image level?)
+            # hmm, maybe it should actually just be "I'm done with data entry"
             st.session_state.workflow_fsm.complete_current_state()
-            # -> data_entry_complete
-        else: 
-            # button, disabled; no state change yet.
-            st.sidebar.button(":gray[*Validate*]", disabled=True, help="Please fill in all fields.")
-            
-    
-if st.session_state.workflow_fsm.is_in_state('data_entry_complete'):
-    # can we advance state? - only when the validate button is pressed
-    if st.sidebar.button(":white_check_mark:[**Validate**]"):
-        # create a dictionary with the submitted observation
+            # -> data_entry_validated
 
-        # TODO NEED TO ADAPT to multipage
-        #tab_log.info(f"{st.session_state.observations}")
-
-        df = pd.DataFrame([obs.to_dict() for obs in st.session_state.observations.values()])
-        #df = pd.DataFrame(st.session_state.observations, index=[0])
-        # with tab_coords:
-        #     st.table(df)
-        # there doesn't seem to be any actual validation here?? TODO: find validator function (each element is validated by the input box, but is there something at the whole image level?)
-        # hmm, maybe it should actually just be "I'm done with data entry"
-        st.session_state.workflow_fsm.complete_current_state()
-        # -> data_entry_validated
-
-if st.session_state.MODE_DEV_STATEFUL:
-            dbg_show_observation_hashes()
-
-add_classifier_header()
-# if we are before data_entry_validated, show the button, disabled.
-if not st.session_state.workflow_fsm.is_in_state_or_beyond('data_entry_validated'):
-    tab_inference.button(":gray[*Identify with cetacean classifier*]", disabled=True, 
-                        help="Please validate inputs before proceeding", 
-                        key="button_infer_ceteans")
-
-if st.session_state.workflow_fsm.is_in_state('data_entry_validated'):
-    # show the button, enabled. If pressed, we start the ML model (And advance state)
-    if tab_inference.button("Identify with cetacean classifier", 
-                            key="button_infer_ceteans"):
-        cetacean_classifier = AutoModelForImageClassification.from_pretrained(
-            classifier_name, 
-            revision=classifier_revision, 
-            trust_remote_code=True)
-
-        cetacean_just_classify(cetacean_classifier)
-        st.session_state.workflow_fsm.complete_current_state()
-        # trigger a refresh too (refreshhing the prog indicator means the script reruns and 
-        # we can enter the next state - visualising the results / review)
-        # ok it doesn't if done programmatically. maybe interacting with teh button? check docs.
-        refresh_progress_display()
-        #TODO: validate this doesn't harm performance adversely.
-        st.rerun()
-
-elif st.session_state.workflow_fsm.is_in_state('ml_classification_completed'):
-    # show the results, and allow manual validation
-    st.markdown("""### Inference results and manual validation/adjustment """)
     if st.session_state.MODE_DEV_STATEFUL:
-        s = ""
-        for k, v in st.session_state.whale_prediction1.items():
-            s += f"* Image {k}: {v}\n"
-            
-        st.markdown(s)
+                dbg_show_observation_hashes()
 
-    # add a button to advance the state
-    if st.button("I have looked over predictions and confirm correct species", icon= "👀",
-                 type="primary",
-                 help="Confirm that all species are selected correctly"):
-        st.session_state.workflow_fsm.complete_current_state()
-        # -> manual_inspection_completed
-        st.rerun()
-    
-    cetacean_show_results_and_review()
+    add_classifier_header()
+    # if we are before data_entry_validated, show the button, disabled.
+    if not st.session_state.workflow_fsm.is_in_state_or_beyond('data_entry_validated'):
+        tab_inference.button(":gray[*Identify with cetacean classifier*]", disabled=True, 
+                            help="Please validate inputs before proceeding", 
+                            key="button_infer_ceteans")
 
-elif st.session_state.workflow_fsm.is_in_state('manual_inspection_completed'):
-    # show the ML results, and allow the user to upload the observation
-    st.markdown("""### Inference Results (after manual validation) """)
-    
-    
-    if st.button("Upload all observations to THE INTERNET!", icon= "⬆️",
-                 type="primary",):
-        # let this go through to the push_all func, since it just reports to log for now.
-        push_all_observations(enable_push=False)
-        st.session_state.workflow_fsm.complete_current_state()
-        # -> data_uploaded
-        st.rerun()
+    if st.session_state.workflow_fsm.is_in_state('data_entry_validated'):
+        # show the button, enabled. If pressed, we start the ML model (And advance state)
+        if tab_inference.button("Identify with cetacean classifier", 
+                                key="button_infer_ceteans"):
+            cetacean_classifier = AutoModelForImageClassification.from_pretrained(
+                classifier_name, 
+                revision=classifier_revision, 
+                trust_remote_code=True)
 
-    cetacean_show_results()
+            cetacean_just_classify(cetacean_classifier)
+            st.session_state.workflow_fsm.complete_current_state()
+            # trigger a refresh too (refreshhing the prog indicator means the script reruns and 
+            # we can enter the next state - visualising the results / review)
+            # ok it doesn't if done programmatically. maybe interacting with teh button? check docs.
+            refresh_progress_display()
+            #TODO: validate this doesn't harm performance adversely.
+            st.rerun()
 
-elif st.session_state.workflow_fsm.is_in_state('data_uploaded'):
-    # the data has been sent. Lets show the observations again
-    # but no buttons to upload (or greyed out ok)
-    st.markdown("""### Observation(s) uploaded - thank you!""")
-    cetacean_show_results()
+    elif st.session_state.workflow_fsm.is_in_state('ml_classification_completed'):
+        # show the results, and allow manual validation
+        st.markdown("""### Inference results and manual validation/adjustment """)
+        if st.session_state.MODE_DEV_STATEFUL:
+            s = ""
+            for k, v in st.session_state.whale_prediction1.items():
+                s += f"* Image {k}: {v}\n"
+                
+            st.markdown(s)
 
-    st.divider()
-    df = pd.DataFrame([obs.to_dict() for obs in st.session_state.observations.values()])
-    st.table(df)
+        # add a button to advance the state
+        if st.button("I have looked over predictions and confirm correct species", icon= "👀",
+                    type="primary",
+                    help="Confirm that all species are selected correctly"):
+            st.session_state.workflow_fsm.complete_current_state()
+            # -> manual_inspection_completed
+            st.rerun()
+        
+        cetacean_show_results_and_review()
 
-    # didn't decide what the next state is here - I think we are in the terminal state.
-    #st.session_state.workflow_fsm.complete_current_state()
+    elif st.session_state.workflow_fsm.is_in_state('manual_inspection_completed'):
+        # show the ML results, and allow the user to upload the observation
+        st.markdown("""### Inference Results (after manual validation) """)
+        
+        
+        if st.button("Upload all observations to THE INTERNET!", icon= "⬆️",
+                    type="primary",):
+            # let this go through to the push_all func, since it just reports to log for now.
+            push_all_observations(enable_push=False)
+            st.session_state.workflow_fsm.complete_current_state()
+            # -> data_uploaded
+            st.rerun()
+
+        cetacean_show_results()
+
+    elif st.session_state.workflow_fsm.is_in_state('data_uploaded'):
+        # the data has been sent. Lets show the observations again
+        # but no buttons to upload (or greyed out ok)
+        st.markdown("""### Observation(s) uploaded - thank you!""")
+        cetacean_show_results()
+
+        st.divider()
+        df = pd.DataFrame([obs.to_dict() for obs in st.session_state.observations.values()])
+        st.table(df)
+
+        # didn't decide what the next state is here - I think we are in the terminal state.
+        #st.session_state.workflow_fsm.complete_current_state()
         
   
-# inside the hotdog tab, on button press we call a 2nd model (totally unrelated at present, just for demo
-# purposes, an hotdog image classifier) which will be run locally.
-# - this model predicts if the image is a hotdog or not, and returns probabilities
-# - the input image is the same as for the ceteacean classifier - defined in the sidebar
-tab_hotdogs.title("Hot Dog? Or Not?")
-tab_hotdogs.write("""
-            *Run alternative classifer on input images. Here we are using
-            a binary classifier - hotdog or not - from
-            huggingface.co/julien-c/hotdog-not-hotdog.*""")
+with tab_hotdogs:
+    # inside the hotdog tab, on button press we call a 2nd model (totally unrelated at present, just for demo
+    # purposes, an hotdog image classifier) which will be run locally.
+    # - this model predicts if the image is a hotdog or not, and returns probabilities
+    # - the input image is the same as for the ceteacean classifier - defined in the sidebar
+    tab_hotdogs.title("Hot Dog? Or Not?")
+    tab_hotdogs.write("""
+                *Run alternative classifer on input images. Here we are using
+                a binary classifier - hotdog or not - from
+                huggingface.co/julien-c/hotdog-not-hotdog.*""")
 
-if tab_hotdogs.button("Get Hotdog Prediction"):   
-    
-    pipeline_hot_dog = pipeline(task="image-classification", model="julien-c/hotdog-not-hotdog")
+    if tab_hotdogs.button("Get Hotdog Prediction"):   
+        
+        pipeline_hot_dog = pipeline(task="image-classification", model="julien-c/hotdog-not-hotdog")
 
-    if st.session_state.image is None:
-        st.info("Please upload an image first.")
-        #st.info(str(observations.to_dict()))
-        
-    else:
-        hotdog_classify(pipeline_hot_dog, tab_hotdogs)
-        
+        if st.session_state.image is None:
+            st.info("Please upload an image first.")
+            #st.info(str(observations.to_dict()))
+            
+        else:
+            hotdog_classify(pipeline_hot_dog, tab_hotdogs)
+            
         
 # after all other processing, we can show the stage/state
 refresh_progress_display()
