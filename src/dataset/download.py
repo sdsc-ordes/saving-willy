@@ -20,6 +20,8 @@ presentation_data_schema = {
     'lat': 'float',
     'lon': 'float',
     'species': 'str',
+    'author_email': 'str',
+    'date' : 'timestamp',
 }
 
 def try_download_dataset(dataset_id:str, data_files:str) -> dict:
@@ -72,6 +74,8 @@ def get_dataset():
         df = pd.DataFrame({
             'lat': metadata["train"]["latitude"],
             'lon': metadata["train"]["longitude"],
-            'species': metadata["train"]["selected_class"],}
+            'species': metadata["train"]["selected_class"],
+            'author_email': metadata["train"]["author_email"],
+            'date': metadata["train"]["date"],}
         )
     return df
