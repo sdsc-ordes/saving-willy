@@ -20,6 +20,9 @@ if "MODE_DEV_STATEFUL" not in st.session_state:
 from utils.st_logs import init_logging_session_states
 init_logging_session_states() # logging init should be early 
 
+# set email state var to exist, to permit persistence across page switches 
+if "input_author_email" not in st.session_state:
+    st.session_state.input_author_email = ""
 
 st.write("# Welcome to Cetacean Research Data Infrastructure! 🐬˚˖𓍢ִ໋ 🐋✧˚.⋆")
 
