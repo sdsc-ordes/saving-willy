@@ -339,8 +339,16 @@ def _setup_oneoff_inputs() -> None:
 
     with container_file_uploader:
         # 1. Input the author email 
-        author_email = st.text_input("Author Email", spoof_metadata.get('author_email', ""),
-                                                key="input_author_email")
+        text0 = st.session_state.get("input_author_email", "None")
+        #print(f"[D] author email: {text0}")
+        author_email = st.text_input("Author Email", 
+                                     value=st.session_state.get("input_author_email", None),
+                                     #spoof_metadata.get('author_email', ""),
+                                                #key="input_author_email")
+        )
+        # store the email in session state
+        st.session_state["input_author_email"] = author_email
+        
         if author_email and not is_valid_email(author_email):   
             st.error("Please enter a valid email address.")
 
