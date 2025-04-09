@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 import pandas as pd
+import logging
 
 st.set_page_config(
     page_title="ML Models",
@@ -23,12 +24,6 @@ from hf_push_observations import push_all_observations
 from classifier.classifier_image import cetacean_just_classify, cetacean_show_results_and_review, cetacean_show_results, init_classifier_session_states
 from classifier.classifier_hotdog import hotdog_classify
 
-# setup for the ML model on huggingface (our wrapper)
-os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
-# one toggle for all the extra debug text
-if "MODE_DEV_STATEFUL" not in st.session_state:
-    st.session_state.MODE_DEV_STATEFUL = False
-
 ############################################################
 classifier_name = "Saving-Willy/cetacean-classifier"
 #classifier_revision = '0f9c15e2db4d64e7f622ade518854b488d8d35e6'
@@ -36,6 +31,16 @@ classifier_revision = 'main' # default/latest version
 dataset_id = "Saving-Willy/temp_dataset"
 data_files = "data/train-00000-of-00001.parquet"
 ############################################################
+
+g_logger = logging.getLogger(__name__)
+# setup for the ML model on huggingface (our wrapper)
+os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
+# one toggle for all the extra debug text
+if "MODE_DEV_STATEFUL" not in st.session_state:
+    st.session_state.MODE_DEV_STATEFUL = False
+
+############################################################
+
 
  # Streamlit app
 tab_inference, tab_hotdogs= \

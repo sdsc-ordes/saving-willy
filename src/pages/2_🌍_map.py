@@ -1,4 +1,7 @@
 import streamlit as st
+import logging 
+from datasets import disable_caching
+disable_caching()
 
 st.set_page_config(
     page_title="About",
@@ -10,10 +13,8 @@ from maps.obs_map import add_obs_map_header
 from maps.alps_map import present_alps_map
 from maps.obs_map import present_obs_map
 
-from datasets import disable_caching
-disable_caching()
-
 ############################################################
+g_logger = logging.getLogger(__name__)
 USE_BASIC_MAP = False
 DEV_SIDEBAR_LIB = True
 ############################################################
