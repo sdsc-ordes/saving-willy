@@ -81,8 +81,7 @@ with tab_inference:
         if st.sidebar.button(":white_check_mark:[**Validate**]"):
             # create a dictionary with the submitted observation
 
-            # TODO NEED TO ADAPT to multipage
-            #tab_log.info(f"{st.session_state.observations}")
+            g_logger.info(f"{st.session_state.observations}")
 
             df = pd.DataFrame([obs.to_dict() for obs in st.session_state.observations.values()])
             #df = pd.DataFrame(st.session_state.observations, index=[0])
