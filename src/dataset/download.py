@@ -63,6 +63,12 @@ def try_download_dataset(dataset_id:str, data_files:str) -> dict:
     return metadata
 
 def get_dataset():
+    """
+    Downloads the dataset from Hugging Face and prepares it for use.
+    If the dataset is not available, it creates an empty DataFrame with the specified schema.
+    Returns:
+        pd.DataFrame: A DataFrame containing the dataset, or an empty DataFrame if the dataset is not available.
+    """
     # load/download data from huggingface dataset
     metadata = try_download_dataset(dataset_id, data_files)
     

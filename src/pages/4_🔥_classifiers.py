@@ -19,7 +19,7 @@ from input.input_handling import init_input_container_states, add_input_UI_eleme
 from input.input_handling import dbg_show_observation_hashes
 
 from utils.workflow_ui import refresh_progress_display, init_workflow_viz, init_workflow_session_states
-from hf_push_observations import push_all_observations
+from dataset.hf_push_observations import push_all_observations
 
 from classifier.classifier_image import cetacean_just_classify, cetacean_show_results_and_review, cetacean_show_results, init_classifier_session_states
 from classifier.classifier_hotdog import hotdog_classify
@@ -84,7 +84,6 @@ with tab_inference:
             g_logger.info(f"{st.session_state.observations}")
 
             df = pd.DataFrame([obs.to_dict() for obs in st.session_state.observations.values()])
-            #df = pd.DataFrame(st.session_state.observations, index=[0])
             # with tab_coords:
             #     st.table(df)
             # there doesn't seem to be any actual validation here?? TODO: find validator function (each element is validated by the input box, but is there something at the whole image level?)
