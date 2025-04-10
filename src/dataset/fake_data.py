@@ -4,6 +4,14 @@ import random
 from datetime import datetime, timedelta
 
 def generate_fake_data(df, num_fake):
+    """
+    Generate fake data for the dataset.
+    Args:
+        df (pd.DataFrame): Original DataFrame to append fake data to.
+        num_fake (int): Number of fake observations to generate.
+    Returns:
+        pd.DataFrame: DataFrame with the original and fake data.
+    """
 
     # Options for random generation
     species_options = [
@@ -51,7 +59,6 @@ def generate_fake_data(df, num_fake):
         end = datetime(end_year, 1, 1)
         return start + timedelta(days=random.randint(0, (end - start).days))
 
-    # Generate 20 new observations
     new_data = []
     for _ in range(num_fake):
         lat, lon = random_ocean_coord()
@@ -60,7 +67,6 @@ def generate_fake_data(df, num_fake):
         date = random_date()
         new_data.append([lat, lon, species, email, date])
 
-    # Create a DataFrame and append
     new_df = pd.DataFrame(new_data, columns=['lat', 'lon', 'species', 'author_email', 'date'])
     df = pd.concat([df, new_df], ignore_index=True)
     return df

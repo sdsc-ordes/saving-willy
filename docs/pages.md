@@ -1,0 +1,1 @@
+The pages documented are the pages with functional code. Some pages such as about, benchmarking, challenges are currently only writing, markdown and images and do not require further documentation. 

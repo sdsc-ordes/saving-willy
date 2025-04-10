@@ -7,7 +7,7 @@ g_logger = logging.getLogger(__name__)
 g_logger.setLevel(LOG_LEVEL)
 
 import whale_viewer as viewer
-from hf_push_observations import push_observations
+from dataset.hf_push_observations import push_observations
 from utils.grid_maker import gridder
 from utils.metadata_handler import metadata2md
 from input.input_observation import InputObservation
