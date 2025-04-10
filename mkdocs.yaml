@@ -27,13 +27,7 @@ nav:
     - Dev Notes: dev_notes.md
   - App:
     - Main App & Home Page: home.md
-    - Pages: 
-      - Overall Notes: pages.md
-      - Map Page: pages_map.md
-      - Requests Page: pages_requests.md
-      - Classifiers Page: pages_classifiers.md
-      - Gallery Page: pages_gallery.md
-      - Logs: pages_logs.md
+    - Multipages Notes: pages.md
     - Modules:
       - Data Entry Handling: 
         - Data Input: input_handling.md
