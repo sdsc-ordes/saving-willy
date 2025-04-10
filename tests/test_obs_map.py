@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from maps.obs_map import try_download_dataset
+from dataset.download import try_download_dataset
 
 # tests for try_download_dataset
 # - the main aim here is to mock the function load_dataset which makes external HTTP requests, 
