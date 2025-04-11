@@ -202,7 +202,12 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
         m_logger.warning("[W] `container_metadata_inputs` is None, using sidebar")
         
 
-
+    # logic for the precedence of lat/lon values (descending importance)
+    # 1) if something was already entered, take that value (can have arrived from 2 or 3 in previous round)
+    # 2) if file metadata, take that value
+    # 3) if spoof metadata flag is up, take that value
+    # 4) else, empty (None)
+    
     author_email = st.session_state["input_author_email"]
     filename = file.name
     image_datetime_raw = get_image_datetime(file)
@@ -211,6 +216,23 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     msg = f"[D] {filename}: lat, lon from image metadata: {latitude0}, {longitude0}"
     m_logger.debug(msg)
     
+    # let's see if there was a value that was already entered for latitude and/or longitude
+    key_lon=f"input_longitude_{image_hash}"
+    key_lat=f"input_latitude_{image_hash}"
+    present_lat = key_lat in st.session_state
+    present_lon = key_lon in st.session_state
+    
+    latitude_prior = st.session_state.get(key_lat, None)
+    longitude_prior = st.session_state.get(key_lon, None)
+    
+    m_logger.debug(f"[D] {key_lat}: key present? {int(present_lat)} | prior value: {latitude_prior} | metadata value: {latitude0}")
+    m_logger.debug(f"[D] {key_lon}: key present? {int(present_lon)} | prior value: {longitude_prior} | metadata value: {longitude0}")
+    
+    if latitude_prior is not None:
+        latitude0 = latitude_prior
+    if longitude_prior is not None:
+        longitude0 = longitude_prior
+
     if spoof_metadata:
         if latitude0 is None: # get some default values if not found in exifdata
             latitude0:float = spoof_metadata.get('latitude', 0) + dbg_ix
@@ -222,17 +244,13 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     #viewcontainer.title(f"Metadata for {filename}")
     viewcontainer = _viewcontainer.expander(f"Metadata for {file.name}", expanded=True)
 
-    # TODO: use session state so any changes are persisted within session -- currently I think
-    # we are going to take the defaults over and over again -- if the user adjusts coords, or date, it will get lost
-    # - it is a bit complicated, if no values change, they persist (the widget definition: params, name, key, etc)
-    #   even if the code is re-run. but if the value changes, it is lost.
-    
 
     # 3. Latitude Entry Box
     latitude = viewcontainer.text_input(
         "Latitude for " + filename, 
         latitude0,
-        key=f"input_latitude_{image_hash}")
+        #key=f"input_latitude_{image_hash}")
+    )
     if latitude and not is_valid_number(latitude):
         viewcontainer.error("Please enter a valid latitude (numerical only).")
         m_logger.error(f"Invalid latitude entered: {latitude}.")
@@ -240,10 +258,17 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     longitude = viewcontainer.text_input(
         "Longitude for " + filename, 
         longitude0,
-        key=f"input_longitude_{image_hash}")
+        #key=f"input_longitude_{image_hash}")
+    )
     if longitude and not is_valid_number(longitude):
         viewcontainer.error("Please enter a valid longitude (numerical only).")
         m_logger.error(f"Invalid latitude entered: {latitude}.")
+    
+    # now store the latitude and longitude into the session state (persists across page switches)
+    st.session_state[key_lat] = latitude
+    st.session_state[key_lon] = longitude
+    
+    
 
     # 5. Date/time
     ## first from image metadata
