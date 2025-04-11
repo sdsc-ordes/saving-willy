@@ -5,7 +5,7 @@ import hashlib
 import os
 
 import streamlit as st
-from streamlit.delta_generator import DeltaGenerator
+#from streamlit.delta_generator import DeltaGenerator
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
 import cv2
@@ -16,13 +16,6 @@ from input.input_validator import get_image_datetime, is_valid_email, is_valid_n
 
 m_logger = logging.getLogger(__name__)
 m_logger.setLevel(logging.INFO)
-
-OKGREEN = '\033[92m'
-ENDC = '\033[0m'
-def _cprint(msg:str, color:str=OKGREEN):
-    """Print colored message"""
-    print(f"{color}{msg}{ENDC}")
-
 
 ''' 
 A module to setup the input handling for the whale observation guidance tool
@@ -249,7 +242,6 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
         
     image = st.session_state.images.get(image_hash, None)
     # add the UI elements
-    #viewcontainer.title(f"Metadata for {filename}")
     viewcontainer = _viewcontainer.expander(f"Metadata for {file.name}", expanded=True)
 
 
@@ -277,7 +269,6 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     # now store the latitude and longitude into the session state (persists across page switches)
     st.session_state[key_lat] = latitude
     st.session_state[key_lon] = longitude
-    
     
 
     # 5. Date/time
@@ -318,8 +309,6 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
             dt = datetime.datetime.now().astimezone().replace(microsecond=0)
             time_value = dt.time() 
             date_value = dt.date()
-            
-    
 
     ## either way, give user the option to enter manually (or correct, e.g. if camera has no rtc clock)
     date = viewcontainer.date_input(
@@ -331,15 +320,10 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
         key=f"input_time_anchor_{image_hash}",
         disabled=st.session_state.get("input_disabled", False),)
     
-    #v1 = st.session_state.get(key_date, None)
-    #v2 = st.session_state.get(key_time, None)
-    #_cprint(f"[DD] date, time: {type(date)}, {type(time)}. {type(v1)}, {type(v2)}. {v1}, {v2}")
-
     # now store the date and time into the session state (persists across page switches)
     st.session_state[key_date] = date
     st.session_state[key_time] = time
     
-
     tz_str = dt.strftime('%z') # this is numeric, otherwise the info isn't consistent. 
 
     observation = InputObservation(image=image, latitude=latitude, longitude=longitude,
@@ -410,8 +394,6 @@ def _setup_oneoff_inputs() -> None:
         author_email = st.text_input("Author Email", 
                                      value=st.session_state.get("input_author_email", None),
                                      disabled=st.session_state.get("input_disabled", False),
-                                     #spoof_metadata.get('author_email', ""),
-                                                #key="input_author_email")
         )
         # store the email in session state
         st.session_state["input_author_email"] = author_email
@@ -425,11 +407,6 @@ def _setup_oneoff_inputs() -> None:
             accept_multiple_files=True, 
             disabled=st.session_state.get("input_disabled", False), 
             key="file_uploader_data", on_change=buffer_uploaded_files)
-
-        
-                                    
-                                    
-    
 
         
 def setup_input() -> None:
