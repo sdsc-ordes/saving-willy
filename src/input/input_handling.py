@@ -17,6 +17,13 @@ from input.input_validator import get_image_datetime, is_valid_email, is_valid_n
 m_logger = logging.getLogger(__name__)
 m_logger.setLevel(logging.INFO)
 
+OKGREEN = '\033[92m'
+ENDC = '\033[0m'
+def _cprint(msg:str, color:str=OKGREEN):
+    """Print colored message"""
+    print(f"{color}{msg}{ENDC}")
+
+
 ''' 
 A module to setup the input handling for the whale observation guidance tool
 
@@ -207,6 +214,7 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     # 2) if file metadata, take that value
     # 3) if spoof metadata flag is up, take that value
     # 4) else, empty (None)
+    # - and similarly for date/time
     
     author_email = st.session_state["input_author_email"]
     filename = file.name
@@ -273,35 +281,64 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     
 
     # 5. Date/time
-    ## first from image metadata
-    if image_datetime_raw is not None:
-        # if we have a timezone let's use it (but only if we also have datetime)
-        time_fmt = '%Y:%m:%d %H:%M:%S'
-        if image_timezone_raw is not None:
-            image_datetime_raw += f" {image_timezone_raw}"
-            time_fmt += ' %z'
-        # 
-        dt = datetime.datetime.strptime(image_datetime_raw, time_fmt)
+    ## first from state, if previously set/modified
+    key_date = f"input_date_{image_hash}"
+    key_time = f"input_time_{image_hash}"
+    present_date = key_date in st.session_state
+    present_time = key_time in st.session_state
+    date_prior:datetime.date = st.session_state.get(key_date, None)
+    time_prior:datetime.time = st.session_state.get(key_time, None)
+
+    m_logger.debug(f"[D] {key_date}: key present? {int(present_date)} | prior value: {date_prior} | metadata value: {image_datetime_raw}")
+    m_logger.debug(f"[D] {key_time}: key present? {int(present_time)} | prior value: {time_prior} | metadata value: {image_datetime_raw}")
+    
+    
+    if date_prior is not None and time_prior is not None:
+        # we should use these values
+        dt = datetime.datetime.combine(date_prior, time_prior)
         date_value = dt.date()
         time_value = dt.time()
-        
-        #time_value = datetime.datetime.strptime(image_datetime_raw, '%Y:%m:%d %H:%M:%S').time()
-        #date_value = datetime.datetime.strptime(image_datetime_raw, '%Y:%m:%d %H:%M:%S').date()
     else:
-        # get current time, with user timezone (or is it server timezone?! TODO: test with different zones)
-        dt = datetime.datetime.now().astimezone().replace(microsecond=0)
-        time_value = dt.time() 
-        date_value = dt.date()
-        
-        #time_value = datetime.datetime.now().time()  # Default to current time
-        #date_value = datetime.datetime.now().date()
+        ## second from image metadata
+        if image_datetime_raw is not None:
+            # if we have a timezone let's use it (but only if we also have datetime)
+            time_fmt = '%Y:%m:%d %H:%M:%S'
+            if image_timezone_raw is not None:
+                image_datetime_raw += f" {image_timezone_raw}"
+                time_fmt += ' %z'
+            # 
+            dt = datetime.datetime.strptime(image_datetime_raw, time_fmt)
+            date_value = dt.date()
+            time_value = dt.time()
+            
+            #time_value = datetime.datetime.strptime(image_datetime_raw, '%Y:%m:%d %H:%M:%S').time()
+            #date_value = datetime.datetime.strptime(image_datetime_raw, '%Y:%m:%d %H:%M:%S').date()
+        else:
+            # get current time, with user timezone (or is it server timezone?! TODO: test with different zones)
+            dt = datetime.datetime.now().astimezone().replace(microsecond=0)
+            time_value = dt.time() 
+            date_value = dt.date()
+            
     
 
     ## either way, give user the option to enter manually (or correct, e.g. if camera has no rtc clock)
-    date = viewcontainer.date_input("Date for "+filename, value=date_value, key=f"input_date_{image_hash}", 
+    date = viewcontainer.date_input(
+        "Date for "+filename, value=date_value, 
+        key=f"input_date_anchor_{image_hash}", 
         disabled=st.session_state.get("input_disabled", False), )
-    time = viewcontainer.time_input("Time for "+filename, time_value, key=f"input_time_{image_hash}",
+    time = viewcontainer.time_input(
+        "Time for "+filename, time_value, 
+        key=f"input_time_anchor_{image_hash}",
         disabled=st.session_state.get("input_disabled", False),)
+    
+    #v1 = st.session_state.get(key_date, None)
+    #v2 = st.session_state.get(key_time, None)
+    #_cprint(f"[DD] date, time: {type(date)}, {type(time)}. {type(v1)}, {type(v2)}. {v1}, {v2}")
+
+    # now store the date and time into the session state (persists across page switches)
+    st.session_state[key_date] = date
+    st.session_state[key_time] = time
+    
 
     tz_str = dt.strftime('%z') # this is numeric, otherwise the info isn't consistent. 
 
