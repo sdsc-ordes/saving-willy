@@ -264,8 +264,8 @@ def test_two_input_files_realdata(mock_file_rv: MagicMock, mock_uploadedFile_Lis
         # check that each of the 4 inputs is present
         assert at.sidebar.text_input(key=f"input_latitude_anchor_{hash}") is not None
         assert at.sidebar.text_input(key=f"input_longitude_anchor_{hash}") is not None
-        assert at.sidebar.date_input(key=f"input_date_{hash}") is not None
-        assert at.sidebar.time_input(key=f"input_time_{hash}") is not None
+        assert at.sidebar.date_input(key=f"input_date_anchor_{hash}") is not None
+        assert at.sidebar.time_input(key=f"input_time_anchor_{hash}") is not None
 
     if 'demo_input_sidebar' in SCRIPT_UNDER_TEST:
         verify_metadata_in_demo_display(at, num_files)
