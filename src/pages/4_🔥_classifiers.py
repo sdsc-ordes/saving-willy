@@ -86,10 +86,15 @@ with tab_inference:
             df = pd.DataFrame([obs.to_dict() for obs in st.session_state.observations.values()])
             # with tab_coords:
             #     st.table(df)
+           
+            # now disable all the input boxes / widgets
+            st.session_state.input_disabled = True
+            
             # there doesn't seem to be any actual validation here?? TODO: find validator function (each element is validated by the input box, but is there something at the whole image level?)
             # hmm, maybe it should actually just be "I'm done with data entry"
             st.session_state.workflow_fsm.complete_current_state()
             # -> data_entry_validated
+            st.rerun() # refresh so the input widgets are immediately disabled
 
     if st.session_state.MODE_DEV_STATEFUL:
                 dbg_show_observation_hashes()

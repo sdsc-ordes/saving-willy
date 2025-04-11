@@ -249,6 +249,7 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     latitude = viewcontainer.text_input(
         "Latitude for " + filename, 
         latitude0,
+        disabled=st.session_state.get("input_disabled", False), 
         #key=f"input_latitude_{image_hash}")
     )
     if latitude and not is_valid_number(latitude):
@@ -258,6 +259,7 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     longitude = viewcontainer.text_input(
         "Longitude for " + filename, 
         longitude0,
+        disabled=st.session_state.get("input_disabled", False), 
         #key=f"input_longitude_{image_hash}")
     )
     if longitude and not is_valid_number(longitude):
@@ -296,8 +298,10 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
     
 
     ## either way, give user the option to enter manually (or correct, e.g. if camera has no rtc clock)
-    date = viewcontainer.date_input("Date for "+filename, value=date_value, key=f"input_date_{image_hash}")
-    time = viewcontainer.time_input("Time for "+filename, time_value, key=f"input_time_{image_hash}")
+    date = viewcontainer.date_input("Date for "+filename, value=date_value, key=f"input_date_{image_hash}", 
+        disabled=st.session_state.get("input_disabled", False), )
+    time = viewcontainer.time_input("Time for "+filename, time_value, key=f"input_time_{image_hash}",
+        disabled=st.session_state.get("input_disabled", False),)
 
     tz_str = dt.strftime('%z') # this is numeric, otherwise the info isn't consistent. 
 
@@ -368,6 +372,7 @@ def _setup_oneoff_inputs() -> None:
         #print(f"[D] author email: {text0}")
         author_email = st.text_input("Author Email", 
                                      value=st.session_state.get("input_author_email", None),
+                                     disabled=st.session_state.get("input_disabled", False),
                                      #spoof_metadata.get('author_email', ""),
                                                 #key="input_author_email")
         )
@@ -381,6 +386,7 @@ def _setup_oneoff_inputs() -> None:
         st.file_uploader(
             "Upload one or more images", type=["png", 'jpg', 'jpeg', 'webp'],
             accept_multiple_files=True, 
+            disabled=st.session_state.get("input_disabled", False), 
             key="file_uploader_data", on_change=buffer_uploaded_files)
 
         
