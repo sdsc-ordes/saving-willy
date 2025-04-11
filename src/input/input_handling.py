@@ -250,7 +250,7 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
         "Latitude for " + filename, 
         latitude0,
         disabled=st.session_state.get("input_disabled", False), 
-        #key=f"input_latitude_{image_hash}")
+        key=f"input_latitude_anchor_{image_hash}",
     )
     if latitude and not is_valid_number(latitude):
         viewcontainer.error("Please enter a valid latitude (numerical only).")
@@ -260,7 +260,7 @@ def metadata_inputs_one_file(file:UploadedFile, image_hash:str, dbg_ix:int=0) ->
         "Longitude for " + filename, 
         longitude0,
         disabled=st.session_state.get("input_disabled", False), 
-        #key=f"input_longitude_{image_hash}")
+        key=f"input_longitude_anchor_{image_hash}",
     )
     if longitude and not is_valid_number(longitude):
         viewcontainer.error("Please enter a valid longitude (numerical only).")
