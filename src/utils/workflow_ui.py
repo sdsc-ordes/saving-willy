@@ -9,6 +9,11 @@ def init_workflow_session_states():
     if "workflow_fsm" not in st.session_state:
         # create and init the state machine
         st.session_state.workflow_fsm = WorkflowFSM(FSM_STATES)
+    
+    if "input_disabled" not in st.session_state:
+        # after workflow reaches some stage, disable chance to change inputs
+        st.session_state.input_disabled = False
+        
 
 def refresh_progress_display() -> None:
     """
