@@ -25,6 +25,8 @@ from apptest.demo_elements import show_uploaded_file_info
 
 if __name__ == "__main__":
     
+    if "input_author_email" not in st.session_state:
+        st.session_state.input_author_email = ""
     init_input_data_session_states()
     init_input_container_states()
     init_workflow_session_states()
