@@ -6,7 +6,7 @@ colorTo: blue
 sdk: streamlit
 sdk_version: 1.39.0
 python_version: "3.10"
-app_file: src/main.py
+app_file: src/home.py
 pinned: false
 license: apache-2.0
 short_description: 'SDSC Hackathon - Project 10. '
