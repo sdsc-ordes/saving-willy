@@ -7,7 +7,6 @@ g_logger = logging.getLogger(__name__)
 g_logger.setLevel(LOG_LEVEL)
 
 import whale_viewer as viewer
-from dataset.hf_push_observations import push_observations
 from utils.grid_maker import gridder
 from utils.metadata_handler import metadata2md
 from input.input_observation import InputObservation
@@ -113,7 +112,6 @@ def cetacean_show_results_and_review() -> None:
             observation = _observation.to_dict()
             st.session_state.public_observations[hash] = observation
             
-            #st.button(f"Upload observation {str(o)} to THE INTERNET!", on_click=push_observations)
             # TODO: the metadata only fills properly if `validate` was clicked.
             # TODO put condition on the debug
             st.markdown(metadata2md(hash, debug=False))

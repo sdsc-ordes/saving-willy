@@ -28,8 +28,6 @@ from classifier.classifier_hotdog import hotdog_classify
 classifier_name = "Saving-Willy/cetacean-classifier"
 #classifier_revision = '0f9c15e2db4d64e7f622ade518854b488d8d35e6'
 classifier_revision = 'main' # default/latest version
-dataset_id = "Saving-Willy/temp_dataset"
-data_files = "data/train-00000-of-00001.parquet"
 ############################################################
 
 g_logger = logging.getLogger(__name__)
