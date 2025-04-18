@@ -33,7 +33,7 @@ os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
 #classifier_revision = '0f9c15e2db4d64e7f622ade518854b488d8d35e6'
 classifier_revision = 'main' # default/latest version
 # and the dataset of observations (hf dataset in our space)
-dataset_id = "Saving-Willy/temp_dataset"
+dataset_id = "Saving-Willy/main_dataset"
 data_files = "data/train-00000-of-00001.parquet"
 
 USE_BASIC_MAP = False
@@ -118,7 +118,7 @@ def push_observation(tab_log:DeltaGenerator=None):
     rv = api.upload_file(
         path_or_fileobj=f.name,
         path_in_repo=path_in_repo,
-        repo_id="Saving-Willy/temp_dataset",
+        repo_id="Saving-Willy/main_dataset",
         repo_type="dataset",
     )
     print(rv)
