@@ -4,7 +4,7 @@ from dataset.cleaner import clean_lat_long, clean_date
 from dataset.download import get_dataset
 from dataset.fake_data import generate_fake_data
 
-def data_prep(): 
+def data_prep() -> pd.DataFrame: 
     """
     Prepares the dataset for use in the application.
     Downloads the dataset and cleans the data (and generates fake data if needed).
@@ -18,7 +18,7 @@ def data_prep():
     df = clean_date(df)
     return df
 
-def filter_data(df): 
+def filter_data(df) -> pd.DataFrame: 
     """
     Filter the DataFrame based on user-selected ranges for latitude, longitude, and date.
     Args:
@@ -51,8 +51,9 @@ def show_specie_author(df):
             label = f"{row['author_email']} ({row['counts']})"
             st.session_state.checkbox_states[key] = st.checkbox(label, key=key)
 
-def show_new_data_view(df): 
+def show_new_data_view(df) -> pd.DataFrame: 
     """
+    Show the new filtered data view on the UI.
     Filter the dataframe based on the state of the localisation sliders and selected timeframe by the user.
     Then, show the results of the filtering grouped by species then by authors. 
     Authors are matched to a checkbox component so the user can click it if he/she/they wish to request data from this author.

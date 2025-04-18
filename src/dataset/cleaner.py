@@ -1,8 +1,9 @@
 import pandas as pd 
 
-def clean_lat_long(df): # Ensure lat and lon are numeric, coerce errors to NaN
+def clean_lat_long(df) -> pd.DataFrame:  
     """
     Clean latitude and longitude columns in the DataFrame.
+    Ensure lat and lon are numeric, coerce errors to NaN
     Args:
         df (pd.DataFrame): DataFrame containing latitude and longitude columns.
     Returns:
@@ -15,7 +16,7 @@ def clean_lat_long(df): # Ensure lat and lon are numeric, coerce errors to NaN
     df = df.dropna(subset=['lat', 'lon']).reset_index(drop=True)
     return df
 
-def clean_date(df): # Ensure lat and lon are numeric, coerce errors to NaN
+def clean_date(df) -> pd.DataFrame: # Ensure lat and lon are numeric, coerce errors to NaN
     """
     Clean date column in the DataFrame.
     Args:
