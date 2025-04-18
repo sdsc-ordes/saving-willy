@@ -3,7 +3,7 @@ import time
 import logging
 import pandas as pd
 from datasets import load_dataset
-from datasets import DatasetDict, Dataset
+from datasets import DatasetDict
 
 ############################################################
 # the dataset of observations (hf dataset in our space)
@@ -62,7 +62,7 @@ def try_download_dataset(dataset_id:str, data_files:str) -> dict:
     #st.write(msg)
     return metadata
 
-def get_dataset():
+def get_dataset() -> pd.DataFrame:
     """
     Downloads the dataset from Hugging Face and prepares it for use.
     If the dataset is not available, it creates an empty DataFrame with the specified schema.

@@ -5,7 +5,7 @@ st.set_page_config(
     page_icon="🤝",
 )
 
-from dataset.requests import data_prep, show_new_data_view
+from dataset.data_requests import data_prep, show_new_data_view
 
 st.title("Data Requests")
 st.write("This page is ensure findability of data across the community.")

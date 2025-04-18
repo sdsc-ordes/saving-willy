@@ -1,11 +1,14 @@
 import pandas as pd
-import numpy as np
 import random
 from datetime import datetime, timedelta
 
-def generate_fake_data(df, num_fake):
+from download import presentation_data_schema
+from whale_viewer import WHALE_CLASSES
+
+def generate_fake_data(df, num_fake) -> pd.DataFrame:
     """
     Generate fake data for the dataset.
+    
     Args:
         df (pd.DataFrame): Original DataFrame to append fake data to.
         num_fake (int): Number of fake observations to generate.
@@ -14,34 +17,7 @@ def generate_fake_data(df, num_fake):
     """
 
     # Options for random generation
-    species_options = [
-        "beluga",
-        "blue_whale",
-        "bottlenose_dolphin",
-        "brydes_whale",
-        "commersons_dolphin",
-        "common_dolphin",
-        "cuviers_beaked_whale",
-        "dusky_dolphin",
-        "false_killer_whale",
-        "fin_whale",
-        "frasiers_dolphin",
-        "gray_whale",
-        "humpback_whale",
-        "killer_whale",
-        "long_finned_pilot_whale",
-        "melon_headed_whale",
-        "minke_whale",
-        "pantropic_spotted_dolphin",
-        "pygmy_killer_whale",        
-        "rough_toothed_dolphin",
-        "sei_whale",
-        "short_finned_pilot_whale",
-        "southern_right_whale",
-        "spinner_dolphin",
-        "spotted_dolphin",
-        "white_sided_dolphin",
-    ]
+    species_options = WHALE_CLASSES
     email_options = [
         'dr.marine@oceanic.org', 'whale.research@deepblue.org',
         'observer@sea.net', 'super@whale.org'
@@ -67,6 +43,6 @@ def generate_fake_data(df, num_fake):
         date = random_date()
         new_data.append([lat, lon, species, email, date])
 
-    new_df = pd.DataFrame(new_data, columns=['lat', 'lon', 'species', 'author_email', 'date'])
+    new_df = pd.DataFrame(new_data, columns=presentation_data_schema).astype(presentation_data_schema)
     df = pd.concat([df, new_df], ignore_index=True)
     return df
