@@ -2,13 +2,13 @@ import pandas as pd
 import random
 from datetime import datetime, timedelta
 
-from download import presentation_data_schema
+from dataset.download import presentation_data_schema
 from whale_viewer import WHALE_CLASSES
 
 def generate_fake_data(df, num_fake) -> pd.DataFrame:
     """
     Generate fake data for the dataset.
-    
+
     Args:
         df (pd.DataFrame): Original DataFrame to append fake data to.
         num_fake (int): Number of fake observations to generate.
