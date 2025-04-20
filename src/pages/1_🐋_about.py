@@ -8,28 +8,28 @@ st.set_page_config(
 st.markdown(
     """
 # About
-    We created this web app in [a hackathon](https://sdsc-hackathons.ch/projectPage?projectRef=vUt8BfDJXaAs0UfOesXI|XyWLFpqjq3CX3zrM4uz8). 
-    
-    This interface is a Proof of Concept of a Community-driven Research Data Infrastructure for the Cetacean Conservation Community. 
+We created this web app in [a hackathon](https://sdsc-hackathons.ch/projectPage?projectRef=vUt8BfDJXaAs0UfOesXI|XyWLFpqjq3CX3zrM4uz8). 
 
-    Please reach out on [the project Github issues](https://github.com/sdsc-ordes/saving-willy/issues) for feedback, suggestions, or if you want to join the project.
+This interface is a Proof of Concept of a Community-driven Research Data Infrastructure for the Cetacean Conservation Community. 
+
+Please reach out on [the project Github issues](https://github.com/sdsc-ordes/saving-willy/issues) for feedback, suggestions, or if you want to join the project.
 
 # Open Source Resources
 
 ## UI Code
-    - The [space is hosted on Hugging Face](https://huggingface.co/spaces/Saving-Willy/saving-willy-space). 
-    - The [UI code is available on Github](https://github.com/sdsc-ordes/saving-willy).
-    - The [development space](https://huggingface.co/spaces/Saving-Willy/saving-willy-dev) is also hosted publically on Hugging Face.
+- The [space is hosted on Hugging Face](https://huggingface.co/spaces/Saving-Willy/saving-willy-space). 
+- The [UI code is available on Github](https://github.com/sdsc-ordes/saving-willy).
+- The [development space](https://huggingface.co/spaces/Saving-Willy/saving-willy-dev) is also hosted publically on Hugging Face.
 
 ## The Machine Learning Models
-    - The [model](https://huggingface.co/Saving-Willy/cetacean-classifier) is hosted on Hugging Face.
-    - The [original Kaggle model code](https://github.com/knshnb/kaggle-happywhale-1st-place) is open on Github as well. 
+- The [model](https://huggingface.co/Saving-Willy/cetacean-classifier) is hosted on Hugging Face.
+- The [original Kaggle model code](https://github.com/knshnb/kaggle-happywhale-1st-place) is open on Github as well. 
 
 ## The Data
 
 (temporary setup, a more stable database is probably desired.)
-    - The dataset is hosted on Hugging Face.
-    - The [dataset syncing code](https://github.com/vancauwe/saving-willy-data-sync) is available on Github. 
+- The dataset is hosted on Hugging Face.
+- The [dataset syncing code](https://github.com/vancauwe/saving-willy-data-sync) is available on Github. 
 
 # Credits and Thanks 
 
