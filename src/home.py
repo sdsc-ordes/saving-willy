@@ -64,10 +64,10 @@ st.markdown(
     ## 💎 Sharing Data 
 
     The dataset is hosted on Hugging Face 🤗 as well, in order to share the metadata of the images which have been classified by the model. 
-    Making the metadata public is under the choice of th researcher, who can choose to use the model for inference without making the image metadata public afterwards. 
+    Making the metadata public is under the choice of the researcher, who can choose to use the model for inference without making the image metadata public afterwards. 
     Of course, we encourage open data. Please note that the original images are never made public in the current-state RDI. 
 
-    💪 The RDI also explore how to share data after inference, with a simple data request page where researchers can fitler the existing metadata from the Hugging Face dataset, and then easily select those of interest for them. 
+    💪 The RDI also explores how to share data after inference, with a simple data request page where researchers can filter the existing metadata from the Hugging Face dataset, and then easily select those of interest for them. 
     Ideally, the Request button would either start a Discord channel discussion between concerned parties of the data request, or generate an e-mail with interested parties. This design is still under conception.
 
 """
