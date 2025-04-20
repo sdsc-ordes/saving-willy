@@ -1,3 +1,4 @@
+from typing import Tuple
 import pandas as pd
 import random
 from datetime import datetime, timedelta
@@ -5,7 +6,7 @@ from datetime import datetime, timedelta
 from dataset.download import presentation_data_schema
 from whale_viewer import WHALE_CLASSES
 
-def generate_fake_data(df, num_fake) -> pd.DataFrame:
+def generate_fake_data(df:pd.DataFrame, num_fake:int) -> pd.DataFrame:
     """
     Generate fake data for the dataset.
 
@@ -23,13 +24,13 @@ def generate_fake_data(df, num_fake) -> pd.DataFrame:
         'observer@sea.net', 'super@whale.org'
     ]
 
-    def random_ocean_coord():
+    def random_ocean_coord() -> Tuple[float, float]:
         """Generate random ocean-friendly coordinates."""
         lat = random.uniform(-60, 60)  # avoid poles
         lon = random.uniform(-180, 180)
         return lat, lon
 
-    def random_date(start_year=2018, end_year=2025):
+    def random_date(start_year:int=2018, end_year:int=2025) -> datetime:
         """Generate a random date."""
         start = datetime(start_year, 1, 1)
         end = datetime(end_year, 1, 1)
