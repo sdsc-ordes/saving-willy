@@ -18,7 +18,7 @@ def data_prep() -> pd.DataFrame:
     df = clean_date(df)
     return df
 
-def filter_data(df) -> pd.DataFrame: 
+def filter_data(df:pd.DataFrame) -> pd.DataFrame: 
     """
     Filter the DataFrame based on user-selected ranges for latitude, longitude, and date.
     Args:
@@ -36,7 +36,7 @@ def filter_data(df) -> pd.DataFrame:
     ]
     return df_filtered
 
-def show_specie_author(df): 
+def show_specie_author(df:pd.DataFrame): 
     """
     Display a list of species and their corresponding authors with checkboxes.
     Args:
@@ -51,7 +51,7 @@ def show_specie_author(df):
             label = f"{row['author_email']} ({row['counts']})"
             st.session_state.checkbox_states[key] = st.checkbox(label, key=key)
 
-def show_new_data_view(df) -> pd.DataFrame: 
+def show_new_data_view(df:pd.DataFrame) -> pd.DataFrame: 
     """
     Show the new filtered data view on the UI.
     Filter the dataframe based on the state of the localisation sliders and selected timeframe by the user.
