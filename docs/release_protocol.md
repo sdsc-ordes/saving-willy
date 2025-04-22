@@ -27,4 +27,6 @@ short_description: 'SDSC Hackathon - Project 10. '
 ```
 
 4. Ask for Review
-5. Merge and make a new release of the code 
+5. Merge to main upon approval
+6. Make a new tag for a major version change (semantic versioning) i.e. `vX.0.0`
+7. Make a new release of the code, associated to this tag
