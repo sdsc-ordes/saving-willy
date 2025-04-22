@@ -22,32 +22,34 @@ plugins:
 
 nav:
   - README: index.md
-  #- Quickstart:
-    #- Installation: installation.md
-    #- Usage: usage.md
-  - API:
-    - Main app: main.md
+  - Release Protocol: release_protocol.md
+  - How to contribute:
+    - Dev Notes: dev_notes.md
+  - App:
+    - Main App & Home Page: home.md
+    - Multipages Notes: pages.md
     - Modules:
-      - Data entry handling: 
-        - Data input: input_handling.md
-        - Data extraction and validation: input_validator.md
+      - Data Entry Handling: 
+        - Data Input: input_handling.md
+        - Data Extraction & Validation: input_validator.md
         - Data Object Class: input_observation.md
-      - Classifiers: 
+      - Hugging Face Dataset: 
+        - Download: dataset_download.md
+        - Cleaning: dataset_cleaner.md
+        - Push Observations to Dataset: dataset_hf_push_observations.md
+        - Data Requests: dataset_requests.md
+        - Fake data: dataset_fake_data.md
+      - Hugging Face Classifiers: 
         - Cetacean Fluke & Fin Recognition: classifier_image.md
-        - (temporary) Hotdog Classifier: hotdog.md
-      - Hugging Face Integration: 
-        - Push Observations to Dataset: hf_push_observations.md
+        - (temporary) Hotdog Classifier: classifier_hotdog.md
       - Map of observations: obs_map.md
       - Whale gallery: whale_gallery.md
       - Whale viewer: whale_viewer.md
       - Logging: st_logs.md
       - Utils: 
-        - Tab-rendering fix (js): fix_tabrender.md
-        - Metadata handling: metadata_handler.md
-        - Grid maker: grid_maker.md
+        - Tab-rendering fix (js): utils_fix_tabrender.md
+        - Metadata handling: utils_metadata_handler.md
+        - Grid maker: utils_grid_maker.md
 
     - Development clutter:
       - Demo app: app.md
-    
-  - How to contribute:
-    - Dev Notes: dev_notes.md

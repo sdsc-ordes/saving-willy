@@ -157,4 +157,6 @@ def display_whale(whale_classes:List[str], i:int, viewcontainer:DeltaGenerator=N
     image_path = os.path.join(current_dir, "src/images/references/")
     image = Image.open(image_path + df_whale_img_ref.loc[whale_classes[i], "WHALE_IMAGES"])
 
-    viewcontainer.image(image, caption=df_whale_img_ref.loc[whale_classes[i], "WHALE_REFERENCES"], use_column_width=True)
+    viewcontainer.image(image, 
+                        caption=df_whale_img_ref.loc[whale_classes[i], "WHALE_REFERENCES"], 
+                        use_column_width=True)
