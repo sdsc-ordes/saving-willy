@@ -14,23 +14,6 @@ jobs:
           fetch-depth: 0
           lfs: true
 
-      - name: Set Git identity
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Set up Git LFS
-        run: |
-          git lfs install
-          git lfs track "*.png"
-          git add .gitattributes
-          git commit -m "Track PNGs with Git LFS" || echo "No changes to commit"
-
-      - name: Migrate existing PNGs to LFS
-        run: |
-          git lfs migrate import --include="src/images/design/*.png"
-          git commit -m "Migrate PNG images to LFS" || echo "No changes to commit"
-
       - name: Push to Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}

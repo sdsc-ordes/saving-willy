@@ -13,13 +13,6 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
-      - name: Set up Git LFS
-        run: |
-          git lfs install
-          git lfs track "*.png"
-          git add .gitattributes
-          git add src/images/design/challenge1.png src/images/design/challenge2.png src/images/design/leaderboard.png
-          git commit -m "Track images with Git LFS" || echo "No changes to commit"
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
