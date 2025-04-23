@@ -1,8 +1,8 @@
-name: Sync to Hugging Face hub
-
+name: Sync to Hugging Face hub DEV
 on:
   push:
     branches: [dev]
+  # to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
@@ -13,10 +13,8 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
-
-      - name: Push to Hugging Face
+      - name: Push to DEV hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          HF_USERNAME: ${{ secrets.HF_USERNAME }}
-        run: |
-          git push --force https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/Saving-Willy/saving-willy-space main
+          HF_USERNAME: ${{secrets.HF_USERNAME}}
+        run: git push --force https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/Saving-Willy/saving-willy-dev dev:main
