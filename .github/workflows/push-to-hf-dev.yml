@@ -1,8 +1,8 @@
-name: Sync to Hugging Face hub DEV
+name: Sync to Hugging Face hub
+
 on:
   push:
-    branches: [dev]
-  # to run this workflow manually from the Actions tab
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -13,15 +13,27 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
+
+      - name: Set Git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Set up Git LFS
         run: |
           git lfs install
           git lfs track "*.png"
           git add .gitattributes
-          git add src/images/design/challenge1.png src/images/design/challenge2.png src/images/design/leaderboard.png
-          git commit -m "Track images with Git LFS" || echo "No changes to commit"
-      - name: Push to DEV hub
+          git commit -m "Track PNGs with Git LFS" || echo "No changes to commit"
+
+      - name: Migrate existing PNGs to LFS
+        run: |
+          git lfs migrate import --include="src/images/design/*.png"
+          git commit -m "Migrate PNG images to LFS" || echo "No changes to commit"
+
+      - name: Push to Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          HF_USERNAME: ${{secrets.HF_USERNAME}}
-        run: git push --force https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/Saving-Willy/saving-willy-dev dev:main
+          HF_USERNAME: ${{ secrets.HF_USERNAME }}
+        run: |
+          git push --force https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/Saving-Willy/saving-willy-space main
