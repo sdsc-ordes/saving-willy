@@ -1,0 +1,1494 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../input_handling/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.12">
+    
+    
+      
+        <title>Main app - Saving Willy Code Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.2afb09e1.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#main-entry-point" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Saving Willy Code Documentation" class="md-header__button md-logo" aria-label="Saving Willy Code Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Saving Willy Code Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Main app
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Saving Willy Code Documentation" class="md-nav__button md-logo" aria-label="Saving Willy Code Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Saving Willy Code Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    README
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    API
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            API
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Main app
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Main app
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.main" class="md-nav__link">
+    <span class="md-ellipsis">
+      main
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.main.main" class="md-nav__link">
+    <span class="md-ellipsis">
+      main
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.main.metadata2md" class="md-nav__link">
+    <span class="md-ellipsis">
+      metadata2md
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.main.push_observation" class="md-nav__link">
+    <span class="md-ellipsis">
+      push_observation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Modules
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            Modules
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../input_handling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Data entry handling
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../obs_map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Map of observations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../whale_gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Whale gallery
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../whale_viewer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Whale viewer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../st_logs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Logging
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fix_tabrender/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tab-rendering fix (js)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Development clutter
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Development clutter
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Demo app
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    How to contribute
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            How to contribute
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev_notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dev Notes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.main" class="md-nav__link">
+    <span class="md-ellipsis">
+      main
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.main.main" class="md-nav__link">
+    <span class="md-ellipsis">
+      main
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.main.metadata2md" class="md-nav__link">
+    <span class="md-ellipsis">
+      metadata2md
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.main.push_observation" class="md-nav__link">
+    <span class="md-ellipsis">
+      push_observation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="main-entry-point">Main entry point</h1>
+<p>This module sets up the streamlit UI frontend, 
+as well as logger and session state elements in the backend.</p>
+<p>The session state is used to retain values from one interaction to the next, since the streamlit execution model is to re-run the entire script top-to-bottom upon each user interaction (e.g. click). 
+See streamlit <a href="https://docs.streamlit.io/develop/api-reference/caching-and-state/st.session_state">docs</a>.</p>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="src.main"></a>
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="src.main.main" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">main</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Main entry point to set up the streamlit UI and run the application.</p>
+<p>The organisation is as follows:</p>
+<ol>
+<li>data input (a new observation) is handled in the sidebar</li>
+<li>
+<p>the rest of the interface is organised in tabs:</p>
+<ul>
+<li>cetean classifier</li>
+<li>hotdog classifier</li>
+<li>map to present the obersvations</li>
+<li>table of recent log entries</li>
+<li>gallery of whale images</li>
+</ul>
+</li>
+</ol>
+<p>The majority of the tabs are instantiated from modules. Currently the two 
+classifiers are still in-line here.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/main.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main entry point to set up the streamlit UI and run the application.</span>
+
+<span class="sd">    The organisation is as follows:</span>
+
+<span class="sd">    1. data input (a new observation) is handled in the sidebar</span>
+<span class="sd">    2. the rest of the interface is organised in tabs:</span>
+
+<span class="sd">        - cetean classifier</span>
+<span class="sd">        - hotdog classifier</span>
+<span class="sd">        - map to present the obersvations</span>
+<span class="sd">        - table of recent log entries</span>
+<span class="sd">        - gallery of whale images</span>
+
+<span class="sd">    The majority of the tabs are instantiated from modules. Currently the two </span>
+<span class="sd">    classifiers are still in-line here.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">g_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;App started.&quot;</span><span class="p">)</span>
+    <span class="n">g_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[D] Streamlit version: </span><span class="si">{</span><span class="n">st</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">. Python version: </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1">#g_logger.debug(&quot;debug message&quot;)</span>
+    <span class="c1">#g_logger.info(&quot;info message&quot;)</span>
+    <span class="c1">#g_logger.warning(&quot;warning message&quot;)</span>
+
+    <span class="c1"># Streamlit app</span>
+    <span class="c1">#tab_gallery, tab_inference, tab_hotdogs, tab_map, tab_data, tab_log = st.tabs([&quot;Cetecean classifier&quot;, &quot;Hotdog classifier&quot;, &quot;Map&quot;, &quot;Data&quot;, &quot;Log&quot;, &quot;Beautiful cetaceans&quot;])</span>
+    <span class="n">tab_inference</span><span class="p">,</span> <span class="n">tab_hotdogs</span><span class="p">,</span> <span class="n">tab_map</span><span class="p">,</span> <span class="n">tab_data</span><span class="p">,</span> <span class="n">tab_log</span><span class="p">,</span> <span class="n">tab_gallery</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">tabs</span><span class="p">([</span><span class="s2">&quot;Cetecean classifier&quot;</span><span class="p">,</span> <span class="s2">&quot;Hotdog classifier&quot;</span><span class="p">,</span> <span class="s2">&quot;Map&quot;</span><span class="p">,</span> <span class="s2">&quot;Data&quot;</span><span class="p">,</span> <span class="s2">&quot;Log&quot;</span><span class="p">,</span> <span class="s2">&quot;Beautiful cetaceans&quot;</span><span class="p">])</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">tab_log</span> <span class="o">=</span> <span class="n">tab_log</span>
+
+
+    <span class="c1"># create a sidebar, and parse all the input (returned as `observation` object)</span>
+    <span class="n">observation</span> <span class="o">=</span> <span class="n">sw_inp</span><span class="o">.</span><span class="n">setup_input</span><span class="p">(</span><span class="n">viewcontainer</span><span class="o">=</span><span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="mi">0</span><span class="p">:</span><span class="c1">## WIP</span>
+        <span class="c1"># goal of this code is to allow the user to override the ML prediction, before transmitting an observation</span>
+        <span class="n">predicted_class</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">selectbox</span><span class="p">(</span><span class="s2">&quot;Predicted Class&quot;</span><span class="p">,</span> <span class="n">sw_wv</span><span class="o">.</span><span class="n">WHALE_CLASSES</span><span class="p">)</span>
+        <span class="n">override_prediction</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">checkbox</span><span class="p">(</span><span class="s2">&quot;Override Prediction&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">override_prediction</span><span class="p">:</span>
+            <span class="n">overridden_class</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">selectbox</span><span class="p">(</span><span class="s2">&quot;Override Class&quot;</span><span class="p">,</span> <span class="n">sw_wv</span><span class="o">.</span><span class="n">WHALE_CLASSES</span><span class="p">)</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">full_data</span><span class="p">[</span><span class="s1">&#39;class_overriden&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">overridden_class</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">full_data</span><span class="p">[</span><span class="s1">&#39;class_overriden&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+    <span class="k">with</span> <span class="n">tab_map</span><span class="p">:</span>
+        <span class="c1"># visual structure: a couple of toggles at the top, then the map inlcuding a</span>
+        <span class="c1"># dropdown for tileset selection.</span>
+        <span class="n">tab_map_ui_cols</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">columns</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">tab_map_ui_cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">show_db_points</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">toggle</span><span class="p">(</span><span class="s2">&quot;Show Points from DB&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">tab_map_ui_cols</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">dbg_show_extra</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">toggle</span><span class="p">(</span><span class="s2">&quot;Show Extra points (test)&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">show_db_points</span><span class="p">:</span>
+            <span class="c1"># show a nicer map, observations marked, tileset selectable.</span>
+            <span class="n">st_data</span> <span class="o">=</span> <span class="n">sw_map</span><span class="o">.</span><span class="n">present_obs_map</span><span class="p">(</span>
+                <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset_id</span><span class="p">,</span> <span class="n">data_files</span><span class="o">=</span><span class="n">data_files</span><span class="p">,</span>
+                <span class="n">dbg_show_extra</span><span class="o">=</span><span class="n">dbg_show_extra</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># development map.</span>
+            <span class="n">st_data</span> <span class="o">=</span> <span class="n">sw_am</span><span class="o">.</span><span class="n">present_alps_map</span><span class="p">()</span>
+
+
+    <span class="k">with</span> <span class="n">tab_log</span><span class="p">:</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s1">&#39;handler&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">handler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">records</span> <span class="o">=</span> <span class="n">sw_logs</span><span class="o">.</span><span class="n">parse_log_buffer</span><span class="p">(</span><span class="n">handler</span><span class="o">.</span><span class="n">buffer</span><span class="p">)</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span><span class="n">records</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">use_container_width</span><span class="o">=</span><span class="kc">True</span><span class="p">,)</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Length of records: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">records</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;⚠️ No log handler found!&quot;</span><span class="p">)</span>
+
+
+
+    <span class="k">with</span> <span class="n">tab_data</span><span class="p">:</span>
+        <span class="c1"># the goal of this tab is to allow selection of the new obsvation&#39;s location by map click/adjust.</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;Coming later hope! :construction:&quot;</span><span class="p">)</span>
+
+        <span class="n">st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Click on the map to capture a location.&quot;</span><span class="p">)</span>
+        <span class="c1">#m = folium.Map(location=visp_loc, zoom_start=7)</span>
+        <span class="n">mm</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">[</span><span class="mf">39.949610</span><span class="p">,</span> <span class="o">-</span><span class="mf">75.150282</span><span class="p">],</span> <span class="n">zoom_start</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">folium</span><span class="o">.</span><span class="n">Marker</span><span class="p">(</span> <span class="p">[</span><span class="mf">39.949610</span><span class="p">,</span> <span class="o">-</span><span class="mf">75.150282</span><span class="p">],</span> <span class="n">popup</span><span class="o">=</span><span class="s2">&quot;Liberty Bell&quot;</span><span class="p">,</span> <span class="n">tooltip</span><span class="o">=</span><span class="s2">&quot;Liberty Bell&quot;</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">mm</span><span class="p">)</span>
+
+        <span class="n">st_data2</span> <span class="o">=</span> <span class="n">st_folium</span><span class="p">(</span><span class="n">mm</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">725</span><span class="p">)</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;below the map...&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">st_data2</span><span class="p">[</span><span class="s1">&#39;last_clicked&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">st_data2</span><span class="p">)</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">st_data2</span><span class="p">[</span><span class="s1">&#39;last_clicked&#39;</span><span class="p">])</span>
+
+
+    <span class="k">with</span> <span class="n">tab_gallery</span><span class="p">:</span>
+        <span class="c1"># here we make a container to allow filtering css properties </span>
+        <span class="c1"># specific to the gallery (otherwise we get side effects)</span>
+        <span class="n">tg_cont</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">container</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;swgallery&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">tg_cont</span><span class="p">:</span>
+            <span class="n">sw_wg</span><span class="o">.</span><span class="n">render_whale_gallery</span><span class="p">(</span><span class="n">n_cols</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+
+    <span class="c1"># Display submitted data</span>
+    <span class="k">if</span> <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;Validate&quot;</span><span class="p">):</span>
+        <span class="c1"># create a dictionary with the submitted data</span>
+        <span class="n">submitted_data</span> <span class="o">=</span> <span class="n">observation</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="c1">#print(submitted_data)</span>
+
+        <span class="c1">#full_data.update(**submitted_data)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">submitted_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">full_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="c1">#st.write(f&quot;full dict of data: {json.dumps(submitted_data)}&quot;)</span>
+        <span class="c1">#tab_inference.info(f&quot;{st.session_state.full_data}&quot;)</span>
+        <span class="n">tab_log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">full_data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">submitted_data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">with</span> <span class="n">tab_data</span><span class="p">:</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+
+
+
+    <span class="c1"># inside the inference tab, on button press we call the model (on huggingface hub)</span>
+    <span class="c1"># which will be run locally. </span>
+    <span class="c1"># - the model predicts the top 3 most likely species from the input image</span>
+    <span class="c1"># - these species are shown</span>
+    <span class="c1"># - the user can override the species prediction using the dropdown </span>
+    <span class="c1"># - an observation is uploaded if the user chooses.</span>
+
+    <span class="k">if</span> <span class="n">tab_inference</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;Identify with cetacean classifier&quot;</span><span class="p">):</span>
+        <span class="c1">#pipe = pipeline(&quot;image-classification&quot;, model=&quot;Saving-Willy/cetacean-classifier&quot;, trust_remote_code=True)</span>
+        <span class="n">cetacean_classifier</span> <span class="o">=</span> <span class="n">AutoModelForImageClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;Saving-Willy/cetacean-classifier&quot;</span><span class="p">,</span> 
+                                                                            <span class="n">revision</span><span class="o">=</span><span class="n">classifier_revision</span><span class="p">,</span>
+                                                                            <span class="n">trust_remote_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># TODO: cleaner design to disable the button until data input done?</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Please upload an image first.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># run classifier model on `image`, and persistently store the output</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">cetacean_classifier</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">image</span><span class="p">)</span> <span class="c1"># get top 3 matches</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">whale_prediction1</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s1">&#39;predictions&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">classify_whale_done</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[D]2 classify_whale_done: </span><span class="si">{</span><span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">classify_whale_done</span><span class="si">}</span><span class="s2">, whale_prediction1: </span><span class="si">{</span><span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">whale_prediction1</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">g_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="c1"># dropdown for selecting/overriding the species prediction</span>
+            <span class="c1">#st.info(f&quot;[D] classify_whale_done: {st.session_state.classify_whale_done}, whale_prediction1: {st.session_state.whale_prediction1}&quot;)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">classify_whale_done</span><span class="p">:</span>
+                <span class="n">selected_class</span> <span class="o">=</span> <span class="n">tab_inference</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">selectbox</span><span class="p">(</span><span class="s2">&quot;Species&quot;</span><span class="p">,</span> <span class="n">sw_wv</span><span class="o">.</span><span class="n">WHALE_CLASSES</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">placeholder</span><span class="o">=</span><span class="s2">&quot;Species not yet identified...&quot;</span><span class="p">,</span> <span class="n">disabled</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pred1</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">whale_prediction1</span>
+                <span class="c1"># get index of pred1 from WHALE_CLASSES, none if not present</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[D] pred1: </span><span class="si">{</span><span class="n">pred1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">ix</span> <span class="o">=</span> <span class="n">sw_wv</span><span class="o">.</span><span class="n">WHALE_CLASSES</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">pred1</span><span class="p">)</span> <span class="k">if</span> <span class="n">pred1</span> <span class="ow">in</span> <span class="n">sw_wv</span><span class="o">.</span><span class="n">WHALE_CLASSES</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="n">selected_class</span> <span class="o">=</span> <span class="n">tab_inference</span><span class="o">.</span><span class="n">selectbox</span><span class="p">(</span><span class="s2">&quot;Species&quot;</span><span class="p">,</span> <span class="n">sw_wv</span><span class="o">.</span><span class="n">WHALE_CLASSES</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">ix</span><span class="p">)</span>
+
+            <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">full_data</span><span class="p">[</span><span class="s1">&#39;predicted_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">selected_class</span>
+            <span class="k">if</span> <span class="n">selected_class</span> <span class="o">!=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">whale_prediction1</span><span class="p">:</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">full_data</span><span class="p">[</span><span class="s1">&#39;class_overriden&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">selected_class</span>
+
+            <span class="n">btn</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;Upload observation to THE INTERNET!&quot;</span><span class="p">,</span> <span class="n">on_click</span><span class="o">=</span><span class="n">push_observation</span><span class="p">)</span>
+            <span class="c1"># TODO: the metadata only fills properly if `validate` was clicked.</span>
+            <span class="n">tab_inference</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">metadata2md</span><span class="p">())</span>
+
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[D] full data after inference: </span><span class="si">{</span><span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">full_data</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">g_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="c1"># TODO: add a link to more info on the model, next to the button.</span>
+
+            <span class="n">whale_classes</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s1">&#39;predictions&#39;</span><span class="p">][:]</span>
+            <span class="c1"># render images for the top 3 (that is what the model api returns)</span>
+            <span class="k">with</span> <span class="n">tab_inference</span><span class="p">:</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="s2">&quot;## Species detected&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">whale_classes</span><span class="p">)):</span>
+                    <span class="n">sw_wv</span><span class="o">.</span><span class="n">display_whale</span><span class="p">(</span><span class="n">whale_classes</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+
+
+
+
+    <span class="c1"># inside the hotdog tab, on button press we call a 2nd model (totally unrelated at present, just for demo</span>
+    <span class="c1"># purposes, an hotdog image classifier) which will be run locally.</span>
+    <span class="c1"># - this model predicts if the image is a hotdog or not, and returns probabilities</span>
+    <span class="c1"># - the input image is the same as for the ceteacean classifier - defined in the sidebar</span>
+
+    <span class="k">if</span> <span class="n">tab_hotdogs</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&quot;Get Hotdog Prediction&quot;</span><span class="p">):</span>   
+
+        <span class="n">pipeline_hot_dog</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="s2">&quot;image-classification&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;julien-c/hotdog-not-hotdog&quot;</span><span class="p">)</span>
+        <span class="n">tab_hotdogs</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Hot Dog? Or Not?&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Please upload an image first.&quot;</span><span class="p">)</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">observation</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">col1</span><span class="p">,</span> <span class="n">col2</span> <span class="o">=</span> <span class="n">tab_hotdogs</span><span class="o">.</span><span class="n">columns</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="c1"># display the image (use cached version, no need to reread)</span>
+            <span class="n">col1</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">image</span><span class="p">,</span> <span class="n">use_column_width</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># and then run inference on the image</span>
+            <span class="n">hotdog_image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">image</span><span class="p">)</span>
+            <span class="n">predictions</span> <span class="o">=</span> <span class="n">pipeline_hot_dog</span><span class="p">(</span><span class="n">hotdog_image</span><span class="p">)</span>
+
+            <span class="n">col2</span><span class="o">.</span><span class="n">header</span><span class="p">(</span><span class="s2">&quot;Probabilities&quot;</span><span class="p">)</span>
+            <span class="n">first</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">:</span>
+                <span class="n">col2</span><span class="o">.</span><span class="n">subheader</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span><span class="w"> </span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="w"> </span><span class="nb">round</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
+                    <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">full_data</span><span class="p">[</span><span class="s1">&#39;predicted_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span>
+                    <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">full_data</span><span class="p">[</span><span class="s1">&#39;predicted_score&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="n">first</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="n">tab_hotdogs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Session Data: </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">full_data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="src.main.metadata2md" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">metadata2md</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get metadata from cache and return as markdown-formatted key-value list</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>str</code></td>            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Markdown-formatted key-value list of metadata</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/main.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">metadata2md</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get metadata from cache and return as markdown-formatted key-value list</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Markdown-formatted key-value list of metadata</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">markdown_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">full_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">markdown_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;- **</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">**: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">markdown_str</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="src.main.push_observation" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">push_observation</span><span class="p">(</span><span class="n">tab_log</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Push the observation to the Hugging Face dataset</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>tab_log</code>
+            </td>
+            <td>
+                  <code><span title="streamlit.container">container</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The container to log messages to. If not provided,
+log messages are in any case written to the global logger (TODO: test - didn't 
+push any data since generating the logger)</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/main.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">push_observation</span><span class="p">(</span><span class="n">tab_log</span><span class="p">:</span><span class="n">DeltaGenerator</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Push the observation to the Hugging Face dataset</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tab_log (streamlit.container): The container to log messages to. If not provided,</span>
+<span class="sd">            log messages are in any case written to the global logger (TODO: test - didn&#39;t </span>
+<span class="sd">            push any data since generating the logger)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># we get the data from session state: 1 is the dict 2 is the image.</span>
+    <span class="c1"># first, lets do an info display (popup)</span>
+    <span class="n">metadata_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">full_data</span><span class="p">)</span>
+
+    <span class="n">st</span><span class="o">.</span><span class="n">toast</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Uploading observation: </span><span class="si">{</span><span class="n">metadata_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="s2">&quot;🦭&quot;</span><span class="p">)</span>
+    <span class="n">tab_log</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">tab_log</span>
+    <span class="k">if</span> <span class="n">tab_log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tab_log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Uploading observation: </span><span class="si">{</span><span class="n">metadata_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># get huggingface api</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">os</span> 
+    <span class="n">token</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;HF_TOKEN&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">api</span> <span class="o">=</span> <span class="n">HfApi</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">metadata_str</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;temp file: </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> with metadata written...&quot;</span><span class="p">)</span>
+
+    <span class="n">path_in_repo</span><span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;metadata/</span><span class="si">{</span><span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">full_data</span><span class="p">[</span><span class="s1">&#39;author_email&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">full_data</span><span class="p">[</span><span class="s1">&#39;image_md5&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.json&quot;</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;fname: </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> | path: </span><span class="si">{</span><span class="n">path_in_repo</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">rv</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span>
+        <span class="n">path_or_fileobj</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">path_in_repo</span><span class="o">=</span><span class="n">path_in_repo</span><span class="p">,</span>
+        <span class="n">repo_id</span><span class="o">=</span><span class="s2">&quot;Saving-Willy/temp_dataset&quot;</span><span class="p">,</span>
+        <span class="n">repo_type</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">rv</span><span class="p">)</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;data attempted tx to repo happy walrus: </span><span class="si">{</span><span class="n">rv</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">g_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+    
+  </body>
+</html>
