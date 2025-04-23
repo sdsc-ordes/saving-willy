@@ -13,6 +13,7 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
+          
       - name: Push to DEV hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
