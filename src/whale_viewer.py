@@ -1,4 +1,6 @@
 from typing import List
+import streamlit as st
+from streamlit.delta_generator import DeltaGenerator
 
 from PIL import Image
 import pandas as pd
@@ -113,28 +115,29 @@ def format_whale_name(whale_class:str) -> str:
     Returns:
         str: The formatted whale name with spaces instead of underscores and each word capitalized.
     """
+    if not isinstance(whale_class, str):
+        raise TypeError("whale_class should be a string.")
+    
     whale_name = whale_class.replace("_", " ").title()
     return whale_name
 
 
-def display_whale(whale_classes:List[str], i:int, viewcontainer=None):
+def display_whale(whale_classes:List[str], i:int, viewcontainer:DeltaGenerator=None) -> None:
     """
     Display whale image and reference to the provided viewcontainer.
 
     Args:
         whale_classes (List[str]): A list of whale class names.
         i (int): The index of the whale class to display.
-        viewcontainer: The container to display the whale information. If 
-            not provided, use the current streamlit context (works via 
-            'with `container`' syntax)
+        viewcontainer (streamlit.delta_generator.DeltaGenerator): The container
+            to display the whale information. If not provided, use the current
+            streamlit context (works via 'with `container`' syntax)
 
     Returns:
         None
     
-    TODO: how to find the object type of viewcontainer.? they are just "deltagenerators" but 
-    we want the result of the generator.. In any case, it works ok with either call signature.
     """
-    import streamlit as st
+    
     if viewcontainer is None:
         viewcontainer = st
 
@@ -148,11 +151,12 @@ def display_whale(whale_classes:List[str], i:int, viewcontainer=None):
     
     
     viewcontainer.markdown(
-        "### :whale:  #" + str(i + 1) + ": " + format_whale_name(whale_classes[i])
+        ":whale:  #" + str(i + 1) + ": " + format_whale_name(whale_classes[i])
     )
     current_dir = os.getcwd()
     image_path = os.path.join(current_dir, "src/images/references/")
     image = Image.open(image_path + df_whale_img_ref.loc[whale_classes[i], "WHALE_IMAGES"])
 
-    viewcontainer.image(image, caption=df_whale_img_ref.loc[whale_classes[i], "WHALE_REFERENCES"])
-    # link st.markdown(f"[{df.loc[whale_classes[i], 'WHALE_REFERENCES']}]({df.loc[whale_classes[i], 'WHALE_REFERENCES']})")
+    viewcontainer.image(image, 
+                        caption=df_whale_img_ref.loc[whale_classes[i], "WHALE_REFERENCES"], 
+                        use_column_width=True)

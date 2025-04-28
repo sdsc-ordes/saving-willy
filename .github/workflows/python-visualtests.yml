@@ -1,0 +1,55 @@
+name: Visual tests of the app
+
+on:
+  workflow_dispatch: 
+  push:
+    branches: [ "feat/stateful-workflow"  ]
+  #pull_request:
+  #  branches: [ "dev", "main" ]
+
+
+permissions:
+    contents: read
+
+jobs:
+   test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+
+        
+    - name: install chrome
+      run: |
+        sudo apt-get install -y wget
+        sudo bash -c "wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+            && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list"
+        sudo apt-get update && sudo apt-get -y install google-chrome-stable
+
+    - name: Install py dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        if [ -f tests/requirements.txt ]; then pip install -r tests/requirements.txt; fi
+        if [ -f tests/visual_selenium/requirements_visual.txt ]; then pip install -r tests/visual_selenium/requirements_visual.txt; fi
+
+    - name: Check the console scripts interface
+      run: |
+        seleniumbase
+        sbase
+    - name: Install chromedriver
+      run: |
+        seleniumbase install chromedriver
+
+
+
+    - name: Run visual tests with pytest
+      # we use --demo to make it slow enough (selenium doesn't wait long enough
+      # otherwise, not one step it consistently fails at.)
+      run: |
+            pytest -m "visual" --strict-markers tests/visual_selenium/ -s --demo
+
+      # DEBUG_AUTOPOPULATE_METADATA=True streamlit run src/main.py
