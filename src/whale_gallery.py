@@ -59,7 +59,11 @@ def render_whale_gallery(n_cols:int = 4) -> None:
 """,
     unsafe_allow_html=True,
 )
-    
+    _n = len(sw_wv.df_whale_img_ref)
+    st.markdown(
+        f"""*The {_n} classes of cetaceans that our classifier can identify.
+        The links provide more information about each species, from NOAA or 
+        wikipedia.*""") 
     cols = cycle(st.columns(n_cols)) 
     for ix in range(len(sw_wv.df_whale_img_ref)):
         img_name = sw_wv.df_whale_img_ref.iloc[ix].loc["WHALE_IMAGES"]

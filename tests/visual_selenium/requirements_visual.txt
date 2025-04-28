@@ -1,0 +1,5 @@
+# visual tests with selenium
+selenium~=4.27.1
+seleniumbase~=4.33.12
+
+pytest~=8.3.4
