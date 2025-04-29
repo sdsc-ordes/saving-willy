@@ -21,7 +21,7 @@ presentation_data_schema = {
     'lon': 'float',
     'species': 'str',
     'author_email': 'str',
-    'date' : 'timestamp',
+    'date' : 'datetime64[ns]',
 }
 
 def try_download_dataset(dataset_id:str, data_files:str) -> dict:
@@ -48,11 +48,26 @@ def try_download_dataset(dataset_id:str, data_files:str) -> dict:
         st.error(msg)
         m_logger.error(msg)
         metadata = {}
+    except FileNotFoundError as e:
+        # dataset file not found, caused by a lack of parquet file in the dataset
+        # (not the error raised when network problems)
+        t2 = time.time(); elap = t2 - t1
+        msg = f"Error downloading dataset (missing parquet file for dataset '{dataset_id}': {e}.  (after {elap:.2f}s)."
+        with st.expander(
+                f"Error: missing parquet file for dataset '{dataset_id}'. Click for more details...", 
+                expanded=False):
+            st.error(msg)
+
+        m_logger.error(msg)
+        metadata = {}
+        
     except Exception as e:
         # catch all (other) exceptions and log them, handle them once isolated 
         t2 = time.time(); elap = t2 - t1
         msg = f"!!Unknown Error!! downloading dataset: {e}.  (after {elap:.2f}s)."
-        st.error(msg)
+        with st.expander("Error details", expanded=False):
+            st.error(msg)
+        #st.error(msg)
         m_logger.error(msg)
         metadata = {}
         
@@ -62,6 +77,8 @@ def try_download_dataset(dataset_id:str, data_files:str) -> dict:
     #st.write(msg)
     return metadata
 
+
+# TODO: add tests, esp edge cases where dataset is not available
 def get_dataset() -> pd.DataFrame:
     """
     Downloads the dataset from Hugging Face and prepares it for use.
@@ -84,4 +101,5 @@ def get_dataset() -> pd.DataFrame:
             'author_email': metadata["train"]["author_email"],
             'date': metadata["train"]["date"],}
         )
+
     return df
