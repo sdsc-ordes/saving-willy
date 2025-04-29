@@ -55,6 +55,7 @@ lat_min, lat_max = float(df['lat'].min()), float(df['lat'].max())
 lon_min, lon_max = float(df['lon'].min()), float(df['lon'].max())
 date_min, date_max = df['date'].min(), df['date'].max()
 
+# NaN or NaT aren't accepted by slider widgets
 if np.isnan(lat_min) or np.isnan(lat_max):
     st.warning("Latitude range includes NaN, not attempting to present filtering options")
     give_up_insufficient_data = True
@@ -62,9 +63,22 @@ if np.isnan(lat_min) or np.isnan(lat_max):
 if np.isnan(lon_min) or np.isnan(lon_max):
     st.warning("Longitude range includes NaN, not attempting to present filtering options")
     give_up_insufficient_data = True
-    
+
 if date_min is pd.NaT or date_max is pd.NaT:
     st.warning("One or both dates are undefined (NaT), not attempting to present filtering options")
+    give_up_insufficient_data = True
+
+# zero range is also not accepted by the slider widgets
+if lat_min == lat_max:
+    st.warning("Latitude range has no variability (min equals max), not attempting to present filtering options")
+    give_up_insufficient_data = True
+
+if lon_min == lon_max:
+    st.warning("Longitude range has no variability (min equals max), not attempting to present filtering options")
+    give_up_insufficient_data = True
+
+if date_min == date_max:
+    st.warning("Date range has no variability (min equals max), not attempting to present filtering options")
     give_up_insufficient_data = True
 
 if give_up_insufficient_data:
