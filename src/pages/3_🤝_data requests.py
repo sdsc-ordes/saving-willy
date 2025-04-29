@@ -55,11 +55,11 @@ lat_min, lat_max = float(df['lat'].min()), float(df['lat'].max())
 lon_min, lon_max = float(df['lon'].min()), float(df['lon'].max())
 date_min, date_max = df['date'].min(), df['date'].max()
 
-if lat_min is np.nan or lat_max is np.nan:
+if np.isnan(lat_min) or np.isnan(lat_max):
     st.warning("Latitude range includes NaN, not attempting to present filtering options")
     give_up_insufficient_data = True
 
-if lon_min is np.nan or lon_max is np.nan:
+if np.isnan(lon_min) or np.isnan(lon_max):
     st.warning("Longitude range includes NaN, not attempting to present filtering options")
     give_up_insufficient_data = True
     

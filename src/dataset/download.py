@@ -52,7 +52,7 @@ def try_download_dataset(dataset_id:str, data_files:str) -> dict:
         # dataset file not found, caused by a lack of parquet file in the dataset
         # (not the error raised when network problems)
         t2 = time.time(); elap = t2 - t1
-        msg = f"Error downloading dataset (missing parquet file for dataset '{dataset_id}: {e}.  (after {elap:.2f}s)."
+        msg = f"Error downloading dataset (missing parquet file for dataset '{dataset_id}': {e}.  (after {elap:.2f}s)."
         with st.expander(
                 f"Error: missing parquet file for dataset '{dataset_id}'. Click for more details...", 
                 expanded=False):
