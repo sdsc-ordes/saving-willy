@@ -21,7 +21,7 @@ presentation_data_schema = {
     'lon': 'float',
     'species': 'str',
     'author_email': 'str',
-    'date' : 'timestamp',
+    'date' : 'datetime64[ns]',
 }
 
 def try_download_dataset(dataset_id:str, data_files:str) -> dict:
@@ -84,4 +84,5 @@ def get_dataset() -> pd.DataFrame:
             'author_email': metadata["train"]["author_email"],
             'date': metadata["train"]["date"],}
         )
+        
     return df
